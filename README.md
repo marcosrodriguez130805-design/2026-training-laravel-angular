@@ -2,20 +2,70 @@
 
 Este repositorio sirve como proyecto base para prácticas de desarrollo backend y frontend, con **Laravel 12** en el backend y **Angular 20** en el frontend.  
 
-El objetivo es que los alumnos aprendan a trabajar con **arquitectura hexagonal** y **Domain-Driven Design (DDD)** desde el primer día.
 
 ---
 
 ## Índice
 
+- [Prerrequisitos](#prerrequisitos)
+- [Cómo empezar](#cómo-empezar)
 - [Estructura del proyecto](#estructura-del-proyecto)
   - [Backend (`backend/`)](#backend-backend)
   - [Frontend (`frontend/`)](#frontend-frontend)
   - [DbGate (cliente de base de datos)](#dbgate-cliente-de-base-de-datos)
-- [Cómo empezar](#cómo-empezar)
 - [Objetivos de aprendizaje](#objetivos-de-aprendizaje)
 - [Buenas prácticas](#buenas-prácticas)
 - [Estilo de código](#estilo-de-código)
+
+---
+
+## Prerrequisitos
+
+Para seguir esta guía necesitas tener instalado en tu máquina:
+
+- **Docker** (y Docker Compose), para levantar la API, el frontend, la base de datos y DbGate. Sin Docker no podrás ejecutar `make start` ni el resto de comandos que dependen de los contenedores.
+- **Make** (GNU Make), para usar los objetivos del `Makefile` (`make start`, `make install`, `make db-migrate`, etc.).
+- **Git**, para clonar el repositorio.
+
+---
+
+## Cómo empezar
+
+1. **Clonar el repositorio:**
+
+   ```bash
+   git clone <repo-url>
+   cd 2026-training-laravel-angular
+   ```
+
+2. **Configurar entorno backend (solo la primera vez):** copiar el archivo de ejemplo:
+
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+
+3. **Levantar los contenedores Docker:**
+
+   ```bash
+   make start
+   ```
+
+4. **Instalar dependencias backend, migrar la base de datos y generar clave de aplicación:**
+
+   ```bash
+   make install   # composer install + migraciones (requiere que los contenedores estén levantados: make start)
+   docker compose run --rm api php artisan key:generate
+   ```
+
+   Si el contenedor `api` no quedó en marcha, vuelve a levantar: `make start`.
+
+5. **Frontend (Angular):** El repositorio ya incluye el proyecto en `frontend/`. Con `make start` el contenedor levanta la app automáticamente. Para desarrollo en primer plano con live reload: `make serve-frontend`.
+
+Tras seguir estos pasos tendrás:
+
+- **API (Laravel):** [http://localhost:8000](http://localhost:8000)
+- **Frontend (Angular):** [http://localhost:4200](http://localhost:4200)
+- **DbGate (MySQL):** [http://localhost:9051](http://localhost:9051) (conexión **Training MySQL** preconfigurada)
 
 ---
 
@@ -40,72 +90,21 @@ App/
         └── Entrypoint/Http/
 ```
 
-Domain/ → lógica de negocio pura, entidades y value objects.
-Interfaces/ → contratos del dominio (por ejemplo UserRepositoryInterface).
-Application/ → casos de uso y handlers.
-Infrastructure/ → adaptadores que conectan el dominio con el mundo externo: persistencia, HTTP, colas.
-Entrypoint/Http/ → controladores o endpoints HTTP.
+| Carpeta | Descripción |
+|---------|-------------|
+| **Domain/** | Lógica de negocio pura, entidades y value objects. |
+| **Interfaces/** | Contratos del dominio (por ejemplo `UserRepositoryInterface`). |
+| **Application/** | Casos de uso y handlers. |
+| **Infrastructure/** | Adaptadores que conectan el dominio con el mundo externo: persistencia, HTTP, colas. |
+| **Entrypoint/Http/** | Controladores o endpoints HTTP. |
 
 ### Frontend (`frontend/`)
 
-Proyecto **Angular 20**.  
-Monta un cliente mínimo que consume la API del backend.  
-Servido en **http://localhost:4200**.
+Proyecto **Angular 20**. Cliente mínimo que consume la API del backend (ver [Cómo empezar](#cómo-empezar) para las URLs de acceso).
 
 ### DbGate (cliente de base de datos)
 
-Interfaz web para explorar y consultar la base MySQL del proyecto.  
-Tras levantar los contenedores (`make start`), accede en:
-
-- **URL:** [http://localhost:9051](http://localhost:9051)
-
-La conexión **Training MySQL** queda preconfigurada por variables de entorno y apunta a la base `training` del servicio `db`.
-
----
-
-## Cómo empezar
-
-1. **Clonar el repositorio:**
-
-   ```bash
-   git clone <repo-url>
-   cd 2026-training-laravel-angular
-   ```
-
-2. **Levantar los contenedores Docker:**
-
-   ```bash
-   make start
-   ```
-
-3. **Instalar dependencias backend:**
-
-   ```bash
-   make install-laravel   # solo si aún no existe el proyecto Laravel en backend/
-   make install           # composer install
-   ```
-
-4. **Instalar frontend (solo si aún no existe el proyecto Angular en frontend/):**
-
-   ```bash
-   make install-frontend  # crea el proyecto Angular 20 en frontend/
-   ```
-
-5. **Migrar base de datos:**
-
-   ```bash
-   make db-migrate
-   ```
-
-6. **Frontend (Angular):** Al hacer `make start`, el contenedor `frontend` ya ejecuta `npm install && npm start`, así que Angular queda levantado y servido en **http://localhost:4200**. No hace falta arrancarlo a mano.
-
-   Si prefieres ejecutar Angular en tu máquina en lugar del contenedor:
-
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
+Interfaz web para explorar y consultar la base MySQL. La conexión **Training MySQL** queda preconfigurada y apunta a la base `training` del servicio `db`.
 
 ---
 

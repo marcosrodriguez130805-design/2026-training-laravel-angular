@@ -14,10 +14,8 @@ status:
 	docker compose ps
 
 install:
-	docker compose exec api composer install
-
-install-laravel:
-	docker compose run --rm api bash -c "composer create-project laravel/laravel /var/www"
+	docker compose run --rm api composer install
+	docker compose run --rm api php artisan migrate
 
 install-frontend:
 	docker compose run --rm -v $(PWD):/workspace -w /workspace frontend sh -c "npx -y @angular/cli@20 new training-frontend --defaults --directory=frontend"
@@ -40,7 +38,7 @@ build-frontend:
 # Para abrir el navegador automáticamente: cd frontend && npm start -- --open
 serve-frontend:
 	docker compose stop frontend 2>/dev/null || true
-	docker compose run --rm -p 4200:4200 frontend npx ng serve --host 0.0.0.0
+	docker compose run --rm -p 4200:4200 frontend sh -c "npm install && npx ng serve --host 0.0.0.0"
 
 lint:
 	docker compose exec api vendor/bin/pint

@@ -64,7 +64,7 @@ Comandos base (desde la raíz del repo):
 ```bash
 make start           # Levantar contenedores (API, frontend, db, dbgate)
 make install         # composer install en api
-make install-laravel # Crear proyecto Laravel en /var/www si aplica
+# Copiar backend/.env.example a backend/.env y generar APP_KEY si aplica
 make install-frontend# Crear proyecto Angular en frontend/ si aplica
 make db-migrate      # Migraciones en api
 make restart         # stop + start
