@@ -20,13 +20,27 @@ install-laravel:
 	docker compose run --rm api bash -c "composer create-project laravel/laravel /var/www"
 
 install-frontend:
-	docker compose run --rm -v $(PWD):/workspace -w /workspace frontend sh -c "npx -y @angular/cli@20 new frontend --defaults"
+	docker compose run --rm -v $(PWD):/workspace -w /workspace frontend sh -c "npx -y @angular/cli@20 new training-frontend --defaults --directory=frontend"
+	docker compose run --rm -v $(PWD):/workspace -w /workspace/frontend frontend sh -c "npx -y @angular/cli@20 add @angular/material --defaults --skip-confirmation"
 
 db-migrate:
 	docker compose exec api php artisan migrate
 
 test:
 	docker compose exec api php artisan test
+
+test-frontend:
+	docker compose exec frontend npx ng test --watch=false --browsers=ChromeHeadlessCI
+
+build-frontend:
+	docker compose exec frontend npx ng build
+
+# Servidor de desarrollo con live reload (watch) en primer plano. Abre http://localhost:4200 en el navegador.
+# Si el frontend ya está en marcha (make start), lo detiene antes para liberar el puerto 4200.
+# Para abrir el navegador automáticamente: cd frontend && npm start -- --open
+serve-frontend:
+	docker compose stop frontend 2>/dev/null || true
+	docker compose run --rm -p 4200:4200 frontend npx ng serve --host 0.0.0.0
 
 lint:
 	docker compose exec api vendor/bin/pint
