@@ -5,19 +5,21 @@ namespace App\User\Domain\Entity;
 use App\Shared\Domain\ValueObject\DomainDateTime;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\User\Domain\ValueObject\PasswordHash;
+use App\User\Domain\ValueObject\UserName;
 
 class User
 {
     private function __construct(
         private Uuid $id,
-        private string $name,
+        private UserName $name,
         private Email $email,
-        private string $passwordHash,
+        private PasswordHash $passwordHash,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(Email $email, string $name, string $passwordHash): self
+    public static function dddCreate(Email $email, UserName $name, PasswordHash $passwordHash): self
     {
         $now = DomainDateTime::now();
 
@@ -41,9 +43,9 @@ class User
     ): self {
         return new self(
             Uuid::create($id),
-            $name,
+            UserName::create($name),
             Email::create($email),
-            $passwordHash,
+            PasswordHash::create($passwordHash),
             DomainDateTime::create($createdAt),
             DomainDateTime::create($updatedAt),
         );
@@ -56,7 +58,7 @@ class User
 
     public function name(): string
     {
-        return $this->name;
+        return $this->name->value();
     }
 
     public function email(): Email
@@ -66,7 +68,7 @@ class User
 
     public function passwordHash(): string
     {
-        return $this->passwordHash;
+        return $this->passwordHash->value();
     }
 
     public function createdAt(): DomainDateTime

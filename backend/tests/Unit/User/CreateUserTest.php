@@ -23,17 +23,18 @@ class CreateUserTest extends TestCase
         $repository = Mockery::mock(UserRepositoryInterface::class);
         $passwordHasher = Mockery::mock(PasswordHasherInterface::class);
 
+        $hashedPassword = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
         $passwordHasher->shouldReceive('hash')
             ->once()
             ->with('plain-password')
-            ->andReturn('hashed');
+            ->andReturn($hashedPassword);
 
         $repository->shouldReceive('save')
             ->once()
-            ->with(Mockery::on(function (User $user) {
+            ->with(Mockery::on(function (User $user) use ($hashedPassword) {
                 return $user->email()->value() === 'create@example.com'
                     && $user->name() === 'Create User'
-                    && $user->passwordHash() === 'hashed';
+                    && $user->passwordHash() === $hashedPassword;
             }));
 
         $createUser = new CreateUser($repository, $passwordHasher);
