@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use App\User\Infrastructure\Persistence\Models\EloquentUser; // ← ruta a tu modelo
 
 class UsersTableSeeder extends Seeder
 {
@@ -12,6 +14,15 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Elo
+        EloquentUser::create([
+            'uuid' => Str::uuid()->toString(),
+            'role' => 'admin',
+            'image_src' => 'default.png',
+            'name' => 'TestUser',
+            'email' => 'test@example.com',
+            'password' => Hash::make('password'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
