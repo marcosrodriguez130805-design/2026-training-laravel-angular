@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('families', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->foreignId('restaurant_id')->constrained();
             $table->string('name');
             $table->boolean('active')->default(false);
             $table->timestamps();

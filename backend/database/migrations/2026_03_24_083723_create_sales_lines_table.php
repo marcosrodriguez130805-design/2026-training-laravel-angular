@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales_lines', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->foreignId('restaurant_id')->constrained();
             $table->foreignId('sale_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->foreignId('user_id')->constrained();

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->foreignId('restaurant_id')->constrained();
             $table->integer('tcket_number');
             $table->string('status')->default('open');
             $table->foreignId('table_id')->constrained();
