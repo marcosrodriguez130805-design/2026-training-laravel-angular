@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use App\User\Infrastructure\Persistence\Models\EloquentUser; // ← ruta a tu modelo
+use App\User\Infrastructure\Persistence\Models\EloquentUser;
 
 class UsersTableSeeder extends Seeder
 {
