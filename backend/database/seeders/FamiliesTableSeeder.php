@@ -13,12 +13,25 @@ class FamiliesTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ejemplo de varias familias
         EloquentFamily::create([
             'uuid' => Str::uuid()->toString(),
-            'name' => 'Test Family',
+            'restaurant_id' => 1, // ID de un restaurante existente
+            'name' => 'Familia Pérez',
             'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
+            'deleted_at' => null,
+        ]);
+
+        EloquentFamily::create([
+            'uuid' => Str::uuid()->toString(),
+            'restaurant_id' => 1,
+            'name' => 'Familia Gómez',
+            'active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'deleted_at' => null,
         ]);
     }
 }

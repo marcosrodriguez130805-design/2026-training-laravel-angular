@@ -4,6 +4,7 @@ namespace App\Family\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 
 class EloquentFamily extends Model
 {
@@ -13,6 +14,7 @@ class EloquentFamily extends Model
 
     protected $fillable = [
         'uuid',
+        'restaurant_id',
         'name',
         'active',
     ];
@@ -22,5 +24,10 @@ class EloquentFamily extends Model
         return [
             'active' => 'boolean',
         ];
+    }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
     }
 }

@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Tax\Infrastructure\Persistence\Models;
+namespace App\Zone\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 
-class EloquentTax extends Model
+class EloquentZone extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'taxes';
+    protected $table = 'zones';
 
     protected $fillable = [
         'uuid',
-        'restaurant_id',
         'name',
-        'percentage',
     ];
 
     public function restaurant()

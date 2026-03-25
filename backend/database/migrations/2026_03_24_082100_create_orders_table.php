@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_lines', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('restaurant_id')->constrained();
-            $table->foreignId('sale_id')->constrained();
-            $table->foreignId('order_line_id')->constrained('order_lines');
-            $table->foreignId('user_id')->constrained();
-            $table->integer('quantity');
-            $table->integer('price');
-            $table->integer('tax_percentage');
+            $table->string('status');
+            $table->foreignId('table_id')->constrained();
+            $table->foreignId('opened_by_user_id')->constrained('users');
+            $table->foreignId('closed_by_user_id')->nullable()->constrained('users');
+            $table->timestamp('opened_at')->useCurrent();
+            $table->timestamp('closed_at')->nullable();
+            $table->integer('diners');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales_lines');
+        Schema::dropIfExists('orders');
     }
 };

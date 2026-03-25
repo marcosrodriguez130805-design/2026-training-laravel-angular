@@ -12,22 +12,32 @@ class User
 {
     private function __construct(
         private Uuid $id,
+        private Uuid $uuid,
+        private Uuid $restaurantId,
+        private string $role,
         private UserName $name,
         private Email $email,
         private PasswordHash $passwordHash,
+        private ?string $pin,
+        private ?string $imageSrc,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(Email $email, UserName $name, PasswordHash $passwordHash): self
+    public static function dddCreate(Uuid $restaurantId, string $role, Email $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, string $pin): self
     {
         $now = DomainDateTime::now();
 
         return new self(
             Uuid::generate(),
+            Uuid::generate(),
+            $restaurantId,
+            $role,
             $name,
             $email,
             $passwordHash,
+            $pin,
+            $imageSrc,
             $now,
             $now,
         );
@@ -35,17 +45,27 @@ class User
 
     public static function fromPersistence(
         string $id,
+        string $uuid,
+        string $restaurantId,
+        string $role,
         string $name,
         string $email,
         string $passwordHash,
+        ?string $pin,
+        ?string $imageSrc,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             Uuid::create($id),
+            Uuid::create($uuid),
+            Uuid::create($restaurantId),
+            $role,
             UserName::create($name),
             Email::create($email),
             PasswordHash::create($passwordHash),
+            $pin,
+            $imageSrc,
             DomainDateTime::create($createdAt),
             DomainDateTime::create($updatedAt),
         );
@@ -56,28 +76,58 @@ class User
         return $this->id;
     }
 
-    public function name(): string
+    public function uuid(): Uuid
+    {
+        return $this->uuid;
+    }
+
+    public function restaurantId(): Uuid
+    {
+        return $this->restaurantId;
+    }
+
+        public function role(): string
+    {
+        return $this->role;
+    }
+
+        public function name(): string
     {
         return $this->name->value();
     }
 
-    public function email(): Email
+        public function email(): Email
     {
         return $this->email;
     }
 
-    public function passwordHash(): string
+        public function passwordHash(): string
     {
         return $this->passwordHash->value();
     }
 
-    public function createdAt(): DomainDateTime
+        public function pin(): ?string
+    {
+        return $this->pin;
+    }
+
+        public function imageSrc(): ?string
+    {
+        return $this->imageSrc;
+    }
+
+        public function createdAt(): DomainDateTime
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DomainDateTime
+        public function updatedAt(): DomainDateTime
     {
         return $this->updatedAt;
+    }
+
+        public function deletedAt(): ?DomainDateTime
+    {
+        return $this->deletedAt;
     }
 }

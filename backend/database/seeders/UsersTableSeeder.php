@@ -16,13 +16,16 @@ class UsersTableSeeder extends Seeder
     {
         EloquentUser::create([
             'uuid' => Str::uuid()->toString(),
+            'restaurant_id' => 1,
             'role' => 'admin',
             'image_src' => 'default.png',
             'name' => 'TestUser',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
+            'pin' => '1234',
             'created_at' => now(),
             'updated_at' => now(),
+            'deleted_at' => null,
         ]);
     }
 }

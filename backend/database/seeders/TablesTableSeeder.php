@@ -4,30 +4,31 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use App\Tax\Infrastructure\Persistence\Models\EloquentTax;
+use App\Table\Infrastructure\Persistence\Models\EloquentTable;
 
-class TaxesTableSeeder extends Seeder
+class TablesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        EloquentTax::create([
+        // Ejemplo de mesas para un restaurante y zona
+        EloquentTable::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1, // ID de un restaurante existente
-            'name' => 'IVA General',
-            'percentage' => 21,    // 21%
+            'restaurant_id' => 1, // Debe existir un restaurante
+            'zone_id' => 1,       // Debe existir una zona
+            'name' => 'Mesa 1',
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,
         ]);
 
-        EloquentTax::create([
+        EloquentTable::create([
             'uuid' => Str::uuid()->toString(),
             'restaurant_id' => 1,
-            'name' => 'IVA Reducido',
-            'percentage' => 10,    // 10%
+            'zone_id' => 1,
+            'name' => 'Mesa 2',
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,

@@ -2,12 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Product\Infrastructure\Persistence\Models\EloquentProduct;
-use App\Family\Infrastructure\Persistence\Models\EloquentFamily;
-use App\Tax\Infrastructure\Persistence\Models\EloquentTax;
 
 class ProductsTableSeeder extends Seeder
 {
@@ -16,17 +13,35 @@ class ProductsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ejemplo de productos
         EloquentProduct::create([
             'uuid' => Str::uuid()->toString(),
-            'family_id' => EloquentFamily::first()->id,
-            'tax_id' => EloquentTax::first()->id,
+            'restaurant_id' => 1,
+            'family_id' => 1,
+            'tax_id' => 1,
             'image_src' => 'default.png',
-            'name' => 'Test Product',
-            'price' => 9.99,
-            'stock' => 100,
+            'name' => 'Producto de prueba 1',
+            'price' => 1500,
+            'stock' => 50,
             'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
+            'deleted_at' => null,
+        ]);
+
+        EloquentProduct::create([
+            'uuid' => Str::uuid()->toString(),
+            'restaurant_id' => 1,
+            'family_id' => 1,
+            'tax_id' => 1,
+            'image_src' => 'default.png',
+            'name' => 'Producto de prueba 2',
+            'price' => 2500,
+            'stock' => 30,
+            'active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'deleted_at' => null,
         ]);
     }
 }

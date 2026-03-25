@@ -5,6 +5,7 @@ namespace App\User\Infrastructure\Persistence\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class EloquentUser extends Authenticatable
@@ -20,14 +21,16 @@ class EloquentUser extends Authenticatable
 
     protected $fillable = [
         'uuid',
+        'role',
+        'image_src',
         'name',
         'email',
         'password',
+        'pin',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     protected function casts(): array
@@ -40,5 +43,10 @@ class EloquentUser extends Authenticatable
     public function getKeyName(): string
     {
         return 'id';
+    }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
     }
 }

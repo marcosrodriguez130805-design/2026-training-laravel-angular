@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Family\Infrastructure\Persistence\Models\EloquentFamily;
 use App\Tax\Infrastructure\Persistence\Models\EloquentTax;
+use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 
 class EloquentProduct extends Model
 {
@@ -22,12 +23,9 @@ class EloquentProduct extends Model
         'active',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'active' => 'boolean',
+    ];
 
     public function family()
     {
@@ -39,4 +37,8 @@ class EloquentProduct extends Model
         return $this->belongsTo(EloquentTax::class, 'tax_id');
     }
 
+    public function restaurant()
+    {
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+    }
 }

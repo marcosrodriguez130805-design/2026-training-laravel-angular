@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->string('name');
             $table->string('legal_name');
-            $table->foreignId('tax_id')->constrained();
+            $table->string('tax_id');
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();

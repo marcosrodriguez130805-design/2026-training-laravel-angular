@@ -15,14 +15,10 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('restaurant_id')->constrained();
-            $table->integer('tcket_number');
-            $table->string('status')->default('open');
-            $table->foreignId('table_id')->constrained();
-            $table->foreignId('opened_by_user_id')->constrained('users');
-            $table->foreignId('closed_by_user_id')->nullable()->constrained('users');
-            $table->integer('diners');
-            $table->timestamp('opened_at')->useCurrent();
-            $table->timestamp('closed_at')->nullable();
+            $table->foreignId('order_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->integer('ticket_number');
+            $table->timestamp('value_date')->useCurrent();
             $table->integer('total')->default(0);
             $table->timestamps();
             $table->softDeletes();
