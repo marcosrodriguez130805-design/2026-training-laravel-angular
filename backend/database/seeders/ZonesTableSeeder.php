@@ -12,6 +12,7 @@ class ZonesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        'uuid' => Str::uuid()->toString(),
+        'restaurant_id' => 1,
     }
 }
