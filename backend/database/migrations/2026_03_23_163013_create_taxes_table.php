@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('taxes', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-<<<<<<< HEAD
             $table->foreignId('restaurant_id')->constrained();
-=======
->>>>>>> 0ff36e8da2ce67bf5513eceafc1f859ea94304db
             $table->string('name');
             $table->integer('percentage');
             $table->timestamps();
