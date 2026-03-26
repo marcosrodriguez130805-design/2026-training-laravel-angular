@@ -4,6 +4,7 @@ namespace App\Family\Domain\Entity;
 
 use App\Shared\Domain\ValueObject\DomainDateTime;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Family\Domain\ValueObject\FamilyName;
 
 class Family
 {
@@ -15,7 +16,7 @@ class Family
         private Uuid $id,
         private Uuid $uuid,
         private Uuid $restaurantId,
-        private string $name,
+        private FamilyName $name,
         private bool $active,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
@@ -29,7 +30,7 @@ class Family
             Uuid::generate(),
             Uuid::generate(),
             $restaurantId,
-            $name,
+            FamilyName::create($name),
             $active,
             $now,
             $now,
@@ -49,11 +50,21 @@ class Family
             Uuid::create($id),
             Uuid::create($uuid),
             Uuid::create($restaurantId),
-            $name,
+            FamilyName::create($name),
             $active,
             DomainDateTime::create($createdAt),
             DomainDateTime::create($updatedAt),
         );
+    }
+
+    public function updateName(string $name): void
+    {
+        $this->name = FamilyName::create($name);
+    }
+
+    public function toggleActive(): void
+    {
+        $this->active = !$this->active;
     }
 
     public function id(): Uuid
@@ -73,7 +84,7 @@ class Family
 
     public function name(): string
     {
-        return $this->name;
+        return $this->name->value();
     }
 
     public function active(): bool
