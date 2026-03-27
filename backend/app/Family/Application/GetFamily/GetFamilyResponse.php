@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Family\Domain\Entity\ListFamilies;
+namespace App\Family\Application\GetFamily;
 
 use App\Family\Domain\Entity\Family;
 
-class ListFamiliesResponse
+class GetFamilyResponse
 {
     public function __construct(
         private Family $family,
@@ -17,8 +17,8 @@ class ListFamiliesResponse
             'restaurant_id' => $this->family->restaurantId()->value(),
             'name' => $this->family->name(),
             'active' => $this->family->active(),
-            'created_at' => $this->family->createdAt()->value()->format('Y-m-d H:i:s'),
-            'updated_at' => $this->family->updatedAt()->value()->format('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt()->value()->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt()->value()->format('Y-m-d H:i:s'),
         ];
     }
 }

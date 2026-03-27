@@ -12,12 +12,14 @@ class ListFamilies
     
     ) {}
     
-    public function execute(bool $onlyActive = false): array
+    public function __invoke(bool $onlyActive = false): array
     {
         $families = $this->repository->findAll($onlyActive);
         
         return array_map(
-            fn($family) => new ListFamiliesResponse($family),
+            function($family) {
+            return new ListFamiliesResponse($family);
+            },
             $families
         );
     }

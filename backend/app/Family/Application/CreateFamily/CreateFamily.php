@@ -12,7 +12,7 @@ class CreateFamily
         private FamilyRepositoryInterface $repository,
     ) {}
 
-    public function execute(string $restaurantId, string $name, bool $active): CreateFamilyResponse
+    public function ___invoke(string $restaurantId, string $name, bool $active): CreateFamilyResponse
     {
         $family = Family::dddCreate(
             Uuid::create($restaurantId), 

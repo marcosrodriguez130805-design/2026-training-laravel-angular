@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Family\Domain\Entity\ListFamilies;
+namespace App\Family\Application\ToggleFamilyActive;
 
 use App\Family\Domain\Entity\Family;
 
-class ListFamiliesResponse
+class ToggleFamilyActiveResponse
 {
     public function __construct(
         private Family $family,
