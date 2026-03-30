@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FamilyDomainInterfaces;
+namespace App\Family\Domain\Interfaces;
 
 use App\Family\Domain\Entity\Family;
 use App\Shared\Domain\ValueObject\Uuid;

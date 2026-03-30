@@ -14,11 +14,11 @@ class GetFamilyResponse
     {
         return [
             'uuid' => $this->family->uuid()->value(),
-            'restaurant_id' => $this->family->restaurantId()->value(),
+            'restaurant_id' => $this->family->restaurantId(),
             'name' => $this->family->name(),
             'active' => $this->family->active(),
-            'created_at' => $this->createdAt()->value()->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updatedAt()->value()->format('Y-m-d H:i:s'),
+            'created_at' => $this->family->createdAt()->value()->format('Y-m-d H:i:s'),
+            'updated_at' => $this->family->updatedAt()->value()->format('Y-m-d H:i:s'),
         ];
     }
 }

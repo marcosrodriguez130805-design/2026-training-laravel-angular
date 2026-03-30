@@ -14,7 +14,7 @@ class UpdateFamilyResponse
     {
         return [
             'uuid'          => $this->family->uuid()->value(),
-            'restaurant_id' => $this->family->restaurantId()->value(),
+            'restaurant_id' => $this->family->restaurantId(),
             'name'          => $this->family->name(),
             'active'        => $this->family->active(),
             'created_at'    => $this->family->createdAt()->value()->format('Y-m-d H:i:s'),

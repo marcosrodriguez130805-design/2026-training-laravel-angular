@@ -10,7 +10,18 @@ use App\Shared\Domain\ValueObject\Uuid;
 class EloquentFamilyRepository implements FamilyRepositoryInterface
 {
     public function save(Family $family): void
-    {
+{
+    $model = EloquentFamily::where('uuid', $family->uuid()->value())->first();
+
+    if ($model) {
+        // Actualiza
+        $model->update([
+            'name' => $family->name(),
+            'active' => $family->active(),
+            'restaurant_id' => $this->resolveRestaurantId($family->restaurantId()),
+        ]);
+    } else {
+        // Crea
         EloquentFamily::create([
             'uuid' => $family->uuid()->value(),
             'restaurant_id' => $this->resolveRestaurantId($family->restaurantId()),
@@ -18,6 +29,7 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
             'active' => $family->active(),
         ]);
     }
+}
 
     public function findByUuid(Uuid $uuid): ?Family
     {
@@ -39,7 +51,8 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
         }
 
         return $query->get()
-        ->map(fn($model) => $this->toDomainEntity($model))->toArray();
+            ->map(fn($model) => $this->toDomainEntity($model))
+            ->toArray();
     }
 
     public function update(Family $family): void
@@ -49,6 +62,7 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
             'active' => $family->active(),
         ]);
     }
+
     public function delete(Uuid $uuid): void
     {
         EloquentFamily::where('uuid', $uuid->value())->delete();
@@ -57,9 +71,8 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
     private function toDomainEntity(EloquentFamily $model): Family
     {
         return Family::fromPersistence(
-            (string) $model->id,
             $model->uuid,
-            (string) $model->restaurant_id,
+            (int) $model->restaurant_id,
             $model->name,
             (bool) $model->active,
             $model->created_at->toDateTimeImmutable(),
@@ -67,13 +80,14 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
         );
     }
 
-    private function resolveRestaurantId(Uuid $restaurantId): int
+    // ✅ Ahora recibe int y opcionalmente valida que exista el restaurante
+    private function resolveRestaurantId(int $restaurantId): int
     {
-        $restaurant = \App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant::where(
-            'uuid', $restaurantId->value()
-        )->firstOrFail();
+        $exists = \App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant::find($restaurantId);
+        if (!$exists) {
+            throw new \InvalidArgumentException("Restaurant ID $restaurantId does not exist");
+        }
 
-        return $restaurant->id;
+        return $restaurantId;
     }
 }
-

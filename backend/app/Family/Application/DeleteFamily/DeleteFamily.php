@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Family\Domain\\;
+namespace App\Family\Application\DeleteFamily;
 
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\Uuid;
 class DeleteFamily
 {
     public function __construct(
-        private FamilyRepositoryInterface $repository;
+        private FamilyRepositoryInterface $repository,
     ) {}
 
     public function __invoke(string $uuid): void

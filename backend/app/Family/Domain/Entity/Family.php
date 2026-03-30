@@ -8,28 +8,22 @@ use App\Family\Domain\ValueObject\FamilyName;
 
 class Family
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct(
-    
-        private Uuid $id,
         private Uuid $uuid,
-        private Uuid $restaurantId,
+        private int $restaurantId,          // ← volvemos a int
         private FamilyName $name,
         private bool $active,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(Uuid $restaurantId, string $name, bool $active): self
+    public static function dddCreate(int $restaurantId, string $name, bool $active): self
     {
         $now = DomainDateTime::now();
 
         return new self(
             Uuid::generate(),
-            Uuid::generate(),
-            $restaurantId,
+            $restaurantId,                 // ← int
             FamilyName::create($name),
             $active,
             $now,
@@ -38,18 +32,16 @@ class Family
     }
 
     public static function fromPersistence(
-        string $id,
         string $uuid,
-        string $restaurantId,
+        int $restaurantId,              // ← int
         string $name,
         bool $active,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
-            Uuid::create($id),
             Uuid::create($uuid),
-            Uuid::create($restaurantId),
+            $restaurantId,                // ← int
             FamilyName::create($name),
             $active,
             DomainDateTime::create($createdAt),
@@ -67,17 +59,12 @@ class Family
         $this->active = !$this->active;
     }
 
-    public function id(): Uuid
-    {
-        return $this->id;
-    }
-
     public function uuid(): Uuid
     {
         return $this->uuid;
     }
 
-    public function restaurantId(): Uuid
+    public function restaurantId(): int
     {
         return $this->restaurantId;
     }
@@ -102,7 +89,3 @@ class Family
         return $this->updatedAt;
     }
 }
-
-    
-
-

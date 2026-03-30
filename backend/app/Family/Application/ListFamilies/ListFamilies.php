@@ -1,15 +1,13 @@
 <?php
 
-
 namespace App\Family\Application\ListFamilies;
 
-use App\Family\Domain\Interfaces\FamilyRespositoryInterface;
+use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
 
 class ListFamilies
 {
     public function __construct(
         private FamilyRepositoryInterface $repository,
-    
     ) {}
     
     public function __invoke(bool $onlyActive = false): array
@@ -18,7 +16,7 @@ class ListFamilies
         
         return array_map(
             function($family) {
-            return new ListFamiliesResponse($family);
+                return new ListFamiliesResponse($family);
             },
             $families
         );

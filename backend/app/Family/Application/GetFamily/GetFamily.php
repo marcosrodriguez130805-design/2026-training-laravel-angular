@@ -2,7 +2,7 @@
 
 namespace App\Family\Application\GetFamily;
 
-use App\Familly\Domain\Interfaces\FsmilyRepositoryInterface;
+use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
 use App\Shared\Domain\VAlueObject\Uuid;
 
 class GetFamily

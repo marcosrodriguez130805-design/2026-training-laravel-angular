@@ -4,7 +4,6 @@ namespace App\Family\Application\CreateFamily;
 
 use App\Family\Domain\Entity\Family;
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
-use App\Shared\Domain\ValueObject\Uuid;
 
 class CreateFamily
 {
@@ -12,10 +11,10 @@ class CreateFamily
         private FamilyRepositoryInterface $repository,
     ) {}
 
-    public function ___invoke(string $restaurantId, string $name, bool $active): CreateFamilyResponse
+    public function __invoke(int $restaurantId, string $name, bool $active): CreateFamilyResponse
     {
         $family = Family::dddCreate(
-            Uuid::create($restaurantId), 
+            (int) $restaurantId, 
             $name, 
             $active
         );

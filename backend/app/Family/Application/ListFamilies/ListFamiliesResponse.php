@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Family\Domain\Entity\ListFamilies;
+namespace App\Family\Application\ListFamilies;
 
 use App\Family\Domain\Entity\Family;
 
@@ -14,7 +14,7 @@ class ListFamiliesResponse
     {
         return [
             'uuid' => $this->family->uuid()->value(),
-            'restaurant_id' => $this->family->restaurantId()->value(),
+            'restaurant_id' => $this->family->restaurantId(),
             'name' => $this->family->name(),
             'active' => $this->family->active(),
             'created_at' => $this->family->createdAt()->value()->format('Y-m-d H:i:s'),
