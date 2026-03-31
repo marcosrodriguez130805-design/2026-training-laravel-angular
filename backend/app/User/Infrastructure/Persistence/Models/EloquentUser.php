@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class EloquentUser extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $table = 'users';
 
@@ -21,6 +22,7 @@ class EloquentUser extends Authenticatable
 
     protected $fillable = [
         'uuid',
+        'restaurant_id',
         'role',
         'image_src',
         'name',

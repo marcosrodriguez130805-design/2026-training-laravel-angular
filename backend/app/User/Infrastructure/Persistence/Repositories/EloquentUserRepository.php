@@ -17,11 +17,15 @@ class EloquentUserRepository implements UserRepositoryInterface
         $this->model->newQuery()->updateOrCreate(
             ['uuid' => $user->id()->value()],
             [
-                'name' => $user->name(),
-                'email' => $user->email()->value(),
-                'password' => $user->passwordHash(),
-                'created_at' => $user->createdAt()->value(),
-                'updated_at' => $user->updatedAt()->value(),
+                'restaurant_id' => $user->restaurantId(),
+                'role'          => $user->role(),
+                'image_src'     => $user->imageSrc(),
+                'name'          => $user->name(),
+                'email'         => $user->email()->value(),
+                'password'      => $user->passwordHash(),
+                'pin'           => $user->pin(),
+                'created_at'    => $user->createdAt()->value(),
+                'updated_at'    => $user->updatedAt()->value(),
             ]
         );
     }
@@ -34,6 +38,16 @@ class EloquentUserRepository implements UserRepositoryInterface
             return null;
         }
 
+        return $this->toEntity($model);
+    }
+
+    public function findByEmail(string $email): ?EloquentUser
+    {
+        return $this->model->newQuery()->where('email', $email)->first();
+    }
+
+    private function toEntity(EloquentUser $model): User
+    {
         return User::fromPersistence(
             $model->uuid,
             $model->name,

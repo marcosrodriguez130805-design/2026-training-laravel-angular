@@ -1,30 +1,21 @@
 <?php
 
-namespace App\Family\Application\ToggleFamilyActive;
+namespace App\Family\Infrastructure\Entrypoint\Http;
 
-use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
-use App\Family\Application\UpdateFamily\UpdateFamilyResponse;
-use App\Shared\Domain\ValueObject\Uuid;
+use App\Family\Application\ToggleFamilyActive\ToggleFamilyActive;
+use Illuminate\Http\Request;
 
-class ToggleFamilyActive
+class ToggleFamilyActiveController
 {
-    public function __construct(
-        private FamilyRepositoryInterface $repository,
-    ) {}
-
-    public function __invoke(string $uuid): UpdateFamilyResponse
+    public function __invoke(Request $request, string $uuid)
     {
-        $family = $this->repository->findByUuid(new Uuid($uuid));
+        // Obtenemos la clase de aplicación desde el contenedor
+        $toggle = app(ToggleFamilyActive::class);
 
-        if (!$family) {
-            throw new \Exception("Family not found");
-        }
+        // Ejecutamos la acción
+        $response = $toggle($uuid);
 
-        // Cambiamos solo el estado activo
-        $family->toggleActive();
-
-        $this->repository->update($family);
-
-        return new UpdateFamilyResponse($family);
+        // Retornamos la respuesta JSON
+        return response()->json($response);
     }
 }

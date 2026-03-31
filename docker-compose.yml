@@ -32,6 +32,8 @@ services:
       MYSQL_DATABASE: training
     ports:
       - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql   # persistencia de datos
 
   dbgate:
     image: dbgate/dbgate
@@ -51,3 +53,7 @@ services:
       ENGINE_training: mysql@dbgate-plugin-mysql
     volumes:
       - ./docker/dbgate-data:/root/.dbgate
+
+# Volúmenes persistentes
+volumes:
+  db_data:
