@@ -3,7 +3,6 @@
 namespace App\User\Domain\Entity;
 
 use App\Shared\Domain\ValueObject\DomainDateTime;
-use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\Uuid;
 use App\User\Domain\ValueObject\PasswordHash;
 use App\User\Domain\ValueObject\UserName;
@@ -11,12 +10,11 @@ use App\User\Domain\ValueObject\UserName;
 class User
 {
     private function __construct(
-        private Uuid $id,
         private Uuid $uuid,
         private int $restaurantId,
         private string $role,
         private UserName $name,
-        private Email $email,
+        private string $email,
         private PasswordHash $passwordHash,
         private ?string $pin,
         private ?string $imageSrc,
@@ -24,12 +22,11 @@ class User
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(int $restaurantId, string $role, Email $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, string $pin): self
+    public static function dddCreate(int $restaurantId, string $role, string $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, string $pin): self
     {
         $now = DomainDateTime::now();
 
         return new self(
-            Uuid::generate(),
             Uuid::generate(),
             $restaurantId,
             $role,
@@ -44,7 +41,6 @@ class User
     }
 
     public static function fromPersistence(
-        string $id,
         string $uuid,
         int $restaurantId,
         string $role,
@@ -57,12 +53,11 @@ class User
         \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
-            Uuid::create($id),
             Uuid::create($uuid),
             (int) $restaurantId,
             $role,
             UserName::create($name),
-            Email::create($email),
+            $email,
             PasswordHash::create($passwordHash),
             $pin,
             $imageSrc,
@@ -96,7 +91,7 @@ class User
         return $this->name->value();
     }
 
-        public function email(): Email
+        public function email(): string
     {
         return $this->email;
     }

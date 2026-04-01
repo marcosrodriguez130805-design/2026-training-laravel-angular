@@ -3,7 +3,7 @@
 namespace App\Family\Application\GetFamily;
 
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
-use App\Shared\Domain\VAlueObject\Uuid;
+use App\Shared\Domain\ValueObject\Uuid;
 
 class GetFamily
 {

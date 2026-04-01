@@ -8,10 +8,19 @@ use App\Family\Infrastructure\Entrypoint\Http\ToggleFamilyActiveController;
 use App\Family\Infrastructure\Entrypoint\Http\UpdateFamilyController;
 use App\User\Infrastructure\Entrypoint\Http\CreateUserController;
 use App\User\Infrastructure\Entrypoint\Http\LoginUserController;
+use App\User\Infrastructure\Entrypoint\Http\GetUserUuidController;
+use App\User\Infrastructure\Entrypoint\Http\GetUserEmailController;
+use App\User\Infrastructure\Entrypoint\Http\UpdateUserController;
 use App\User\Infrastructure\Entrypoint\Http\PostController;
+use App\User\Infrastructure\Entrypoint\Http\ListUsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
+Route::put('/users/{uuid}', UpdateUserController::class);
+Route::post('login', LoginUserController::class);
+Route::get('/users', ListUsersController::class);
+Route::get('/users/{uuid}', GetUserUuidController::class);
+Route::get('/users/email/{email}', GetUserEmailController::class);
 
 // Family routes
 Route::get('/families', ListFamiliesController::class);
@@ -23,4 +32,4 @@ Route::patch(
     '/families/{uuid}/toggle-active',
     [ToggleFamilyActiveController::class, '__invoke']
 );
-Route::post('login', LoginUserController::class);
+

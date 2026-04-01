@@ -30,9 +30,9 @@ class EloquentUserRepository implements UserRepositoryInterface
         );
     }
 
-    public function findById(string $id): ?User
+    public function findByUuid(string $uuid): ?User
     {
-        $model = $this->model->newQuery()->where('uuid', $id)->first();
+        $model = $this->model->newQuery()->where('uuid', $uuid)->first();
 
         if ($model === null) {
             return null;
@@ -41,20 +41,54 @@ class EloquentUserRepository implements UserRepositoryInterface
         return $this->toEntity($model);
     }
 
-    public function findByEmail(string $email): ?EloquentUser
+    public function findByEmail(string $email): ?User
     {
-        return $this->model->newQuery()->where('email', $email)->first();
+        $model = $this->model->newQuery()->where('email', $email)->first();
+
+        if ($model === null) {
+            return null;
+        }
+
+        return $this->toEntity($model);
+    }
+
+    public function findAll(): array
+    {
+        return $this->model->newQuery()->get()->map(fn($model) => $this->toEntity($model))->toArray();
+    }
+
+    public function update(User $user): void
+    {
+        $this->model->newQuery()->where('uuid', $user->id()->value())->update([
+            'restaurant_id' => $user->restaurantId(),
+            'role'          => $user->role(),
+            'image_src'     => $user->imageSrc(),
+            'name'          => $user->name(),
+            'email'         => $user->email(),
+            'password'      => $user->passwordHash(),
+            'pin'           => $user->pin(),
+            'updated_at'    => $user->updatedAt()->value(),
+        ]);
+    }
+
+    public function delete(string $uuid): void
+    {
+        $this->model->newQuery()->where('uuid', $uuid)->delete();
     }
 
     private function toEntity(EloquentUser $model): User
-    {
-        return User::fromPersistence(
-            $model->uuid,
-            $model->name,
-            $model->email,
-            $model->password,
-            $model->created_at->toDateTimeImmutable(),
-            $model->updated_at->toDateTimeImmutable(),
-        );
-    }
+{
+    return User::fromPersistence(
+    $model->uuid,
+    (int) $model->restaurant_id, // <--- ASEGÚRATE DE QUE TENGA EL (int)
+    $model->role,
+    $model->name,
+    $model->email,
+    $model->password,
+    (string) $model->pin,
+    $model->image_src,
+    $model->created_at->toDateTimeImmutable(),
+    $model->updated_at->toDateTimeImmutable()
+);
+}
 }
