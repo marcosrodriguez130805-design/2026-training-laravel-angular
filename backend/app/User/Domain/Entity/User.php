@@ -66,9 +66,45 @@ class User
         );
     }
 
+
+    public function updateName(UserName $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function updateEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function updatePassword(PasswordHash $password): void
+{
+    $this->passwordHash = $password;
+}
+
+    public function updatePin(?string $pin): void
+    {
+        $this->pin = $pin;
+    }
+
+    public function updateRole(string $role): void
+    {
+        $this->role = $role;
+    }
+
+    public function updateImageSrc(?string $imageSrc): void
+    {
+        $this->imageSrc = $imageSrc;
+    }
+
+    public function updateRestaurantId(int $restaurantId): void
+    {
+        $this->restaurantId = $restaurantId;
+    }
+
     public function id(): Uuid
     {
-        return $this->id;
+        return $this->uuid;
     }
 
     public function uuid(): Uuid

@@ -11,6 +11,7 @@ use App\User\Infrastructure\Entrypoint\Http\LoginUserController;
 use App\User\Infrastructure\Entrypoint\Http\GetUserUuidController;
 use App\User\Infrastructure\Entrypoint\Http\GetUserEmailController;
 use App\User\Infrastructure\Entrypoint\Http\UpdateUserController;
+use App\User\Infrastructure\Entrypoint\Http\DeleteUserController;
 use App\User\Infrastructure\Entrypoint\Http\PostController;
 use App\User\Infrastructure\Entrypoint\Http\ListUsersController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::post('login', LoginUserController::class);
 Route::get('/users', ListUsersController::class);
 Route::get('/users/{uuid}', GetUserUuidController::class);
 Route::get('/users/email/{email}', GetUserEmailController::class);
+Route::delete('/users/{uuid}', DeleteUserController::class);
 
 // Family routes
 Route::get('/families', ListFamiliesController::class);

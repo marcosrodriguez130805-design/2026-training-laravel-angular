@@ -17,7 +17,7 @@ class GetUserUuidResponse
             'restaurant_id' => $this->user->restaurantId(),
             'role'          => $this->user->role(),
             'name'          => $this->user->name(),
-            'email'         => $this->user->email()->value(),
+            'email'         => $this->user->email(),
             'image_src'     => $this->user->imageSrc(),
             'pin'           => $this->user->pin(),
             'created_at'    => $this->user->createdAt()->value()->format('Y-m-d H:i:s'),

@@ -6,6 +6,7 @@ use App\User\Domain\Entity\User;
 
 class UpdateUserResponse
 {
+    private string $uuid; // <-- agregar
     private int $restaurantId;
     private string $role;
     private string $name;
@@ -17,6 +18,7 @@ class UpdateUserResponse
 
     public function __construct(User $user)
     {
+        $this->uuid         = $user->id()->value(); // si id() devuelve un ValueObject UUID
         $this->restaurantId = $user->restaurantId();
         $this->role         = $user->role();
         $this->name         = $user->name();

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Order\Infrastructure\Persistence\Models\EloquentOrder;
+use App\User\Infrastructure\Persistence\Models\EloquentUser;
 
 class OrdersTableSeeder extends Seeder
 {
@@ -13,13 +14,21 @@ class OrdersTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Tomamos un usuario existente para usar su UUID
+        $user = EloquentUser::first();
+
+        if (!$user) {
+            $this->command->info('No hay usuarios en la tabla users. Primero ejecuta UsersTableSeeder.');
+            return;
+        }
+
         // Pedido abierto
         EloquentOrder::create([
             'uuid' => Str::uuid()->toString(),
             'restaurant_id' => 1,
             'status' => 'open',
             'table_id' => 1,
-            'opened_by_user_id' => 1,
+            'opened_by_user_id' => $user->uuid,
             'closed_by_user_id' => null,
             'diners' => 4,
             'opened_at' => now(),
@@ -34,8 +43,8 @@ class OrdersTableSeeder extends Seeder
             'restaurant_id' => 1,
             'status' => 'invoiced',
             'table_id' => 1,
-            'opened_by_user_id' => 1,
-            'closed_by_user_id' => 1,
+            'opened_by_user_id' => $user->uuid,
+            'closed_by_user_id' => $user->uuid,
             'diners' => 1,
             'opened_at' => now()->subHours(2),
             'closed_at' => now(),
@@ -43,4 +52,4 @@ class OrdersTableSeeder extends Seeder
             'updated_at' => now(),
         ]);
     }
-}
+} 

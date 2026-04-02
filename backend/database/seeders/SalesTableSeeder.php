@@ -4,24 +4,32 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Sale\Infrastructure\Persistence\Models\EloquentSale;
 
 class SalesTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Ejemplo de ventas
+        // Obtener un usuario existente
+        $userUuid = DB::table('users')->first()->uuid;
+
+        // Obtener un restaurante existente
+        $restaurantUuid = DB::table('restaurants')->first()->uuid;
+
+        // Obtener un pedido existente
+        $orderUuid = DB::table('orders')->first()->uuid;
+
+
+        // Crear ventas
         EloquentSale::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1, // Debe existir un restaurante
-            'order_id' => 1,      // Debe existir un pedido
-            'user_id' => 1,       // Debe existir un usuario
+            'restaurant_id' => $restaurantUuid,
+            'order_id' => $orderUuid,
+            'user_id' => $userUuid,
             'ticket_number' => 1001,
             'value_date' => now(),
-            'total' => 4500,      // 45,00 €
+            'total' => 4500,
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,
@@ -29,12 +37,12 @@ class SalesTableSeeder extends Seeder
 
         EloquentSale::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1,
-            'order_id' => 1,
-            'user_id' => 1,
+            'restaurant_id' => $restaurantUuid,
+            'order_id' => $orderUuid,
+            'user_id' => $userUuid,
             'ticket_number' => 1002,
             'value_date' => now(),
-            'total' => 2300,      // 23,00 €
+            'total' => 2300,
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,

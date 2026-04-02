@@ -12,18 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_lines', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique();
-            $table->foreignId('restaurant_id')->constrained();
-            $table->foreignId('order_id')->constrained();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('user_id')->constrained();
-            $table->integer('quantity');
-            $table->integer('price');
-            $table->integer('tax_percentage');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+    $table->id();
+    $table->uuid('uuid')->unique();
+    $table->foreignId('restaurant_id')->constrained();
+    $table->foreignId('order_id')->constrained();
+    $table->foreignId('product_id')->constrained();
+    $table->uuid('user_id');
+    $table->foreign('user_id')->references('uuid')->on('users');
+    $table->integer('quantity');
+    $table->integer('price');
+    $table->integer('tax_percentage');
+    $table->timestamps();
+    $table->softDeletes();
+});
     }
 
     /**

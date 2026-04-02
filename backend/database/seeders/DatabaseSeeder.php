@@ -23,10 +23,6 @@ class DatabaseSeeder extends Seeder
             ZonesTableSeeder::class,
             ProductsTableSeeder::class,
             TablesTableSeeder::class,
-            OrdersTableSeeder::class,
-            OrderLinesTableSeeder::class,
-            SalesTableSeeder::class,
-            SalesLinesTableSeeder::class,
         ]);
     }
 }

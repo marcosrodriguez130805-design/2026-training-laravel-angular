@@ -17,8 +17,14 @@ return new class extends Migration
             $table->foreignId('restaurant_id')->constrained();
             $table->string('status');
             $table->foreignId('table_id')->constrained();
-            $table->foreignId('opened_by_user_id')->constrained('users');
-            $table->foreignId('closed_by_user_id')->nullable()->constrained('users');
+
+            // Cambiado a UUID
+            $table->uuid('opened_by_user_id');
+            $table->foreign('opened_by_user_id')->references('uuid')->on('users');
+
+            $table->uuid('closed_by_user_id')->nullable();
+            $table->foreign('closed_by_user_id')->references('uuid')->on('users');
+
             $table->timestamp('opened_at')->useCurrent();
             $table->timestamp('closed_at')->nullable();
             $table->integer('diners');
