@@ -5,7 +5,6 @@ namespace App\User\Application\CreateUser;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Domain\Interfaces\PasswordHasherInterface;
-use App\Shared\Domain\ValueObject\Email;
 use App\User\Domain\ValueObject\UserName;
 use App\User\Domain\ValueObject\PasswordHash;
 
@@ -33,7 +32,7 @@ class CreateUser
         $user = User::dddCreate(
     (int) $restaurantId,            // int
     $role,                          // string
-    Email::create($email),          // Value Object Email
+    $email,          // Value Object Email
     UserName::create($name),        // Value Object UserName
     PasswordHash::create($hashedPassword), // Value Object PasswordHash
     $imageSrc,                      // ?string

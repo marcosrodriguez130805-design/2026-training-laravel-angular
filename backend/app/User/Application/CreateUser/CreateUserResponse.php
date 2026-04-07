@@ -18,7 +18,7 @@ class CreateUserResponse
             'role' => $this->user->role(),
             'image_src' => $this->user->imageSrc(),
             'name' => $this->user->name(),
-            'email' => $this->user->email()->value(),
+            'email' => $this->user->email(),
             'pin' => $this->user->pin(),
             'created_at' => $this->user->createdAt()->format('Y-m-d H:i:s'),
             'updated_at' => $this->user->updatedAt()->format('Y-m-d H:i:s'),

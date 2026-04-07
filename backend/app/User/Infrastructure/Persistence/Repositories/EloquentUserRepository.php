@@ -5,10 +5,6 @@ namespace App\User\Infrastructure\Persistence\Repositories;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Infrastructure\Persistence\Models\EloquentUser;
-use App\SaleLine\Infrastructure\Persistence\Models\EloquentSaleLine;
-use App\Sale\Infrastructure\Persistence\Models\EloquentSale;
-use App\OrderLine\Infrastructure\Persistence\Models\EloquentOrderLine;
-use App\Order\Infrastructure\Persistence\Models\EloquentOrder;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
@@ -79,10 +75,10 @@ class EloquentUserRepository implements UserRepositoryInterface
     }
 
     public function delete(string $uuid): void
-    {
-        $this->model->newQuery()->where('uuid', $uuid)->delete();
-    }
- 
+{
+    // Solo borramos. No hacemos "return", no hace falta.
+    EloquentUser::where('uuid', $uuid)->delete();
+}
     private function toEntity(EloquentUser $model): User
     {
         return User::fromPersistence(

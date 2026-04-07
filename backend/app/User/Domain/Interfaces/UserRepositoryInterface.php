@@ -16,11 +16,6 @@ interface UserRepositoryInterface
 
     public function findByEmail(string $email): ?User;
 
-    public function deleteOrderLinesByUserId(string $userId): void;
+    public function delete(string $uuid): void;
 
-    public function deleteOrdersByUserId(string $uuid): void;
-
-    public function deleteSalesByUserId(string $uuid): void;
-
-    public function deleteSalesLinesByUserId(string $uuid): void;
 }

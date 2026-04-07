@@ -14,6 +14,8 @@ use App\User\Infrastructure\Entrypoint\Http\UpdateUserController;
 use App\User\Infrastructure\Entrypoint\Http\DeleteUserController;
 use App\User\Infrastructure\Entrypoint\Http\PostController;
 use App\User\Infrastructure\Entrypoint\Http\ListUsersController;
+use App\Tax\Infrastructure\Entrypoint\Http\CreateTaxController;
+use App\Tax\Infrastructure\Entrypoint\Http\ListTaxesController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
@@ -34,4 +36,7 @@ Route::patch(
     '/families/{uuid}/toggle-active',
     [ToggleFamilyActiveController::class, '__invoke']
 );
+
+Route::post('/taxes', CreateTaxController::class);
+Route::get('/taxes', ListTaxesController::class);
 

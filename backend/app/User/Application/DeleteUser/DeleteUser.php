@@ -11,13 +11,16 @@ class DeleteUser
     ) {}
 
     public function __invoke(string $uuid): void
-{
-    $user = $this->repository->findByUuid($uuid);
+    {
+        // 1. Buscamos al usuario pasando el string directamente
+        $user = $this->repository->findByUuid($uuid);
 
-    if (!$user) {
-        throw new \RuntimeException("User not found with uuid: $uuid");
+        if (!$user) {
+            throw new \RuntimeException("User not found with uuid: $uuid");
+        }
+
+        // 2. Llamamos al delete pasando el string directamente
+        // NO uses Uuid::create($uuid) aquí, o volverá a fallar el tipo
+        $this->repository->delete($uuid);
     }
-
-$this->repository->delete($uuid);                                    // 5️⃣ user                                    // 5️⃣ user                  
-}
 }
