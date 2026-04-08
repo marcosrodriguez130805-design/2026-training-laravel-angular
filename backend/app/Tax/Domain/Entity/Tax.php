@@ -78,4 +78,11 @@ class Tax
     { 
         return $this->updatedAt; 
     }
+
+    public function update(string $name, int $percentage): void
+    {
+        $this->name = $name;
+        $this->percentage = $percentage;
+        $this->updatedAt = DomainDateTime::now();
+    }
 }

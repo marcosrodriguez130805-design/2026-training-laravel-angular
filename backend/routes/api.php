@@ -16,6 +16,12 @@ use App\User\Infrastructure\Entrypoint\Http\PostController;
 use App\User\Infrastructure\Entrypoint\Http\ListUsersController;
 use App\Tax\Infrastructure\Entrypoint\Http\CreateTaxController;
 use App\Tax\Infrastructure\Entrypoint\Http\ListTaxesController;
+use App\Tax\Infrastructure\Entrypoint\Http\GetTaxController;
+use App\Tax\Infrastructure\Entrypoint\Http\UpdateTaxController;
+use App\Tax\Infrastructure\Entrypoint\Http\DeleteTaxController;
+use App\Product\Infrastructure\Entrypoint\Http\CreateProductController;
+use App\Product\Infrastructure\Entrypoint\Http\ListProductsController;
+use App\Product\Infrastructure\Entrypoint\Http\GetProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
@@ -39,4 +45,10 @@ Route::patch(
 
 Route::post('/taxes', CreateTaxController::class);
 Route::get('/taxes', ListTaxesController::class);
+Route::get('/taxes/{uuid}', GetTaxController::class);
+Route::put('/taxes/{uuid}', UpdateTaxController::class);
+Route::delete('/taxes/{uuid}', DeleteTaxController::class);
 
+Route::post('/products', CreateProductController::class);
+Route::get('/products', ListProductsController::class);
+Route::get('/products/{uuid}', GetProductController::class);
