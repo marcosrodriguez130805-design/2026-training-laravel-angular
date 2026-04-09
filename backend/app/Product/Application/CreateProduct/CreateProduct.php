@@ -4,6 +4,7 @@ namespace App\Product\Application\CreateProduct;
 
 use App\Product\Domain\Entity\Product;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
+use App\Shared\Domain\ValueObject\Uuid;
 
 final class CreateProduct
 {
@@ -12,9 +13,9 @@ final class CreateProduct
     ) {}
 
     public function __invoke(
-        int $restaurantId,
-        int $familyId,
-        int $taxId,
+        Uuid $restaurantId,
+        Uuid $familyId,
+        Uuid $taxId,
         string $name,
         int $price,
         int $stock,

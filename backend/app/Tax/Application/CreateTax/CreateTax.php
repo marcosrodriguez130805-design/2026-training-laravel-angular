@@ -2,8 +2,7 @@
 
 namespace App\Tax\Application\CreateTax;
 
-use App\Tax\Domain\Entity\Tax;
-use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
+use App\Shared\Domain\ValueObject\Uuid;
 
 class CreateTax
 {
@@ -11,18 +10,23 @@ class CreateTax
         private TaxRepositoryInterface $repository
     ) {}
 
-    public function __invoke(int $restaurantId, string $name, int $percentage): CreateTaxResponse
+    public function __invoke(string $restaurantUuid, string $name, int $percentage): CreateTaxResponse
     {
-        // 1. Creamos la entidad siguiendo el DATA_MODEL (restaurant_id, name, percentage)
-        $tax = Tax::dddCreate(
-            $restaurantId,
-            $name,
-            $percentage
-        );
+        $restaurantId = Uuid::create($restaurantUuid);
 
-        // 2. Persistencia
+        // Validaciones
+        if (empty(trim($name))) {
+            throw new \Exception("Tax name cannot be empty", 400);
+        }
+        if ($percentage < 0) {
+            throw new \Exception("Tax percentage cannot be negative", 400);
+        }
+        if ($this->repository->existsByNameAndRestaurant($name, $restaurantUuid)) {
+            throw new \Exception("Tax name already exists for this restaurant", 409);
+        }
+
+        $tax = Tax::dddCreate($restaurantId, $name, $percentage);
         $this->repository->save($tax);
-
         return new CreateTaxResponse($tax);
     }
 }

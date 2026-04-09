@@ -13,10 +13,14 @@ class ListTaxesController
      */
     public function __invoke(Request $request, ListTaxes $listTaxes): JsonResponse
     {
-        // Por ahora solo filtramos por el restaurant_id que venga en la query
-        $restaurantId = (int) $request->query('restaurant_id', 1);
+        // Filtramos por el restaurant_uuid que venga en la query
+        $restaurantUuid = $request->query('restaurant_uuid', '');
 
-        $responses = $listTaxes($restaurantId);
+        if (empty($restaurantUuid)) {
+            return response()->json(['error' => 'restaurant_uuid is required'], 400);
+        }
+
+        $responses = $listTaxes($restaurantUuid);
 
         return response()->json(
             array_map(fn($response) => $response->toArray(), $responses), 

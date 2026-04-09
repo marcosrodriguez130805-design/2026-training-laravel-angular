@@ -22,7 +22,7 @@ class EloquentUser extends Authenticatable
 
     protected $fillable = [
         'uuid',
-        'restaurant_id',
+        'restaurant_uuid',
         'role',
         'image_src',
         'name',
@@ -49,6 +49,6 @@ class EloquentUser extends Authenticatable
 
     public function restaurant()
     {
-        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_uuid', 'uuid');
     }
 }

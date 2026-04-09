@@ -12,7 +12,7 @@ class EloquentTaxRepository implements TaxRepositoryInterface
     {
         EloquentTax::create([
             'uuid'          => $tax->uuid()->value(),
-            'restaurant_id' => $tax->restaurantId(),
+            'restaurant_uuid' => $tax->restaurantId()->value(),
             'name'          => $tax->name(),
             'percentage'    => $tax->percentage(),
             'created_at'    => $tax->createdAt()->format('Y-m-d H:i:s'),
@@ -45,9 +45,39 @@ class EloquentTaxRepository implements TaxRepositoryInterface
             return null;
         }
 
-        // Aquí deberías tener un Mapper o un método en la entidad para reconstruirla
         return $this->toDomainEntity($eloquentTax);
     }
+
+    public function findByUuidWithRestaurantUuid(string $uuid): ?array
+    {
+        $eloquentTax = EloquentTax::with('restaurant')
+            ->where('uuid', $uuid)
+            ->first();
+
+        if (!$eloquentTax) {
+            return null;
+        }
+
+        return [
+            'tax' => $this->toDomainEntity($eloquentTax),
+            'restaurant_uuid' => $eloquentTax->restaurant?->uuid,
+        ];
+    }
+
+    // App/Tax/Infrastructure/Persistence/Repositories/EloquentTaxRepository.php
+
+public function existsByNameAndRestaurant(string $name, string $restaurantUuid, ?string $excludeUuid = null): bool
+{
+    $query = EloquentTax::where('name', $name)
+        ->where('restaurant_uuid', $restaurantUuid);
+
+    // CRUCIAL: Si hay un UUID para excluir, lo aplicamos a la consulta
+    if ($excludeUuid !== null) {
+        $query->where('uuid', '!=', $excludeUuid);
+    }
+
+    return $query->exists();
+}
 
     public function delete(string $uuid): void
     {
@@ -57,12 +87,11 @@ class EloquentTaxRepository implements TaxRepositoryInterface
         }
     }
 
-    public function listAll(int $restaurantId): array
+    public function listAll(string $restaurantUuid): array
     {
-    // Seguimos la misma estructura de Family
-        return EloquentTax::where('restaurant_id', $restaurantId)
+        return EloquentTax::where('restaurant_uuid', $restaurantUuid)
             ->get()
-            ->map(fn($model) => $this->toDomainEntity($model))
+            ->map(fn(EloquentTax $model) => $this->toDomainEntity($model))
             ->toArray();
     }
 
@@ -70,7 +99,7 @@ class EloquentTaxRepository implements TaxRepositoryInterface
     {
         return Tax::fromPersistence(
             $model->uuid,
-            $model->restaurant_id,
+            $model->restaurant_uuid,
             $model->name,
             $model->percentage,
             new \DateTimeImmutable($model->created_at),

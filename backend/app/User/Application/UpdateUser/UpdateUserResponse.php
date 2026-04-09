@@ -7,7 +7,7 @@ use App\User\Domain\Entity\User;
 class UpdateUserResponse
 {
     private string $uuid; // <-- agregar
-    private int $restaurantId;
+    private \App\Shared\Domain\ValueObject\Uuid $restaurantId;
     private string $role;
     private string $name;
     private string $email;
@@ -33,7 +33,7 @@ class UpdateUserResponse
     {
         return [
             'uuid'          => $this->uuid,
-            'restaurant_id' => $this->restaurantId,
+            'restaurant_uuid' => $this->restaurantId->value(),
             'role'          => $this->role,
             'name'          => $this->name,
             'email'         => $this->email,

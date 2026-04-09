@@ -18,13 +18,13 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
         $model->update([
             'name' => $family->name(),
             'active' => $family->active(),
-            'restaurant_id' => $this->resolveRestaurantId($family->restaurantId()),
+            'restaurant_uuid' => $family->restaurantId()->value(),
         ]);
     } else {
         // Crea
         EloquentFamily::create([
             'uuid' => $family->uuid()->value(),
-            'restaurant_id' => $this->resolveRestaurantId($family->restaurantId()),
+            'restaurant_uuid' => $family->restaurantId()->value(),
             'name' => $family->name(),
             'active' => $family->active(),
         ]);
@@ -72,7 +72,7 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
     {
         return Family::fromPersistence(
             $model->uuid,
-            (int) $model->restaurant_id,
+            Uuid::fromString($model->restaurant_uuid),
             $model->name,
             (bool) $model->active,
             $model->created_at->toDateTimeImmutable(),
@@ -80,14 +80,5 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
         );
     }
 
-    // ✅ Ahora recibe int y opcionalmente valida que exista el restaurante
-    private function resolveRestaurantId(int $restaurantId): int
-    {
-        $exists = \App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant::find($restaurantId);
-        if (!$exists) {
-            throw new \InvalidArgumentException("Restaurant ID $restaurantId does not exist");
-        }
 
-        return $restaurantId;
-    }
 }

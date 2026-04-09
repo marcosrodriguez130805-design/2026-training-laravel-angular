@@ -14,7 +14,7 @@ class EloquentFamily extends Model
 
     protected $fillable = [
         'uuid',
-        'restaurant_id',
+        'restaurant_uuid',
         'name',
         'active',
     ];
@@ -28,6 +28,6 @@ class EloquentFamily extends Model
 
     public function restaurant()
     {
-        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_uuid', 'uuid');
     }
 }

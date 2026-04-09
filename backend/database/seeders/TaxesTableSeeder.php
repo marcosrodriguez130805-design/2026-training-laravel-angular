@@ -13,9 +13,12 @@ class TaxesTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Obtener el UUID del primer restaurante
+        $restaurantUuid = \App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant::first()->uuid;
+
         EloquentTax::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1, // ID de un restaurante existente
+            'restaurant_uuid' => $restaurantUuid,
             'name' => 'IVA General',
             'percentage' => 21,    // 21%
             'created_at' => now(),
@@ -25,7 +28,7 @@ class TaxesTableSeeder extends Seeder
 
         EloquentTax::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1,
+            'restaurant_uuid' => $restaurantUuid,
             'name' => 'IVA Reducido',
             'percentage' => 10,    // 10%
             'created_at' => now(),

@@ -5,6 +5,7 @@ namespace App\Product\Infrastructure\Persistence\Repositories;
 use App\Product\Domain\Entity\Product;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
 use App\Product\Infrastructure\Persistence\Models\EloquentProduct;
+use App\Shared\Domain\ValueObject\Uuid;
 
 final class EloquentProductRepository implements ProductRepositoryInterface
 {
@@ -12,11 +13,11 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     {
         EloquentProduct::create([
             'uuid'          => $product->uuid()->value(),
-            'restaurant_id' => $product->restaurantId(), // <-- Añadir ->value()
-            'family_id'     => $product->familyId(),     // <-- Añadir ->value()
-            'tax_id'        => $product->taxId(),        // <-- Añadir ->value()
-            'name'          => $product->name(),                  // Si es string plano, déjalo así. Si es VO, usa ->value()
-            'price'         => $product->price(),                 // Si es int plano, déjalo así
+            'restaurant_uuid' => $product->restaurantId()->value(),
+            'family_uuid'     => $product->familyId()->value(),
+            'tax_uuid'        => $product->taxId()->value(),
+            'name'          => $product->name(),
+            'price'         => $product->price(),
             'stock'         => $product->stock(),
             'active'        => $product->active(),
             'image_src'     => $product->imageSrc(),
@@ -27,9 +28,9 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    public function listProducts(int $restaurantId): array
+    public function listProducts(Uuid $restaurantId): array
 {
-    $eloquentProducts = EloquentProduct::where('restaurant_id', $restaurantId)->get();
+    $eloquentProducts = EloquentProduct::where('restaurant_uuid', $restaurantId->value())->get();
 
     return $eloquentProducts->map(fn (EloquentProduct $model) => $this->toDomain($model))->toArray();
 }
@@ -45,13 +46,26 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         return $this->toDomain($model);
     }
 
+    public function update(Product $product): void
+    {
+        EloquentProduct::where('uuid', $product->uuid()->value())->update([
+            'active' => $product->active(),
+            'updated_at' => $product->updatedAt()->value(),
+        ]);
+    }
+
+    public function delete(string $uuid): void
+    {
+        EloquentProduct::where('uuid', $uuid)->delete();
+    }
+
     private function toDomain(EloquentProduct $model): Product
     {
         return Product::fromPersistence(
             $model->uuid,
-            $model->restaurant_id,
-            $model->family_id,
-            $model->tax_id,
+            Uuid::fromString($model->restaurant_uuid),
+            Uuid::fromString($model->family_uuid),
+            Uuid::fromString($model->tax_uuid),
             $model->name,
             $model->price,
             $model->stock,

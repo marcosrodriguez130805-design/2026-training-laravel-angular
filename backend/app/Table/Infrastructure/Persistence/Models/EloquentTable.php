@@ -13,16 +13,18 @@ class EloquentTable extends Model
 
     protected $fillable = [
         'uuid',
+        'restaurant_uuid',
+        'zone_uuid',
         'name',
     ];
 
     public function restaurant()
     {
-        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_uuid', 'uuid');
     }
 
     public function zone()
     {
-        return $this->belongsTo(EloquentZone::class, 'zone_id');
+        return $this->belongsTo(EloquentZone::class, 'zone_uuid', 'uuid');
     }
 }

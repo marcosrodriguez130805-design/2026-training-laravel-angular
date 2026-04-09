@@ -10,14 +10,12 @@ class ListTaxes
         private TaxRepositoryInterface $repository
     ) {}
 
-    public function __invoke(int $restaurantId): array
+    public function __invoke(string $restaurantUuid): array
     {
-        $taxes = $this->repository->listAll($restaurantId);
+        $taxes = $this->repository->listAll($restaurantUuid);
 
-        // AQUÍ ESTÁ EL TRUCO: 
-        // Convertimos cada Tax (Entidad) en un ListTaxesResponse (DTO)
         return array_map(
-            fn($tax) => new ListTaxesResponse($tax), 
+            fn(Tax $tax) => new ListTaxesResponse($tax, $restaurantUuid),
             $taxes
         );
     }

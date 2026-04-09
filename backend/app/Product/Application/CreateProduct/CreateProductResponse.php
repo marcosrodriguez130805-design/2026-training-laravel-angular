@@ -14,9 +14,9 @@ class CreateProductResponse
     {
         return [
             'uuid'          => $this->product->uuid()->value(),
-            'restaurant_id' => $this->product->restaurantId(),
-            'family_id'     => $this->product->familyId(),
-            'tax_id'        => $this->product->taxId(),
+            'restaurant_uuid' => $this->product->restaurantId()->value(),
+            'family_uuid'     => $this->product->familyId()->value(),
+            'tax_uuid'        => $this->product->taxId()->value(),
             'name'          => $this->product->name(),
             'price'         => $this->product->price(),
             'stock'         => $this->product->stock(),

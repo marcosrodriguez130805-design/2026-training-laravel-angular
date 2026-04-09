@@ -11,9 +11,15 @@ interface TaxRepositoryInterface
 
     public function update(Tax $tax): Tax;
 
-    public function listAll(int $restaurantId): array;
+    public function listAll(string $restaurantUuid): array;
 
     public function findByUuid(string $uuid): ?Tax;
 
+    public function findByUuidWithRestaurantUuid(string $uuid): ?array;
+
+    public function existsByNameAndRestaurant(string $name, string $restaurantUuid, ?string $excludeUuid = null): bool;
+
     public function delete(string $uuid): void;
+
+    public function existsByNameAndRestaurant(string $name, int $restaurantId, ?string $excludeUuid = null): bool;
 }

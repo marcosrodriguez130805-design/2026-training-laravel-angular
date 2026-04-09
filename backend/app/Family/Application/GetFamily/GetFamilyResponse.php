@@ -14,7 +14,7 @@ class GetFamilyResponse
     {
         return [
             'uuid' => $this->family->uuid()->value(),
-            'restaurant_id' => $this->family->restaurantId(),
+            'restaurant_uuid' => $this->family->restaurantId()->value(),
             'name' => $this->family->name(),
             'active' => $this->family->active(),
             'created_at' => $this->family->createdAt()->value()->format('Y-m-d H:i:s'),

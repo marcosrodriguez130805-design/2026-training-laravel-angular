@@ -15,7 +15,7 @@ class UpdateUserController
             'email' => 'required|email',
             'password' => 'nullable|string|min:6',
             'pin' => 'nullable|string',
-            'restaurant_id' => 'nullable|integer',
+            'restaurant_uuid' => 'nullable|string',
             'role' => 'required|string',
             'image_src' => 'nullable|string',
         ]);
@@ -26,7 +26,7 @@ class UpdateUserController
             $validated['email'],
             $validated['password'] ?? null,
             $validated['pin'] ?? null,
-            $validated['restaurant_id'] ?? null,
+            $validated['restaurant_uuid'] ? \App\Shared\Domain\ValueObject\Uuid::fromString($validated['restaurant_uuid']) : null,
             $validated['role'],
             $validated['image_src'] ?? null
         );

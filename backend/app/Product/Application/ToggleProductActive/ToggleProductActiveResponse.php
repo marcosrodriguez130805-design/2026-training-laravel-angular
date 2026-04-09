@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Product\Application\GetProduct;
+namespace App\Product\Application\ToggleProductActive;
 
 use App\Product\Domain\Entity\Product;
 
-class GetProductResponse
+class ToggleProductActiveResponse
 {
     public function __construct(
-        private Product $product
+        private Product $product,
     ) {}
 
     public function toArray(): array

@@ -16,9 +16,9 @@ class EloquentProduct extends Model
 
     protected $fillable = [
         'uuid',
-        'restaurant_id',
-        'family_id',
-        'tax_id',
+        'restaurant_uuid',
+        'family_uuid',
+        'tax_uuid',
         'image_src',
         'name',
         'price',
@@ -32,16 +32,16 @@ class EloquentProduct extends Model
 
     public function family()
     {
-        return $this->belongsTo(EloquentFamily::class, 'family_id');
+        return $this->belongsTo(EloquentFamily::class, 'family_uuid', 'uuid');
     }
 
     public function tax()
     {
-        return $this->belongsTo(EloquentTax::class, 'tax_id');
+        return $this->belongsTo(EloquentTax::class, 'tax_uuid', 'uuid');
     }
 
     public function restaurant()
     {
-        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_uuid', 'uuid');
     }
 }

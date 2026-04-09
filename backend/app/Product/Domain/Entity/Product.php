@@ -9,9 +9,9 @@ class Product
 {
     public function __construct(
         private Uuid $uuid,
-        private int $restaurantId,
-        private int $familyId,
-        private int $taxId,
+        private Uuid $restaurantId,
+        private Uuid $familyId,
+        private Uuid $taxId,
         private string $name,
         private int $price,
         private int $stock,
@@ -22,9 +22,9 @@ class Product
     ) {}
 
     public static function dddCreate(
-        int $restaurantId,
-        int $familyId,
-        int $taxId,
+        Uuid $restaurantId,
+        Uuid $familyId,
+        Uuid $taxId,
         string $name,
         int $price,
         int $stock,
@@ -50,9 +50,9 @@ class Product
 
     public static function fromPersistence(
         string $uuid,
-        int $restaurantId,
-        int $familyId,
-        int $taxId,
+        Uuid $restaurantId,
+        Uuid $familyId,
+        Uuid $taxId,
         string $name,
         int $price,
         int $stock,
@@ -82,17 +82,17 @@ class Product
         return $this->uuid; 
     }
     
-    public function restaurantId(): int 
+    public function restaurantId(): Uuid 
     { 
         return $this->restaurantId; 
     }
     
-    public function familyId(): int 
+    public function familyId(): Uuid 
     { 
         return $this->familyId; 
     }
     
-    public function taxId(): int 
+    public function taxId(): Uuid 
     { 
         return $this->taxId;
     }
@@ -130,5 +130,30 @@ class Product
     public function updatedAt(): DomainDateTime 
     { 
         return $this->updatedAt; 
+    }
+
+    // Dentro de App\Product\Domain\Entity\Product.php
+
+    public function update(
+        Uuid $familyId,
+        Uuid $taxId,
+        string $name,
+        int $price,
+        int $stock,
+        ?string $imageSrc
+    ): void {
+        $this->familyId = $familyId;
+        $this->taxId = $taxId;
+        $this->name = $name;
+        $this->price = $price;
+        $this->stock = $stock;
+        $this->imageSrc = $imageSrc;
+        $this->updatedAt = DomainDateTime::now();
+    }
+
+    public function toggleActive(): void
+    {
+        $this->active = !$this->active;
+        $this->updatedAt = DomainDateTime::now();
     }
 }

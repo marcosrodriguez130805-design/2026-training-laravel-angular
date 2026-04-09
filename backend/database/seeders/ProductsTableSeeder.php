@@ -4,41 +4,38 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use App\Product\Infrastructure\Persistence\Models\EloquentProduct;
+use Illuminate\Support\Facades\Hash;
+use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 
-class ProductsTableSeeder extends Seeder
+class RestaurantsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Ejemplo de productos
-        EloquentProduct::create([
+        // 1. Buscamos el UUID de un impuesto real (Como haces en Product)
+        $taxUuid = \App\Tax\Infrastructure\Persistence\Models\EloquentTax::first()->uuid;
+
+        EloquentRestaurant::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1,
-            'family_id' => 1,
-            'tax_id' => 1,
-            'image_src' => 'default.png',
-            'name' => 'Producto de prueba 1',
-            'price' => 1500,
-            'stock' => 50,
-            'active' => true,
+            'name' => 'Restaurante Ejemplo',
+            'legal_name' => 'Restaurante Ejemplo S.L.',
+            'tax_uuid' => $taxUuid,
+            'email' => 'info@restauranteejemplo.com',
+            'password' => Hash::make('password123'),
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,
         ]);
 
-        EloquentProduct::create([
+        EloquentRestaurant::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1,
-            'family_id' => 1,
-            'tax_id' => 1,
-            'image_src' => 'default.png',
-            'name' => 'Producto de prueba 2',
-            'price' => 2500,
-            'stock' => 30,
-            'active' => true,
+            'name' => 'Otro Restaurante',
+            'legal_name' => 'Otro Restaurante S.A.',
+            'tax_uuid' => $taxUuid,
+            'email' => 'contacto@otrorestaurante.com',
+            'password' => Hash::make('password123'),
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,

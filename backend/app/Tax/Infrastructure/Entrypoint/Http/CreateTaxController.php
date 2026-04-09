@@ -16,14 +16,14 @@ class CreateTaxController
     {
         // 1. Validamos la entrada según el DATA_MODEL
         $request->validate([
-            'restaurant_id' => 'required|integer',
-            'name'          => 'required|string',
-            'percentage'    => 'required|integer',
+            'restaurant_uuid' => 'required|string',
+            'name'            => 'required|string',
+            'percentage'      => 'required|integer',
         ]);
 
         // 2. Ejecutamos el caso de uso
         $response = $this->useCase->__invoke(
-            (int) $request->input('restaurant_id'),
+            $request->input('restaurant_uuid'),
             $request->input('name'),
             (int) $request->input('percentage')
         );

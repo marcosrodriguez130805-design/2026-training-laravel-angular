@@ -14,11 +14,12 @@ class EloquentZone extends Model
 
     protected $fillable = [
         'uuid',
+        'restaurant_uuid',
         'name',
     ];
 
     public function restaurant()
     {
-        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_uuid', 'uuid');
     }
 }

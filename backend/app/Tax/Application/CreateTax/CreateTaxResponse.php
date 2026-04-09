@@ -13,10 +13,10 @@ class CreateTaxResponse
     public function toArray(): array
     {
         return [
-            'uuid'          => $this->tax->uuid()->value(),
-            'restaurant_id' => $this->tax->restaurantId(),
-            'name'          => $this->tax->name(),
-            'percentage'    => $this->tax->percentage(), // Recordamos: tipo INT
+            'uuid'           => $this->tax->uuid()->value(),
+            'restaurant_uuid' => $this->tax->restaurantId()->value(),
+            'name'           => $this->tax->name(),
+            'percentage'     => $this->tax->percentage(),
         ];
     }
 }

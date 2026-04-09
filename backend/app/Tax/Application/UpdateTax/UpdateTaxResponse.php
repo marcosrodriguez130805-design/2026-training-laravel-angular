@@ -13,11 +13,11 @@ class UpdateTaxResponse
     public function toArray(): array
     {
         return [
-            'uuid'          => $this->tax->uuid()->value(),
-            'restaurant_id' => $this->tax->restaurantId(),
-            'name'          => $this->tax->name(),
-            'percentage'    => $this->tax->percentage(),
-            'updated_at'    => $this->tax->updatedAt()->format('Y-m-d H:i:s'),
+            'uuid'           => $this->tax->uuid()->value(),
+            'restaurant_uuid' => $this->tax->restaurantId()->value(),
+            'name'           => $this->tax->name(),
+            'percentage'     => $this->tax->percentage(),
+            'updated_at'     => $this->tax->updatedAt()->format('Y-m-d H:i:s'),
         ];
     }
 }

@@ -10,10 +10,13 @@ class ListProductsController
 {
     public function __invoke(Request $request, ListProducts $listProducts): JsonResponse
     {
-        // Obtenemos el restaurant_id de la query, por defecto 1 si no viene
-        $restaurantId = (int) $request->query('restaurant_id', 1);
+        // Obtenemos el restaurant_uuid de la query
+        $restaurantUuid = $request->query('restaurant_uuid');
+        if (!$restaurantUuid) {
+            return response()->json(['error' => 'restaurant_uuid is required'], 400);
+        }
 
-        $responses = $listProducts($restaurantId);
+        $responses = $listProducts(\App\Shared\Domain\ValueObject\Uuid::fromString($restaurantUuid));
 
         return response()->json(
             array_map(fn($response) => $response->toArray(), $responses), 

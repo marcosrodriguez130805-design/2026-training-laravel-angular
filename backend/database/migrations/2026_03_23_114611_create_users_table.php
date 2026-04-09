@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('restaurant_id')->constrained();
+            $table->string('restaurant_uuid');
+            $table->foreign('restaurant_uuid')->references('uuid')->on('restaurants');
             $table->string('role');
             $table->string('image_src')->nullable();
             $table->string('name');

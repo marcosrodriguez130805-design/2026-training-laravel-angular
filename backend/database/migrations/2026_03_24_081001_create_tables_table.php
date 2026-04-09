@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('restaurant_id')->constrained();
-            $table->foreignId('zone_id')->constrained();
+            $table->string('restaurant_uuid');
+            $table->foreign('restaurant_uuid')->references('uuid')->on('restaurants');
+            $table->string('zone_uuid');
+            $table->foreign('zone_uuid')->references('uuid')->on('zones');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

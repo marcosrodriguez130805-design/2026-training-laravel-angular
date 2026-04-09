@@ -9,14 +9,14 @@ class Tax
 {
     public function __construct(
         private Uuid $uuid,
-        private int $restaurantId,
+        private Uuid $restaurantId,
         private string $name,
         private int $percentage,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(int $restaurantId, string $name, int $percentage): self
+    public static function dddCreate(Uuid $restaurantId, string $name, int $percentage): self
     {
         $now = DomainDateTime::now();
 
@@ -32,7 +32,7 @@ class Tax
 
     public static function fromPersistence(
         string $uuid,
-        int $restaurantId,
+        string $restaurantId,
         string $name,
         int $percentage,
         \DateTimeImmutable $createdAt,
@@ -40,7 +40,7 @@ class Tax
     ): self {
         return new self(
             Uuid::create($uuid),
-            $restaurantId,
+            Uuid::create($restaurantId),
             $name,
             $percentage,
             DomainDateTime::create($createdAt),
@@ -54,7 +54,7 @@ class Tax
         return $this->uuid; 
     }
     
-    public function restaurantId(): int 
+    public function restaurantId(): Uuid 
     { 
         return $this->restaurantId; 
     }

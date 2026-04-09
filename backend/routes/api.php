@@ -22,6 +22,9 @@ use App\Tax\Infrastructure\Entrypoint\Http\DeleteTaxController;
 use App\Product\Infrastructure\Entrypoint\Http\CreateProductController;
 use App\Product\Infrastructure\Entrypoint\Http\ListProductsController;
 use App\Product\Infrastructure\Entrypoint\Http\GetProductController;
+use App\Product\Infrastructure\Entrypoint\Http\ToggleProductActiveController;
+use App\Product\Infrastructure\Entrypoint\Http\UpdateProductController;
+use App\Product\Infrastructure\Entrypoint\Http\DeleteProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
@@ -52,3 +55,6 @@ Route::delete('/taxes/{uuid}', DeleteTaxController::class);
 Route::post('/products', CreateProductController::class);
 Route::get('/products', ListProductsController::class);
 Route::get('/products/{uuid}', GetProductController::class);
+Route::patch('products/{uuid}/toggle-active', ToggleProductActiveController::class);
+Route::put('products/{uuid}', UpdateProductController::class);
+Route::delete('products/{uuid}', DeleteProductController::class);

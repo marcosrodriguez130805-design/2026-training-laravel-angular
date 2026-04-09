@@ -12,14 +12,14 @@ class CreateFamilyController
     public function __invoke(Request $request, CreateFamily $createFamily): JsonResponse
     {
         $validated = $request->validate([
-            'restaurant_id' => 'required|integer',
+            'restaurant_uuid' => 'required|string',
             'name' => 'required|string|max:255',
             'active' => 'required|boolean',
         ]);
 
-        // Pasamos directamente el ID del restaurante como int
+        // Pasamos directamente el UUID del restaurante
         $response = $createFamily(
-            $validated['restaurant_id'],
+            \App\Shared\Domain\ValueObject\Uuid::fromString($validated['restaurant_uuid']),
             $validated['name'],
             $validated['active']
         );

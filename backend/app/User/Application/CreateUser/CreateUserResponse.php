@@ -14,7 +14,7 @@ class CreateUserResponse
     {
         return [
             'uuid' => $this->user->uuid(),
-            'restaurant_id' => $this->user->restaurantId(),
+            'restaurant_uuid' => $this->user->restaurantId()->value(),
             'role' => $this->user->role(),
             'image_src' => $this->user->imageSrc(),
             'name' => $this->user->name(),

@@ -2,6 +2,7 @@
 
 namespace App\Tax\Infrastructure\Persistence\Models;
 
+use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,13 +14,13 @@ class EloquentTax extends Model
 
     protected $fillable = [
         'uuid',
-        'restaurant_id',
+        'restaurant_uuid',
         'name',
         'percentage',
     ];
 
     public function restaurant()
     {
-        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_id');
+        return $this->belongsTo(EloquentRestaurant::class, 'restaurant_uuid', 'uuid');
     }
 }

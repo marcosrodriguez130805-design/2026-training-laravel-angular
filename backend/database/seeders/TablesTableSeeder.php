@@ -13,11 +13,15 @@ class TablesTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Obtener UUIDs existentes
+        $restaurantUuid = \App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant::first()->uuid;
+        $zoneUuid = \App\Zone\Infrastructure\Persistence\Models\EloquentZone::first()->uuid;
+
         // Ejemplo de mesas para un restaurante y zona
         EloquentTable::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1, // Debe existir un restaurante
-            'zone_id' => 1,       // Debe existir una zona
+            'restaurant_uuid' => $restaurantUuid,
+            'zone_uuid' => $zoneUuid,
             'name' => 'Mesa 1',
             'created_at' => now(),
             'updated_at' => now(),
@@ -26,8 +30,8 @@ class TablesTableSeeder extends Seeder
 
         EloquentTable::create([
             'uuid' => Str::uuid()->toString(),
-            'restaurant_id' => 1,
-            'zone_id' => 1,
+            'restaurant_uuid' => $restaurantUuid,
+            'zone_uuid' => $zoneUuid,
             'name' => 'Mesa 2',
             'created_at' => now(),
             'updated_at' => now(),

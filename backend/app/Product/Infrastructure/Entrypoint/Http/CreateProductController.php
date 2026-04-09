@@ -16,9 +16,9 @@ class CreateProductController
     {
         // 1. Validamos la entrada según el DATA_MODEL de tu migración de products
         $request->validate([
-            'restaurant_id' => 'required|integer',
-            'family_id'     => 'required|integer',
-            'tax_id'        => 'required|integer',
+            'restaurant_uuid' => 'required|string',
+            'family_uuid'     => 'required|string',
+            'tax_uuid'        => 'required|string',
             'name'          => 'required|string',
             'price'         => 'required|integer',
             'stock'         => 'required|integer',
@@ -28,9 +28,9 @@ class CreateProductController
 
         // 2. Ejecutamos el caso de uso
         $response = $this->useCase->__invoke(
-            (int) $request->input('restaurant_id'),
-            (int) $request->input('family_id'),
-            (int) $request->input('tax_id'),
+            \App\Shared\Domain\ValueObject\Uuid::fromString($request->input('restaurant_uuid')),
+            \App\Shared\Domain\ValueObject\Uuid::fromString($request->input('family_uuid')),
+            \App\Shared\Domain\ValueObject\Uuid::fromString($request->input('tax_uuid')),
             $request->input('name'),
             (int) $request->input('price'),
             (int) $request->input('stock'),

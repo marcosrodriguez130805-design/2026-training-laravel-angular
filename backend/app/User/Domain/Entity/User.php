@@ -11,7 +11,7 @@ class User
 {
     private function __construct(
         private Uuid $uuid,
-        private int $restaurantId,
+        private Uuid $restaurantId,
         private string $role,
         private UserName $name,
         private string $email,
@@ -22,7 +22,7 @@ class User
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(int $restaurantId, string $role, string $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, string $pin): self
+    public static function dddCreate(Uuid $restaurantId, string $role, string $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, string $pin): self
     {
         $now = DomainDateTime::now();
 
@@ -42,7 +42,7 @@ class User
 
     public static function fromPersistence(
         string $uuid,
-        int $restaurantId,
+        string $restaurantId,
         string $role,
         string $name,
         string $email,
@@ -54,7 +54,7 @@ class User
     ): self {
         return new self(
             Uuid::create($uuid),
-            (int) $restaurantId,
+            Uuid::create($restaurantId),
             $role,
             UserName::create($name),
             $email,
@@ -112,7 +112,7 @@ class User
         return $this->uuid;
     }
 
-    public function restaurantId(): int
+    public function restaurantId(): Uuid
     {
         return $this->restaurantId;
     }

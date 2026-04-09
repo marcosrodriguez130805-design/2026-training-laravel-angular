@@ -12,12 +12,15 @@ class GetTax
 
     public function __invoke(string $uuid): ?GetTaxResponse
     {
-        $tax = $this->repository->findByUuid($uuid);
+        $taxWithRestaurant = $this->repository->findByUuidWithRestaurantUuid($uuid);
 
-        if (!$tax) {
+        if (!$taxWithRestaurant) {
             return null;
         }
 
-        return new GetTaxResponse($tax);
+        return new GetTaxResponse(
+            $taxWithRestaurant['tax'], 
+            $taxWithRestaurant['restaurant_uuid']
+        );
     }
 }

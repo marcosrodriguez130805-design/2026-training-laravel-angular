@@ -13,9 +13,9 @@ class UpdateTaxController
         try {
             $response = $updateTax(
                 $uuid,
-                (int) $request->get('restaurant_id'),
+                $request->get('restaurant_uuid'),
                 (string) $request->get('name'),
-                (float) $request->get('percentage')
+                (int) $request->get('percentage')
             );
 
             return response()->json($response->toArray(), 200);

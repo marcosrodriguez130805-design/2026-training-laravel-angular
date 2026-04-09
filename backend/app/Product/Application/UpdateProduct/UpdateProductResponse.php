@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Product\Application\GetProduct;
+namespace App\Product\Application\UpdateProduct;
 
 use App\Product\Domain\Entity\Product;
 
-class GetProductResponse
+class UpdateProductResponse
 {
     public function __construct(
         private Product $product

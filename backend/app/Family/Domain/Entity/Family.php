@@ -10,14 +10,14 @@ class Family
 {
     public function __construct(
         private Uuid $uuid,
-        private int $restaurantId,          // ← volvemos a int
+        private Uuid $restaurantId,
         private FamilyName $name,
         private bool $active,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(int $restaurantId, string $name, bool $active): self
+    public static function dddCreate(Uuid $restaurantId, string $name, bool $active): self
     {
         $now = DomainDateTime::now();
 
@@ -33,7 +33,7 @@ class Family
 
     public static function fromPersistence(
         string $uuid,
-        int $restaurantId,              // ← int
+        string $restaurantId,
         string $name,
         bool $active,
         \DateTimeImmutable $createdAt,
@@ -41,7 +41,7 @@ class Family
     ): self {
         return new self(
             Uuid::create($uuid),
-            $restaurantId,                // ← int
+            Uuid::create($restaurantId),
             FamilyName::create($name),
             $active,
             DomainDateTime::create($createdAt),
@@ -64,7 +64,7 @@ class Family
         return $this->uuid;
     }
 
-    public function restaurantId(): int
+    public function restaurantId(): Uuid
     {
         return $this->restaurantId;
     }

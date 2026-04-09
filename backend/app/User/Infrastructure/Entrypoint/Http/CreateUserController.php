@@ -12,7 +12,7 @@ class CreateUserController
     public function __invoke(Request $request, CreateUser $createUser): JsonResponse
     {
     $validated = $request->validate([
-        'restaurant_id' => 'required|integer',
+        'restaurant_uuid' => 'required|string',
         'name'          => 'required|string|max:255',
         'email'         => 'required|email|max:255',
         'password'      => 'required|string|min:6',
@@ -23,7 +23,7 @@ class CreateUserController
 
     // Llamamos al caso de uso respetando el orden de CreateUser::__invoke
     $response = $createUser(
-        (int) $validated['restaurant_id'],
+        \App\Shared\Domain\ValueObject\Uuid::fromString($validated['restaurant_uuid']),
         $validated['name'],
         $validated['email'],
         $validated['password'],
