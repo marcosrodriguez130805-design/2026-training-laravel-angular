@@ -7,6 +7,7 @@ use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Domain\Interfaces\PasswordHasherInterface;
 use App\User\Domain\ValueObject\UserName;
 use App\User\Domain\ValueObject\PasswordHash;
+use App\Shared\Domain\ValueObject\Uuid; 
 
 class CreateUser
 {
@@ -16,7 +17,7 @@ class CreateUser
     ) {}
 
     public function __invoke(
-        int $restaurantId,
+        Uuid $restaurantId,
         string $name,
         string $email,
         string $plainPassword,
@@ -30,7 +31,7 @@ class CreateUser
 
         // Creamos el usuario
         $user = User::dddCreate(
-    (int) $restaurantId,            // int
+    $restaurantId,       // int
     $role,                          // string
     $email,          // Value Object Email
     UserName::create($name),        // Value Object UserName

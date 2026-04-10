@@ -20,16 +20,17 @@ class UpdateUserController
             'image_src' => 'nullable|string',
         ]);
 
-        $response = $updateUser(
-            $uuid,
-            $validated['name'],
-            $validated['email'],
-            $validated['password'] ?? null,
-            $validated['pin'] ?? null,
-            $validated['restaurant_uuid'] ? \App\Shared\Domain\ValueObject\Uuid::fromString($validated['restaurant_uuid']) : null,
-            $validated['role'],
-            $validated['image_src'] ?? null
-        );
+        // ... dentro del __invoke del controlador ...
+
+$response = $updateUser(
+    $uuid,
+    $validated['name'],
+    $validated['email'],
+    $validated['password'] ?? null,
+    $validated['pin'] ?? null,
+    $validated['role'], // Saltamos el restaurante
+    $validated['image_src'] ?? null
+);
 
         return response()->json($response->toArray(), 200);
     }

@@ -10,26 +10,24 @@ use App\Shared\Domain\ValueObject\Uuid;
 class EloquentFamilyRepository implements FamilyRepositoryInterface
 {
     public function save(Family $family): void
-{
-    $model = EloquentFamily::where('uuid', $family->uuid()->value())->first();
+    {
+        $model = EloquentFamily::where('uuid', $family->uuid()->value())->first();
 
-    if ($model) {
-        // Actualiza
-        $model->update([
-            'name' => $family->name(),
-            'active' => $family->active(),
-            'restaurant_uuid' => $family->restaurantId()->value(),
-        ]);
-    } else {
-        // Crea
-        EloquentFamily::create([
-            'uuid' => $family->uuid()->value(),
-            'restaurant_uuid' => $family->restaurantId()->value(),
-            'name' => $family->name(),
-            'active' => $family->active(),
-        ]);
+        if ($model) {
+            $model->update([
+                'name' => $family->name(),
+                'active' => $family->active(),
+                'restaurant_uuid' => $family->restaurantId()->value(),
+            ]);
+        } else {
+            EloquentFamily::create([
+                'uuid' => $family->uuid()->value(),
+                'restaurant_uuid' => $family->restaurantId()->value(),
+                'name' => $family->name(),
+                'active' => $family->active(),
+            ]);
+        }
     }
-}
 
     public function findByUuid(Uuid $uuid): ?Family
     {
@@ -69,16 +67,14 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
     }
 
     private function toDomainEntity(EloquentFamily $model): Family
-    {
-        return Family::fromPersistence(
-            $model->uuid,
-            Uuid::fromString($model->restaurant_uuid),
-            $model->name,
-            (bool) $model->active,
-            $model->created_at->toDateTimeImmutable(),
-            $model->updated_at->toDateTimeImmutable(),
-        );
-    }
-
-
+{
+    return Family::fromPersistence(
+        $model->uuid,
+        Uuid::create($model->restaurant_uuid)->value(), // 🔥 Agregamos ->value() para pasar el string
+        $model->name,
+        (bool) $model->active,
+        $model->created_at->toDateTimeImmutable(),
+        $model->updated_at->toDateTimeImmutable(),
+    );
+}
 }

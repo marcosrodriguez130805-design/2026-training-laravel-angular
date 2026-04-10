@@ -13,7 +13,7 @@ class CreateUserResponse
     public function toArray(): array
     {
         return [
-            'uuid' => $this->user->uuid(),
+            'uuid' => $this->user->uuid()->value(),
             'restaurant_uuid' => $this->user->restaurantId()->value(),
             'role' => $this->user->role(),
             'image_src' => $this->user->imageSrc(),

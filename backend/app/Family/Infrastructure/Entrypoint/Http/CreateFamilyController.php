@@ -19,7 +19,7 @@ class CreateFamilyController
 
         // Pasamos directamente el UUID del restaurante
         $response = $createFamily(
-            \App\Shared\Domain\ValueObject\Uuid::fromString($validated['restaurant_uuid']),
+            \App\Shared\Domain\ValueObject\Uuid::create($validated['restaurant_uuid']),
             $validated['name'],
             $validated['active']
         );

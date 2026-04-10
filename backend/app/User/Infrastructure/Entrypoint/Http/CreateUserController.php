@@ -23,7 +23,7 @@ class CreateUserController
 
     // Llamamos al caso de uso respetando el orden de CreateUser::__invoke
     $response = $createUser(
-        \App\Shared\Domain\ValueObject\Uuid::fromString($validated['restaurant_uuid']),
+        \App\Shared\Domain\ValueObject\Uuid::create($validated['restaurant_uuid']),
         $validated['name'],
         $validated['email'],
         $validated['password'],

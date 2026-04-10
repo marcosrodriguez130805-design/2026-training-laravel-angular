@@ -4,8 +4,9 @@ namespace App\User\Application\UpdateUser;
 
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Domain\ValueObject\UserName;
-use Illuminate\Support\Facades\Hash;
 use App\User\Domain\ValueObject\PasswordHash;
+use App\Shared\Domain\ValueObject\Uuid;
+use Illuminate\Support\Facades\Hash;
 
 class UpdateUser
 {
@@ -19,7 +20,6 @@ class UpdateUser
         string $email,
         ?string $password,
         ?string $pin,
-        ?int $restaurantId,
         string $role,
         ?string $imageSrc
     ): UpdateUserResponse {
@@ -30,7 +30,6 @@ class UpdateUser
             throw new \RuntimeException("User not found with uuid: $uuid");
         }
 
-        // 🔥 AQUÍ es donde usamos Value Objects
         $user->updateName(UserName::create($name));
         $user->updateEmail($email);
 
@@ -41,10 +40,6 @@ class UpdateUser
 
         if ($pin !== null) {
             $user->updatePin($pin);
-        }
-
-        if ($restaurantId !== null) {
-            $user->updateRestaurantId($restaurantId);
         }
 
         $user->updateRole($role);

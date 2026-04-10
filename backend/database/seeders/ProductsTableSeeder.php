@@ -4,38 +4,46 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
-use App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant;
+use App\Product\Infrastructure\Persistence\Models\EloquentProduct;
 
-class RestaurantsTableSeeder extends Seeder
+class ProductsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // 1. Buscamos el UUID de un impuesto real (Como haces en Product)
+        // Obtener UUIDs existentes de la base de datos
+        $restaurantUuid = \App\Restaurant\Infrastructure\Persistence\Models\EloquentRestaurant::first()->uuid;
+        $familyUuid = \App\Family\Infrastructure\Persistence\Models\EloquentFamily::first()->uuid;
         $taxUuid = \App\Tax\Infrastructure\Persistence\Models\EloquentTax::first()->uuid;
 
-        EloquentRestaurant::create([
+        // Ejemplo de productos
+        EloquentProduct::create([
             'uuid' => Str::uuid()->toString(),
-            'name' => 'Restaurante Ejemplo',
-            'legal_name' => 'Restaurante Ejemplo S.L.',
+            'restaurant_uuid' => $restaurantUuid,
+            'family_uuid' => $familyUuid,
             'tax_uuid' => $taxUuid,
-            'email' => 'info@restauranteejemplo.com',
-            'password' => Hash::make('password123'),
+            'image_src' => 'default.png',
+            'name' => 'Producto de prueba 1',
+            'price' => 1500,
+            'stock' => 50,
+            'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,
         ]);
 
-        EloquentRestaurant::create([
+        EloquentProduct::create([
             'uuid' => Str::uuid()->toString(),
-            'name' => 'Otro Restaurante',
-            'legal_name' => 'Otro Restaurante S.A.',
+            'restaurant_uuid' => $restaurantUuid,
+            'family_uuid' => $familyUuid,
             'tax_uuid' => $taxUuid,
-            'email' => 'contacto@otrorestaurante.com',
-            'password' => Hash::make('password123'),
+            'image_src' => 'default.png',
+            'name' => 'Producto de prueba 2',
+            'price' => 2500,
+            'stock' => 30,
+            'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,

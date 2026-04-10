@@ -14,14 +14,11 @@ class RestaurantsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buscamos el UUID de un impuesto real (Como haces en Product)
-        $taxUuid = \App\Tax\Infrastructure\Persistence\Models\EloquentTax::first()->uuid;
-
         EloquentRestaurant::create([
             'uuid' => Str::uuid()->toString(),
             'name' => 'Restaurante Ejemplo',
             'legal_name' => 'Restaurante Ejemplo S.L.',
-            'tax_uuid' => $taxUuid,
+            'tax_id' => 'B12345678', // Aquí va el NIF/CIF que viste en la tabla
             'email' => 'info@restauranteejemplo.com',
             'password' => Hash::make('password123'),
             'created_at' => now(),
@@ -33,7 +30,7 @@ class RestaurantsTableSeeder extends Seeder
             'uuid' => Str::uuid()->toString(),
             'name' => 'Otro Restaurante',
             'legal_name' => 'Otro Restaurante S.A.',
-            'tax_uuid' => $taxUuid,
+            'tax_id' => 'A87654321', // Identificador fiscal
             'email' => 'contacto@otrorestaurante.com',
             'password' => Hash::make('password123'),
             'created_at' => now(),
