@@ -28,9 +28,9 @@ class CreateProductController
 
         // 2. Ejecutamos el caso de uso
         $response = $this->useCase->__invoke(
-            \App\Shared\Domain\ValueObject\Uuid::fromString($request->input('restaurant_uuid')),
-            \App\Shared\Domain\ValueObject\Uuid::fromString($request->input('family_uuid')),
-            \App\Shared\Domain\ValueObject\Uuid::fromString($request->input('tax_uuid')),
+            \App\Shared\Domain\ValueObject\Uuid::create($request->input('restaurant_uuid')),
+            \App\Shared\Domain\ValueObject\Uuid::create($request->input('family_uuid')),
+            \App\Shared\Domain\ValueObject\Uuid::create($request->input('tax_uuid')),
             $request->input('name'),
             (int) $request->input('price'),
             (int) $request->input('stock'),

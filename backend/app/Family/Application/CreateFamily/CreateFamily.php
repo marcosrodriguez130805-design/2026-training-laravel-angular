@@ -4,16 +4,12 @@ namespace App\Family\Application\CreateFamily;
 
 use App\Family\Domain\Entity\Family;
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
-// Importamos la interfaz del repositorio de restaurantes
-use App\Restaurant\Domain\Interfaces\RestaurantRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
 
-class CreateFamily
+final class CreateFamily
 {
     public function __construct(
-        private FamilyRepositoryInterface $repository,
-        // 🔥 INYECTAMOS el repositorio de restaurantes aquí
-        private RestaurantRepositoryInterface $restaurantRepository 
+        private FamilyRepositoryInterface $repository
     ) {}
 
     public function __invoke(
@@ -22,16 +18,11 @@ class CreateFamily
         bool $active
     ): CreateFamilyResponse {
         
-        // Ahora $this->restaurantRepository ya existe y no dará error
-        $restaurant = $this->restaurantRepository->findByUuid($restaurantUuid->value());
-        
-        if (!$restaurant) {
-            throw new \RuntimeException("Restaurant not found with UUID: " . $restaurantUuid->value());
-        }
-
-        // Creamos la familia usando el ID numérico del restaurante
-        $family = Family::create(
-            $restaurant->id(), 
+        // Creamos la familia directamente con el UUID del restaurante
+        // No necesitamos el RestaurantRepository porque la entidad Family
+        // ahora debería aceptar el Uuid en su método de creación.
+        $family = Family::dddCreate(
+            $restaurantUuid, 
             $name,
             $active
         );

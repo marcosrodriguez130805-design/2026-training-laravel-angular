@@ -25,6 +25,11 @@ use App\Product\Infrastructure\Entrypoint\Http\GetProductController;
 use App\Product\Infrastructure\Entrypoint\Http\ToggleProductActiveController;
 use App\Product\Infrastructure\Entrypoint\Http\UpdateProductController;
 use App\Product\Infrastructure\Entrypoint\Http\DeleteProductController;
+use App\Zone\Infrastructure\Entrypoint\Http\CreateZoneController;
+use App\Zone\Infrastructure\Entrypoint\Http\ListZonesController;
+use App\Zone\Infrastructure\Entrypoint\Http\GetZoneController;
+use App\Zone\Infrastructure\Entrypoint\Http\UpdateZoneController;
+use App\Zone\Infrastructure\Entrypoint\Http\DeleteZoneController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
@@ -58,3 +63,9 @@ Route::get('/products/{uuid}', GetProductController::class);
 Route::patch('products/{uuid}/toggle-active', ToggleProductActiveController::class);
 Route::put('products/{uuid}', UpdateProductController::class);
 Route::delete('products/{uuid}', DeleteProductController::class);
+
+Route::post('/zones', CreateZoneController::class);
+Route::get('/zones', ListZonesController::class);
+Route::get('/zones/{uuid}', GetZoneController::class);
+Route::put('/zones/{uuid}', UpdateZoneController::class);
+Route::delete('/zones/{uuid}', DeleteZoneController::class);

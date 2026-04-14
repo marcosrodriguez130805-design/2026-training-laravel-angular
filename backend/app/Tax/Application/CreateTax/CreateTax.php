@@ -3,6 +3,9 @@
 namespace App\Tax\Application\CreateTax;
 
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
+use App\Tax\Domain\Entity\Tax;
+
 
 class CreateTax
 {

@@ -16,7 +16,7 @@ class ListProductsController
             return response()->json(['error' => 'restaurant_uuid is required'], 400);
         }
 
-        $responses = $listProducts(\App\Shared\Domain\ValueObject\Uuid::fromString($restaurantUuid));
+        $responses = $listProducts(\App\Shared\Domain\ValueObject\Uuid::create($restaurantUuid));
 
         return response()->json(
             array_map(fn($response) => $response->toArray(), $responses), 

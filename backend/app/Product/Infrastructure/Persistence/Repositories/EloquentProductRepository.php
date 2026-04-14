@@ -63,9 +63,9 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     {
         return Product::fromPersistence(
             $model->uuid,
-            Uuid::fromString($model->restaurant_uuid),
-            Uuid::fromString($model->family_uuid),
-            Uuid::fromString($model->tax_uuid),
+            Uuid::create($model->restaurant_uuid),
+            Uuid::create($model->family_uuid),
+            Uuid::create($model->tax_uuid),
             $model->name,
             $model->price,
             $model->stock,
