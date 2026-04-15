@@ -3,6 +3,7 @@
 namespace App\Family\Application\ListFamilies;
 
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
+use App\Shared\Domain\ValueObject\Uuid;
 
 class ListFamilies
 {
@@ -10,13 +11,19 @@ class ListFamilies
         private FamilyRepositoryInterface $repository,
     ) {}
     
-    public function __invoke(bool $onlyActive = false): array
+    // Añadimos el restaurantUuid como string (luego lo validamos con el VO)
+    public function __invoke(string $restaurantUuid, bool $onlyActive = false): array
     {
-        $families = $this->repository->findAll($onlyActive);
+        // Validamos que sea un UUID real antes de ir a base de datos
+        $uuid = Uuid::create($restaurantUuid);
+
+        // Le pasamos el filtro al repositorio
+        $families = $this->repository->findAll($uuid->value(), $onlyActive);
         
         return array_map(
             function($family) {
-                return new ListFamiliesResponse($family);
+                // Asegúrate de que ListFamiliesResponse devuelva un array al final
+                return (new ListFamiliesResponse($family))->toArray();
             },
             $families
         );

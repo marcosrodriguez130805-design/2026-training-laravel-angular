@@ -30,6 +30,7 @@ use App\Zone\Infrastructure\Entrypoint\Http\ListZonesController;
 use App\Zone\Infrastructure\Entrypoint\Http\GetZoneController;
 use App\Zone\Infrastructure\Entrypoint\Http\UpdateZoneController;
 use App\Zone\Infrastructure\Entrypoint\Http\DeleteZoneController;
+use App\Table\Infrastructure\Entrypoint\Http\CreateTableController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
@@ -69,3 +70,5 @@ Route::get('/zones', ListZonesController::class);
 Route::get('/zones/{uuid}', GetZoneController::class);
 Route::put('/zones/{uuid}', UpdateZoneController::class);
 Route::delete('/zones/{uuid}', DeleteZoneController::class);
+
+Route::post('/tables', CreateTableController::class);

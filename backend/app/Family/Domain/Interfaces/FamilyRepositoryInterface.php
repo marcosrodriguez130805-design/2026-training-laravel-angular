@@ -9,9 +9,9 @@ interface FamilyRepositoryInterface
 {
     public function save(Family $family):void;
 
-    public function findByUuid(Uuid $uuid): ?Family;
+    public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Family;
 
-    public function findAll(bool $onlyActive): array;
+    public function findAll(string $restaurantUuid, bool $onlyActive = false): array;
 
     public function update(Family $family): void;
 

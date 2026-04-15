@@ -2,6 +2,7 @@
 
 namespace App\Zone\Application\GetZone;
 
+use App\Shared\Domain\ValueObject\Uuid; // 1. Importante para la conversión
 use App\Zone\Domain\Interfaces\ZoneRepositoryInterface;
 
 final class GetZone
@@ -10,10 +11,14 @@ final class GetZone
         private ZoneRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $uuid): ?GetZoneResponse
+    // 2. Añadimos el $restaurantUuid que viene del controlador
+    public function __invoke(string $uuid, string $restaurantUuid): ?GetZoneResponse
     {
-        // Usamos el findByUuid que ya tenemos en la interfaz
-        $zone = $this->repository->findByUuid($uuid);
+        // 3. Convertimos el string a objeto Uuid y pasamos el restaurantUuid
+        $zone = $this->repository->findByUuid(
+            Uuid::create($uuid), 
+            $restaurantUuid
+        );
 
         if (!$zone) {
             return null;

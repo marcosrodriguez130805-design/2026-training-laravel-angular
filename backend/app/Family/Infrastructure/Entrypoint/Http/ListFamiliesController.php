@@ -10,13 +10,19 @@ class ListFamiliesController
 {
     public function __invoke(Request $request, ListFamilies $listFamilies): JsonResponse
     {
-        $onlyActive = $request->query('active', false);
+        $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        $responses = $listFamilies($onlyActive);
+        if (!$restaurantUuid) {
+        return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+        }
 
-        return response()->json(
-            array_map(fn($response) => $response->toArray(), $responses), 200
+        // Le pasamos el ID y, si quieres, el filtro de activos desde la query
+        $families = $listFamilies(
+            $restaurantUuid, 
+            $request->query('only_active', false)
         );
+
+        return response()->json($families, 200);
     }
 }
 

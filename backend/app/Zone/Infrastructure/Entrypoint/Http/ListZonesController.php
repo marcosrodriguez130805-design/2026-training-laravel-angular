@@ -10,25 +10,17 @@ use Illuminate\Http\Request;
 final class ListZonesController
 {
     public function __invoke(Request $request, ListZones $listZones): JsonResponse
-    {
-        // 1. Obtenemos el restaurant_uuid de la query string (?restaurant_uuid=...)
-        $restaurantUuid = $request->query('restaurant_uuid');
+{
+    // Buscamos el ID en el mismo Header que el otro controlador
+    $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        if (!$restaurantUuid) {
-            return response()->json(['error' => 'restaurant_uuid is required'], 400);
-        }
-
-        try {
-            // 2. Ejecutamos el caso de uso convirtiendo el string a Value Object
-            $responses = $listZones(Uuid::create($restaurantUuid));
-
-            // 3. Formateamos la colección de respuestas a array
-            return response()->json(
-                array_map(fn($response) => $response->toArray(), $responses), 
-                200
-            );
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+    if (!$restaurantUuid) {
+        return response()->json(['error' => 'Header X-Restaurant-Id is missing'], 400);
     }
+
+    // Pasamos el ID al caso de uso de listar
+    $zones = $listZones($restaurantUuid);
+
+    return response()->json($zones, 200);
+}
 }

@@ -12,13 +12,16 @@ final class ListZones
         private ZoneRepositoryInterface $repository
     ) {}
 
-    public function __invoke(Uuid $restaurantUuid): array
+    public function __invoke(string $restaurantUuid): array
     {
-        // Usamos el método que ya definimos en la interfaz antes
-        $zones = $this->repository->listZones($restaurantUuid->value());
+    // Convertimos el string a Value Object para asegurar que es un UUID válido
+        $uuid = Uuid::create($restaurantUuid);
+
+    // Asegúrate de que tu repositorio tenga este método 'listAll' o 'listByRestaurant'
+        $zones = $this->repository->listZones($uuid->value());
 
         return array_map(function (Zone $zone) {
-            return new ListZonesResponse($zone);
+            return (new ListZonesResponse($zone))->toArray(); // O como tengas el Response
         }, $zones);
     }
 }

@@ -18,22 +18,20 @@ final class EloquentZoneRepository implements ZoneRepositoryInterface
         ]);
     }
 
-    public function findByUuid(string $uuid): ?Zone
-    {
-        $model = EloquentZone::where('uuid', $uuid)->first();
+    public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Zone 
+{
+    $model = EloquentZone::where('uuid', $uuid->value())
+        ->where('restaurant_uuid', $restaurantUuid) // Aquí es donde fallaba
+        ->first();
 
-        if (!$model) {
-            return null;
-        }
-
-        return $this->toDomain($model);
-    }
+    return $model ? $this->toDomain($model) : null;
+}
 
     public function listZones(string $restaurantUuid): array
     {
-        $eloquentZones = EloquentZone::where('restaurant_uuid', $restaurantUuid)->get();
+        $models = EloquentZone::where('restaurant_uuid', $restaurantUuid)->get();
 
-        return $eloquentZones->map(fn (EloquentZone $model) => $this->toDomain($model))->toArray();
+        return $models->map(fn($model) => $this->toDomain($model))->toArray();
     }
 
     /**

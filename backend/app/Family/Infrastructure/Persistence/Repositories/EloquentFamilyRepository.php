@@ -29,29 +29,29 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
         }
     }
 
-    public function findByUuid(Uuid $uuid): ?Family
-    {
-        $model = EloquentFamily::where('uuid', $uuid->value())->first();
+    public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Family
+{
+    $model = EloquentFamily::where('uuid', $uuid->value())
+        ->where('restaurant_uuid', $restaurantUuid) // 🔒 Seguridad reforzada
+        ->first();
 
-        if (!$model) {
-            return null;
-        }
+    return $model ? $this->toDomainEntity($model) : null;
+}
 
-        return $this->toDomainEntity($model);
+    public function findAll(string $restaurantUuid, bool $onlyActive = false): array
+{
+    $query = EloquentFamily::where('restaurant_uuid', $restaurantUuid);
+
+    if ($onlyActive) {
+        // OJO: Verifica si en tu DB es 'is_active' o 'active' (en tu save usas 'active')
+        $query->where('active', true); 
     }
 
-    public function findAll(bool $onlyActive): array
-    {
-        $query = EloquentFamily::query();
+    $models = $query->get();
 
-        if ($onlyActive) {
-            $query->where('active', true);
-        }
-
-        return $query->get()
-            ->map(fn($model) => $this->toDomainEntity($model))
-            ->toArray();
-    }
+    // CAMBIO AQUÍ: Añadimos 'Entity' al final del nombre del método ⬇️
+    return $models->map(fn($model) => $this->toDomainEntity($model))->toArray();
+}
 
     public function update(Family $family): void
     {
