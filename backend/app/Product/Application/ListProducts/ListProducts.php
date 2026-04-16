@@ -3,7 +3,6 @@
 namespace App\Product\Application\ListProducts;
 
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
-use App\Product\Domain\Entity\Product;
 use App\Shared\Domain\ValueObject\Uuid;
 
 final class ListProducts
@@ -12,13 +11,15 @@ final class ListProducts
         private ProductRepositoryInterface $repository
     ) {}
 
-    public function __invoke(\App\Shared\Domain\ValueObject\Uuid $restaurantId): array
+    // 1. Cambiamos Uuid por string para aceptar lo que viene del controlador
+    public function __invoke(string $restaurantUuid, ?string $familyUuid = null): array
     {
-        // El repositorio debería filtrar por restaurante
-        $products = $this->repository->listProducts($restaurantId);
+        // 2. Creamos el Value Object a partir del string
+        $restaurantId = Uuid::create($restaurantUuid);
+    
+        // 3. Pasamos el OBJETO $restaurantId (el repositorio ya se encarga de sacar el ->value())
+        $products = $this->repository->listProducts($restaurantId, $familyUuid);
 
-        return array_map(function (Product $product) {
-            return new ListProductsResponse($product);
-        }, $products);
+        return array_map(fn($product) => (new ListProductsResponse($product))->toArray(), $products);
     }
 }

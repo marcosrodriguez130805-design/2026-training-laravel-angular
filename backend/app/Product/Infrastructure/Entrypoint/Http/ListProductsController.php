@@ -9,18 +9,18 @@ use Illuminate\Http\Request;
 class ListProductsController
 {
     public function __invoke(Request $request, ListProducts $listProducts): JsonResponse
-    {
-        // Obtenemos el restaurant_uuid de la query
-        $restaurantUuid = $request->query('restaurant_uuid');
-        if (!$restaurantUuid) {
-            return response()->json(['error' => 'restaurant_uuid is required'], 400);
-        }
+{
+    $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        $responses = $listProducts(\App\Shared\Domain\ValueObject\Uuid::create($restaurantUuid));
-
-        return response()->json(
-            array_map(fn($response) => $response->toArray(), $responses), 
-            200
-        );
+    if (!$restaurantUuid) {
+        return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
     }
+
+    // Opcional: permitir filtrar por familia desde la URL (?family_id=...)
+    $familyUuid = $request->query('family_id');
+
+    $products = $listProducts($restaurantUuid, $familyUuid);
+
+    return response()->json($products, 200);
+}
 }

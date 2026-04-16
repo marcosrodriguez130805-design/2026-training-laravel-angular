@@ -11,11 +11,9 @@ interface TaxRepositoryInterface
 
     public function update(Tax $tax): Tax;
 
-    public function listAll(string $restaurantUuid): array;
+    public function listTaxes(Uuid $restaurantUuid): array;
 
     public function findByUuid(string $uuid): ?Tax;
-
-    public function findByUuidWithRestaurantUuid(string $uuid): ?array;
 
     public function delete(string $uuid): void;
 

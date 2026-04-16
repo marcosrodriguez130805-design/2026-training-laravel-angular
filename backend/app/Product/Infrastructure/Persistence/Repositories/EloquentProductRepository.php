@@ -28,16 +28,26 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    public function listProducts(Uuid $restaurantId): array
-{
-    $eloquentProducts = EloquentProduct::where('restaurant_uuid', $restaurantId->value())->get();
-
-    return $eloquentProducts->map(fn (EloquentProduct $model) => $this->toDomain($model))->toArray();
-}
-
-    public function getProduct(string $uuid): ?Product
+    
+    public function listProducts(Uuid $restaurantId, ?string $familyUuid = null): array
     {
-        $model = EloquentProduct::where('uuid', $uuid)->first();
+        $query = EloquentProduct::where('restaurant_uuid', $restaurantId->value());
+
+        if ($familyUuid) {
+            $query->where('family_uuid', $familyUuid);
+        }
+
+        $models = $query->get();
+
+        // CAMBIO: Ahora llamamos a toDomain (que es como se llama tu método abajo)
+        return $models->map(fn($model) => $this->toDomain($model))->toArray();
+    }
+
+    public function getProduct(Uuid $restaurantId, string $uuid): ?Product
+    {
+        $model = EloquentProduct::where('uuid', $uuid)
+            ->where('restaurant_uuid', $restaurantId->value()) // <--- Seguridad extra
+            ->first();
 
         if (!$model) {
             return null;
@@ -49,8 +59,9 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     public function update(Product $product): void
     {
         EloquentProduct::where('uuid', $product->uuid()->value())->update([
-            'active' => $product->active(),
-            'updated_at' => $product->updatedAt()->value(),
+            'active'     => $product->active(),
+            'price'      => $product->price(), // Asegúrate de actualizar lo necesario
+            'updated_at' => $product->updated_at()->value(),
         ]);
     }
 
@@ -59,17 +70,20 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         EloquentProduct::where('uuid', $uuid)->delete();
     }
 
+    // ... update y delete están bien ...
+
     private function toDomain(EloquentProduct $model): Product
     {
+        // Asegúrate de que Product::fromPersistence acepte estos tipos
         return Product::fromPersistence(
             $model->uuid,
             Uuid::create($model->restaurant_uuid),
             Uuid::create($model->family_uuid),
             Uuid::create($model->tax_uuid),
             $model->name,
-            $model->price,
-            $model->stock,
-            $model->active,
+            (float) $model->price,
+            (int) $model->stock,
+            (bool) $model->active,
             $model->image_src,
             new \DateTimeImmutable($model->created_at),
             new \DateTimeImmutable($model->updated_at)

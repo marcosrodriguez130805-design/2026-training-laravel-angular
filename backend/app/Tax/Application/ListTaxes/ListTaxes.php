@@ -3,23 +3,20 @@
 namespace App\Tax\Application\ListTaxes;
 
 use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
-// 1. IMPORTA LA ENTIDAD DE DOMINIO
-use App\Tax\Domain\Entity\Tax; 
+use App\Shared\Domain\ValueObject\Uuid;
 
-class ListTaxes
+final class ListTaxes
 {
     public function __construct(
         private TaxRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $restaurantUuid): array
-    {
-        $taxes = $this->repository->listAll($restaurantUuid);
+    public function __invoke(string $restaurantUuid): ListTaxesResponse
+{
+    $restaurantId = Uuid::create($restaurantUuid);
+    $taxes = $this->repository->listTaxes($restaurantId);
 
-        return array_map(
-            // Ahora PHP sabe que este Tax es el de Domain\Entity\Tax
-            fn(Tax $tax) => new ListTaxesResponse($tax, $restaurantUuid),
-            $taxes
-        );
-    }
+    // Devolvemos el objeto Response, no el array
+    return new ListTaxesResponse($taxes);
+}
 }

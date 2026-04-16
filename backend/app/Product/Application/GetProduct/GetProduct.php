@@ -3,6 +3,7 @@
 namespace App\Product\Application\GetProduct;
 
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
+use App\Shared\Domain\ValueObject\Uuid;
 
 class GetProduct
 {
@@ -10,12 +11,15 @@ class GetProduct
         private ProductRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $uuid): ?GetProductResponse
+    public function __invoke(string $restaurantUuid, string $uuid): ?GetProductResponse
     {
-        $product = $this->repository->getProduct($uuid);
+        $restaurantId = Uuid::create($restaurantUuid);
+
+    
+        $product = $this->repository->getProduct($restaurantId, $uuid);
 
         if (!$product) {
-            return null;
+        return null;
         }
 
         return new GetProductResponse($product);

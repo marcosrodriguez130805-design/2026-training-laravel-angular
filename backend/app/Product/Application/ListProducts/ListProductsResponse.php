@@ -22,8 +22,6 @@ class ListProductsResponse
             'stock'         => $this->product->stock(),
             'active'        => $this->product->active(),
             'image_src'     => $this->product->imageSrc(),
-            'created_at'    => $this->product->createdAt()->value()->format('Y-m-d H:i:s'),
-            'updated_at'    => $this->product->updatedAt()->value()->format('Y-m-d H:i:s'),
         ];
     }
 }

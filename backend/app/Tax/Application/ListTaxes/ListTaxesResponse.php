@@ -7,19 +7,17 @@ use App\Tax\Domain\Entity\Tax;
 class ListTaxesResponse
 {
     public function __construct(
-        private Tax $tax,
-        private ?string $restaurantUuid = null,
+        private array $taxes // Recibimos el array que devuelve el repositorio
     ) {}
 
     public function toArray(): array
     {
-        return [
-            'uuid'           => $this->tax->uuid()->value(),
-            'restaurant_uuid' => $this->tax->restaurantId()->value(),
-            'name'           => $this->tax->name(),
-            'percentage'     => $this->tax->percentage(),
-            'created_at'     => $this->tax->createdAt()->value()->format('Y-m-d H:i:s'),
-            'updated_at'     => $this->tax->updatedAt()->value()->format('Y-m-d H:i:s'),
-        ];
+        // Iteramos sobre cada objeto Tax para convertirlo en array
+        return array_map(fn(Tax $tax) => [
+            'uuid'            => $tax->uuid()->value(),
+            'restaurant_uuid' => $tax->restaurantId()->value(),
+            'name'            => $tax->name(),
+            'percentage'      => $tax->percentage(),
+        ], $this->taxes);
     }
 }

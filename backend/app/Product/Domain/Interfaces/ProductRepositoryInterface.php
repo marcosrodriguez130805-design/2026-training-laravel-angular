@@ -9,9 +9,9 @@ interface ProductRepositoryInterface
 {
     public function save(Product $product): Product;
 
-    public function getProduct(string $uuid): ?Product;
+    public function getProduct(Uuid $restaurantId, string $uuid): ?Product;
 
-    public function listProducts(Uuid $restaurantId): array;
+    public function listProducts(Uuid $restaurantId, ?string $familyId = null): array;
 
     public function update(Product $product): void;
 
