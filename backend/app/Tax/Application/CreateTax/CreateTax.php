@@ -2,34 +2,39 @@
 
 namespace App\Tax\Application\CreateTax;
 
-use App\Shared\Domain\ValueObject\Uuid;
-use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
 use App\Tax\Domain\Entity\Tax;
+use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
+use App\Shared\Domain\ValueObject\DomainDateTime;
+use App\Shared\Domain\ValueObject\Uuid;
+use Illuminate\Support\Str; // Para generar el UUID si no tienes el método random()
 
-
-class CreateTax
+final class CreateTax
 {
     public function __construct(
         private TaxRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $restaurantUuid, string $name, int $percentage): CreateTaxResponse
+    public function __invoke(string $name, float $percentage, string $restaurantUuid): CreateTaxResponse
     {
-        $restaurantId = Uuid::create($restaurantUuid);
+        $taxUuid = Uuid::create(Str::uuid()->toString());
+    $restaurantId = Uuid::create($restaurantUuid);
+    
+    // En lugar de new \DateTimeImmutable(), usamos tu Value Object
+    // Si tiene un método "now", úsalo. Si no, usa "create" con un string
+    $now = DomainDateTime::now(); 
+    // O si no existe .now(): DomainDateTime::create(date('Y-m-d H:i:s'));
 
-        // Validaciones
-        if (empty(trim($name))) {
-            throw new \Exception("Tax name cannot be empty", 400);
-        }
-        if ($percentage < 0) {
-            throw new \Exception("Tax percentage cannot be negative", 400);
-        }
-        if ($this->repository->existsByNameAndRestaurant($name, $restaurantUuid)) {
-            throw new \Exception("Tax name already exists for this restaurant", 409);
-        }
+    $tax = new Tax(
+        $taxUuid,
+        $restaurantId,
+        $name,
+        $percentage,
+        $now, // Ahora sí es de tipo DomainDateTime
+        $now
+    );
 
-        $tax = Tax::dddCreate($restaurantId, $name, $percentage);
         $this->repository->save($tax);
+
         return new CreateTaxResponse($tax);
     }
 }

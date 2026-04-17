@@ -5,6 +5,8 @@ namespace App\Product\Application\CreateProduct;
 use App\Product\Domain\Entity\Product;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Shared\Domain\ValueObject\DomainDateTime;
+use Illuminate\Support\Str;
 
 final class CreateProduct
 {
@@ -22,8 +24,12 @@ final class CreateProduct
         bool $active,
         ?string $imageSrc = null
     ): CreateProductResponse {
-        // Usamos el método estático que definimos en la Entidad
+        
+        $productUuid = Uuid::create(Str::uuid()->toString());
+        $now = DomainDateTime::now();
+
         $product = Product::dddCreate(
+            $productUuid,
             $restaurantId,
             $familyId,
             $taxId,
@@ -31,6 +37,8 @@ final class CreateProduct
             $price,
             $stock,
             $active,
+            $now,
+            $now,
             $imageSrc
         );
 

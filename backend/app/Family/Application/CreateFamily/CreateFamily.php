@@ -5,6 +5,8 @@ namespace App\Family\Application\CreateFamily;
 use App\Family\Domain\Entity\Family;
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Shared\Domain\ValueObject\DomainDateTime; // Tu VO de fechas
+use Illuminate\Support\Str;
 
 final class CreateFamily
 {
@@ -18,13 +20,18 @@ final class CreateFamily
         bool $active
     ): CreateFamilyResponse {
         
-        // Creamos la familia directamente con el UUID del restaurante
-        // No necesitamos el RestaurantRepository porque la entidad Family
-        // ahora debería aceptar el Uuid en su método de creación.
+        // Generamos los datos que faltan para la entidad
+        $familyUuid = Uuid::create(Str::uuid()->toString());
+        $now = DomainDateTime::now();
+
+        // Usamos el método de creación de la entidad pasando el estado completo
         $family = Family::dddCreate(
+            $familyUuid,
             $restaurantUuid, 
             $name,
-            $active
+            $active,
+            $now,
+            $now
         );
 
         $this->repository->save($family);

@@ -12,6 +12,8 @@ use App\Tax\Infrastructure\Persistence\Repositories\EloquentTaxRepository;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
 use App\Product\Infrastructure\Persistence\Repositories\EloquentProductRepository;
 use App\User\Infrastructure\Services\LaravelPasswordHasher;
+use App\User\Domain\Interfaces\TokenGeneratorInterface;
+use App\User\Infrastructure\Services\SanctumTokenGenerator;
 use App\Restaurant\Domain\Interfaces\RestaurantRepositoryInterface;
 use App\Zone\Domain\Interfaces\ZoneRepositoryInterface;
 use App\Zone\Infrastructure\Persistence\Repositories\EloquentZoneRepository;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
         $this->app->bind(PasswordHasherInterface::class, LaravelPasswordHasher::class);
+        $this->app->bind(TokenGeneratorInterface::class, SanctumTokenGenerator::class);
         $this->app->bind(FamilyRepositoryInterface::class, EloquentFamilyRepository::class);
         $this->app->bind(TaxRepositoryInterface::class, EloquentTaxRepository::class);
         $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);

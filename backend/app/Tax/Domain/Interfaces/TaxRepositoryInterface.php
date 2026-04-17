@@ -15,6 +15,8 @@ interface TaxRepositoryInterface
 
     public function findByUuid(string $uuid): ?Tax;
 
+    public function findByUuidWithRestaurantUuid(string $uuid): ?array;
+
     public function delete(string $uuid): void;
 
     public function existsByNameAndRestaurant(string $name, string $restaurantId, ?string $excludeUuid = null): bool;

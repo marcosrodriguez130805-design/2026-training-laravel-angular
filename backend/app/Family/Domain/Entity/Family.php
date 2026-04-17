@@ -17,20 +17,31 @@ class Family
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(Uuid $restaurantId, string $name, bool $active): self
-    {
-        $now = DomainDateTime::now();
-
+    /**
+     * Método estático para crear una nueva instancia desde el Caso de Uso.
+     * Ahora acepta todos los parámetros necesarios para evitar errores de tipos.
+     */
+    public static function dddCreate(
+        Uuid $uuid,
+        Uuid $restaurantId,
+        string $name,
+        bool $active,
+        DomainDateTime $createdAt,
+        DomainDateTime $updatedAt
+    ): self {
         return new self(
-            Uuid::generate(),
-            $restaurantId,                 // ← int
+            $uuid,
+            $restaurantId,
             FamilyName::create($name),
             $active,
-            $now,
-            $now,
+            $createdAt,
+            $updatedAt,
         );
     }
 
+    /**
+     * Método para reconstruir la entidad desde la persistencia (Base de Datos).
+     */
     public static function fromPersistence(
         string $uuid,
         string $restaurantId,
@@ -48,6 +59,8 @@ class Family
             DomainDateTime::create($updatedAt),
         );
     }
+
+    // --- Getters & Business Logic ---
 
     public function updateName(string $name): void
     {

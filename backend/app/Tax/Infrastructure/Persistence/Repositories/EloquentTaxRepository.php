@@ -10,18 +10,17 @@ use App\Shared\Domain\ValueObject\Uuid; // Asegúrate de tener este use
 class EloquentTaxRepository implements TaxRepositoryInterface
 {
     public function save(Tax $tax): Tax
-    {
-        EloquentTax::create([
-            'uuid'          => $tax->uuid()->value(),
-            'restaurant_uuid' => $tax->restaurantId()->value(),
-            'name'          => $tax->name(),
-            'percentage'    => $tax->percentage(),
-            'created_at'    => $tax->createdAt()->format('Y-m-d H:i:s'),
-            'updated_at'    => $tax->updatedAt()->format('Y-m-d H:i:s'),
-        ]);
-
-        return $tax;
-    }
+{
+    EloquentTax::updateOrCreate(
+        ['uuid' => $tax->uuid()->value()],
+        [
+            'restaurant_uuid' => $tax->restaurantId()->value(), // <-- Guardamos el ID del contexto
+            'name'            => $tax->name(),
+            'percentage'      => $tax->percentage(),
+        ]
+    );
+    return $tax;
+}
 
     public function update(Tax $tax): Tax
     {
@@ -72,6 +71,22 @@ class EloquentTaxRepository implements TaxRepositoryInterface
         return $models->map(fn($model) => $this->toDomain($model))->toArray();
     }
 
+    public function findByUuidWithRestaurantUuid(string $uuid): ?array
+    {
+    // Buscamos el modelo en la base de datos
+        $model = EloquentTax::where('uuid', $uuid)->first();
+
+        if (!$model) {
+            return null;
+        }
+    
+
+    // Devolvemos el array que espera el Caso de Uso
+    return [
+        'tax'             => $this->toDomain($model), // Convierte el modelo a Entidad de Dominio
+        'restaurant_uuid' => $model->restaurant_uuid // Suponiendo que se llama así en tu DB
+        ];
+    }
     private function toDomain(EloquentTax $model): Tax
     {
         return Tax::fromPersistence(

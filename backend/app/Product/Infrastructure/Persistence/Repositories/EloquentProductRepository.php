@@ -73,20 +73,20 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     // ... update y delete están bien ...
 
     private function toDomain(EloquentProduct $model): Product
-    {
-        // Asegúrate de que Product::fromPersistence acepte estos tipos
-        return Product::fromPersistence(
-            $model->uuid,
-            Uuid::create($model->restaurant_uuid),
-            Uuid::create($model->family_uuid),
-            Uuid::create($model->tax_uuid),
-            $model->name,
-            (float) $model->price,
-            (int) $model->stock,
-            (bool) $model->active,
-            $model->image_src,
-            new \DateTimeImmutable($model->created_at),
-            new \DateTimeImmutable($model->updated_at)
-        );
-    }
+{
+    return Product::fromPersistence(
+        (string) $model->uuid,
+        (string) $model->restaurant_uuid,
+        (string) $model->family_uuid,
+        (string) $model->tax_uuid,
+        $model->name,
+        (int) $model->price,
+        (int) $model->stock,
+        (bool) $model->active,
+        // Forzamos el paso a DateTimeImmutable para que la entidad no se queje
+        $model->created_at->toDateTimeImmutable(),
+        $model->updated_at->toDateTimeImmutable(),
+        $model->image_src
+    );
+}
 }
