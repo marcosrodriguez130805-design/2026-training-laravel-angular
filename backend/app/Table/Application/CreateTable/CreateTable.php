@@ -5,6 +5,8 @@ namespace App\Table\Application\CreateTable;
 use App\Table\Domain\Entity\Table;
 use App\Table\Domain\Interfaces\TableRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Shared\Domain\ValueObject\DomainDateTime;
+use Illuminate\Support\Str;
 
 final class CreateTable
 {
@@ -17,10 +19,20 @@ final class CreateTable
         Uuid $zoneUuid,
         string $name
     ): CreateTableResponse {
-        // Creamos la entidad usando el método dddCreate (que genera el UUID)
-        $table = Table::dddCreate($restaurantUuid, $zoneUuid, $name);
+        
+        $tableUuid = Uuid::create(Str::uuid()->toString());
+        $now = DomainDateTime::now();
 
-        // Persistimos
+        // Creamos la entidad con el mismo patrón que Product
+        $table = Table::dddCreate(
+            $tableUuid,
+            $restaurantUuid,
+            $zoneUuid,
+            $name,
+            $now,
+            $now
+        );
+
         $this->repository->save($table);
 
         return new CreateTableResponse($table);

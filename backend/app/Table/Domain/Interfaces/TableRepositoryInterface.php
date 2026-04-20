@@ -11,7 +11,9 @@ interface TableRepositoryInterface
     
     public function findByUuid(string $uuid): ?Table;
     
-    public function listByZone(Uuid $zoneUuid): array;
+    public function findByZone(string $restaurantUuid, string $zoneUuid): array;
+
+    public function listByRestaurant(Uuid $restaurantUuid): array;
     
     public function update(Table $table): void;
     

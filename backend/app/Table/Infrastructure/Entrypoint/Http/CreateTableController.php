@@ -16,21 +16,26 @@ final class CreateTableController
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            // 1. Validamos la entrada
+            // 1. Validamos (ya no pedimos restaurant_uuid en el body)
             $request->validate([
-                'restaurant_uuid' => 'required|string',
-                'zone_uuid'       => 'required|string',
-                'name'            => 'required|string',
+                'zone_uuid' => 'required|string',
+                'name'      => 'required|string',
             ]);
 
-            // 2. Ejecutamos el caso de uso
+            // 2. Extraemos el Restaurante del Header
+            $restaurantHeader = $request->header('X-Restaurant-Id');
+            
+            if (!$restaurantHeader) {
+                return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+            }
+
+            // 3. Ejecutamos el caso de uso
             $response = $this->useCase->__invoke(
-                Uuid::create($request->input('restaurant_uuid')),
+                Uuid::create($restaurantHeader),
                 Uuid::create($request->input('zone_uuid')),
                 (string) $request->input('name')
             );
 
-            // 3. Respuesta 201 Created
             return new JsonResponse($response->toArray(), 201);
 
         } catch (\Exception $e) {

@@ -22,15 +22,23 @@ final class EloquentTableRepository implements TableRepositoryInterface
     public function findByUuid(string $uuid): ?Table
     {
         $model = EloquentTable::where('uuid', $uuid)->first();
-
         return $model ? $this->toDomain($model) : null;
     }
 
-    public function listByZone(Uuid $zoneUuid): array
-    {
-        $models = EloquentTable::where('zone_uuid', $zoneUuid->value())->get();
+    public function findByZone(string $restaurantUuid, string $zoneUuid): array
+{
+    // Cambiamos $this->model por EloquentTable
+    $models = EloquentTable::where('restaurant_uuid', $restaurantUuid)
+        ->where('zone_uuid', $zoneUuid)
+        ->get();
 
-        return $models->map(fn (EloquentTable $model) => $this->toDomain($model))->toArray();
+    return $models->map(fn($model) => $this->toDomain($model))->toArray();
+}
+
+    public function listByRestaurant(Uuid $restaurantUuid): array
+    {
+        $models = EloquentTable::where('restaurant_uuid', $restaurantUuid->value())->get();
+        return $models->map(fn($model) => $this->toDomain($model))->toArray();
     }
 
     public function update(Table $table): void
@@ -47,11 +55,14 @@ final class EloquentTableRepository implements TableRepositoryInterface
 
     private function toDomain(EloquentTable $model): Table
     {
-        return new Table(
-            Uuid::create($model->uuid),
-            Uuid::create($model->restaurant_uuid),
-            Uuid::create($model->zone_uuid),
-            (string) $model->name
+        // Importante: Usamos el método estático y convertimos las fechas de Eloquent
+        return Table::fromPersistence(
+            (string) $model->uuid,
+            (string) $model->restaurant_uuid,
+            (string) $model->zone_uuid,
+            (string) $model->name,
+            $model->created_at->toDateTimeImmutable(),
+            $model->updated_at->toDateTimeImmutable()
         );
     }
 }
