@@ -3,7 +3,6 @@
 namespace App\Table\Application\GetTable;
 
 use App\Table\Domain\Interfaces\TableRepositoryInterface;
-use App\Table\Application\ListTables\ListTablesResponse;
 use Exception;
 
 final class GetTable
@@ -12,14 +11,14 @@ final class GetTable
         private TableRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $uuid): array
-    {
-        $table = $this->repository->findByUuid($uuid);
+    public function __invoke(string $uuid): GetTableResponse // Devolvemos el OBJETO
+{
+    $table = $this->repository->findByUuid($uuid);
 
-        if (!$table) {
-            throw new Exception("Table not found", 404);
-        }
-
-        return (new ListTablesResponse($table))->toArray();
+    if (!$table) {
+        throw new \RuntimeException("Table not found with uuid: $uuid", 404);
     }
+
+    return new GetTableResponse($table);
+}
 }

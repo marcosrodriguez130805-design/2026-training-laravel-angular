@@ -22,6 +22,11 @@ final class EloquentTableRepository implements TableRepositoryInterface
     public function findByUuid(string $uuid): ?Table
     {
         $model = EloquentTable::where('uuid', $uuid)->first();
+
+        if (is_null($model)) {
+        dd("No se encontró nada en la DB para el UUID: " . $uuid);
+    }
+
         return $model ? $this->toDomain($model) : null;
     }
 
@@ -54,15 +59,14 @@ final class EloquentTableRepository implements TableRepositoryInterface
     }
 
     private function toDomain(EloquentTable $model): Table
-    {
-        // Importante: Usamos el método estático y convertimos las fechas de Eloquent
-        return Table::fromPersistence(
-            (string) $model->uuid,
-            (string) $model->restaurant_uuid,
-            (string) $model->zone_uuid,
-            (string) $model->name,
-            $model->created_at->toDateTimeImmutable(),
-            $model->updated_at->toDateTimeImmutable()
-        );
-    }
+{
+    return Table::fromPersistence(
+        $model->getAttribute('uuid'),            // Usamos getAttribute para mayor seguridad
+        $model->getAttribute('restaurant_uuid'),
+        $model->getAttribute('zone_uuid'),
+        $model->getAttribute('name'),
+        $model->created_at->toDateTimeImmutable(),
+        $model->updated_at->toDateTimeImmutable()
+    );
+}
 }
