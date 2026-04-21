@@ -12,7 +12,6 @@ use App\User\Infrastructure\Entrypoint\Http\GetUserUuidController;
 use App\User\Infrastructure\Entrypoint\Http\GetUserEmailController;
 use App\User\Infrastructure\Entrypoint\Http\UpdateUserController;
 use App\User\Infrastructure\Entrypoint\Http\DeleteUserController;
-use App\User\Infrastructure\Entrypoint\Http\PostController;
 use App\User\Infrastructure\Entrypoint\Http\ListUsersController;
 use App\Tax\Infrastructure\Entrypoint\Http\CreateTaxController;
 use App\Tax\Infrastructure\Entrypoint\Http\ListTaxesController;
@@ -33,6 +32,9 @@ use App\Zone\Infrastructure\Entrypoint\Http\DeleteZoneController;
 use App\Table\Infrastructure\Entrypoint\Http\CreateTableController;
 use App\Table\Infrastructure\Entrypoint\Http\ListTablesController;
 use App\Table\Infrastructure\Entrypoint\Http\ListTablesByZoneController;
+use App\Table\Infrastructure\Entrypoint\Http\GetTableController;
+use App\Table\Infrastructure\Entrypoint\Http\UpdateTableController;
+use App\Table\Infrastructure\Entrypoint\Http\DeleteTableController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users', CreateUserController::class);
@@ -75,4 +77,7 @@ Route::delete('/zones/{uuid}', DeleteZoneController::class);
 
 Route::post('/tables', CreateTableController::class);
 Route::get('/tables', ListTablesController::class);
-Route::get('/tables/{uuid_zone}', ListTablesByZoneController::class);
+Route::get('/tables/zones/{uuid_zone}', ListTablesByZoneController::class); // primero
+Route::get('/tables/{uuid}', GetTableController::class); // después
+Route::put('/tables/{uuid}', UpdateTableController::class);
+Route::delete('/tables/{uuid}', DeleteTableController::class);

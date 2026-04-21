@@ -20,15 +20,10 @@ final class EloquentTableRepository implements TableRepositoryInterface
     }
 
     public function findByUuid(string $uuid): ?Table
-    {
-        $model = EloquentTable::where('uuid', $uuid)->first();
-
-        if (is_null($model)) {
-        dd("No se encontró nada en la DB para el UUID: " . $uuid);
-    }
-
-        return $model ? $this->toDomain($model) : null;
-    }
+{
+    $model = EloquentTable::where('uuid', $uuid)->first();
+    return $model ? $this->toDomain($model) : null;
+}
 
     public function findByZone(string $restaurantUuid, string $zoneUuid): array
 {
@@ -61,10 +56,10 @@ final class EloquentTableRepository implements TableRepositoryInterface
     private function toDomain(EloquentTable $model): Table
 {
     return Table::fromPersistence(
-        $model->getAttribute('uuid'),            // Usamos getAttribute para mayor seguridad
-        $model->getAttribute('restaurant_uuid'),
-        $model->getAttribute('zone_uuid'),
-        $model->getAttribute('name'),
+        $model->uuid,             // Si en la DB es 'uuid'
+        $model->restaurant_uuid,  // Si en la DB es 'restaurant_uuid'
+        $model->zone_uuid,        // Si en la DB es 'zone_uuid'
+        $model->name,
         $model->created_at->toDateTimeImmutable(),
         $model->updated_at->toDateTimeImmutable()
     );

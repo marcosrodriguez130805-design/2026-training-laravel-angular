@@ -93,8 +93,9 @@ final class Table
 
     // --- Business Logic ---
 
-    public function updateName(string $name): void
+    public function update(string $name): void
     {
         $this->name = $name;
     }
+
 }

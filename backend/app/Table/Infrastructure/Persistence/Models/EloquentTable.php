@@ -9,6 +9,8 @@ use App\Zone\Infrastructure\Persistence\Models\EloquentZone;
 
 class EloquentTable extends Model
 {
+    use SoftDeletes;
+    
     protected $table = 'tables';
 
     protected $fillable = [
