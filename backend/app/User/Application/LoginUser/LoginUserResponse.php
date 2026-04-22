@@ -4,14 +4,16 @@ namespace App\User\Application\LoginUser;
 
 class LoginUserResponse
 {
-    public string $id;
+    public string $uuid;
+    public string $restaurant_uuid;
     public string $name;
     public string $email;
     public string $token;
 
-    public function __construct(string $id, string $name, string $email, string $token)
+    public function __construct(string $uuid, string $restaurant_uuid, string $name, string $email, string $token)
     {
-        $this->id = $id;
+        $this->uuid = $uuid;
+        $this->restaurant_uuid = $restaurant_uuid;
         $this->name = $name;
         $this->email = $email;
         $this->token = $token;
@@ -20,7 +22,8 @@ class LoginUserResponse
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'uuid' => $this->uuid,
+            'restaurant_uuid' => $this->restaurant_uuid,
             'name' => $this->name,
             'email' => $this->email,
             'token' => $this->token,

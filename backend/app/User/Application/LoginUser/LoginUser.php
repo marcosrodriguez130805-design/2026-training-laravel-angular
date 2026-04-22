@@ -32,6 +32,7 @@ class LoginUser
 
         return new LoginUserResponse(
             $user->uuid()->value(),
+            $user->restaurantUuid()->value(),
             $user->name(),
             $user->email(),
             $token

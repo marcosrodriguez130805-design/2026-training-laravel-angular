@@ -37,47 +37,55 @@ use App\Table\Infrastructure\Entrypoint\Http\UpdateTableController;
 use App\Table\Infrastructure\Entrypoint\Http\DeleteTableController;
 use Illuminate\Support\Facades\Route;
 
+// Rutas públicas
 Route::post('/users', CreateUserController::class);
-Route::put('/users/{uuid}', UpdateUserController::class);
-Route::post('login', LoginUserController::class);
-Route::get('/users', ListUsersController::class);
-Route::get('/users/{uuid}', GetUserUuidController::class);
-Route::get('/users/email/{email}', GetUserEmailController::class);
-Route::delete('/users/{uuid}', DeleteUserController::class);
+Route::post('/login', LoginUserController::class);
 
-// Family routes
-Route::get('/families', ListFamiliesController::class);
-Route::post('/families', CreateFamilyController::class);
-Route::get('/families/{uuid}', GetFamilyController::class);
-Route::put('/families/{uuid}', UpdateFamilyController::class);
-Route::delete('/families/{uuid}', DeleteFamilyController::class);
-Route::patch(
-    '/families/{uuid}/toggle-active',
-    [ToggleFamilyActiveController::class, '__invoke']
-);
+// Rutas protegidas
+Route::middleware('auth:sanctum')->group(function () {
 
-Route::post('/taxes', CreateTaxController::class);
-Route::get('/taxes', ListTaxesController::class);
-Route::get('/taxes/{uuid}', GetTaxController::class);
-Route::put('/taxes/{uuid}', UpdateTaxController::class);
-Route::delete('/taxes/{uuid}', DeleteTaxController::class);
+    // Users
+    Route::get('/users', ListUsersController::class);
+    Route::get('/users/{uuid}', GetUserUuidController::class);
+    Route::get('/users/email/{email}', GetUserEmailController::class);
+    Route::put('/users/{uuid}', UpdateUserController::class);
+    Route::delete('/users/{uuid}', DeleteUserController::class);
 
-Route::post('/products', CreateProductController::class);
-Route::get('/products', ListProductsController::class);
-Route::get('/products/{uuid}', GetProductController::class);
-Route::patch('products/{uuid}/toggle-active', ToggleProductActiveController::class);
-Route::put('products/{uuid}', UpdateProductController::class);
-Route::delete('products/{uuid}', DeleteProductController::class);
+    // Families
+    Route::get('/families', ListFamiliesController::class);
+    Route::post('/families', CreateFamilyController::class);
+    Route::get('/families/{uuid}', GetFamilyController::class);
+    Route::put('/families/{uuid}', UpdateFamilyController::class);
+    Route::delete('/families/{uuid}', DeleteFamilyController::class);
+    Route::patch('/families/{uuid}/toggle-active', ToggleFamilyActiveController::class, '__invoke');
 
-Route::post('/zones', CreateZoneController::class);
-Route::get('/zones', ListZonesController::class);
-Route::get('/zones/{uuid}', GetZoneController::class);
-Route::put('/zones/{uuid}', UpdateZoneController::class);
-Route::delete('/zones/{uuid}', DeleteZoneController::class);
+    // Taxes
+    Route::post('/taxes', CreateTaxController::class);
+    Route::get('/taxes', ListTaxesController::class);
+    Route::get('/taxes/{uuid}', GetTaxController::class);
+    Route::put('/taxes/{uuid}', UpdateTaxController::class);
+    Route::delete('/taxes/{uuid}', DeleteTaxController::class);
 
-Route::post('/tables', CreateTableController::class);
-Route::get('/tables', ListTablesController::class);
-Route::get('/tables/zones/{uuid_zone}', ListTablesByZoneController::class); // primero
-Route::get('/tables/{uuid}', GetTableController::class); // después
-Route::put('/tables/{uuid}', UpdateTableController::class);
-Route::delete('/tables/{uuid}', DeleteTableController::class);
+    // Products
+    Route::post('/products', CreateProductController::class);
+    Route::get('/products', ListProductsController::class);
+    Route::get('/products/{uuid}', GetProductController::class);
+    Route::patch('/products/{uuid}/toggle-active', ToggleProductActiveController::class);
+    Route::put('/products/{uuid}', UpdateProductController::class);
+    Route::delete('/products/{uuid}', DeleteProductController::class);
+
+    // Zones
+    Route::post('/zones', CreateZoneController::class);
+    Route::get('/zones', ListZonesController::class);
+    Route::get('/zones/{uuid}', GetZoneController::class);
+    Route::put('/zones/{uuid}', UpdateZoneController::class);
+    Route::delete('/zones/{uuid}', DeleteZoneController::class);
+
+    // Tables
+    Route::post('/tables', CreateTableController::class);
+    Route::get('/tables', ListTablesController::class);
+    Route::get('/tables/zones/{uuid_zone}', ListTablesByZoneController::class);
+    Route::get('/tables/{uuid}', GetTableController::class);
+    Route::put('/tables/{uuid}', UpdateTableController::class);
+    Route::delete('/tables/{uuid}', DeleteTableController::class);
+});

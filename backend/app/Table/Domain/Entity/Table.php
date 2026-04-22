@@ -4,6 +4,7 @@ namespace App\Table\Domain\Entity;
 
 use App\Shared\Domain\ValueObject\Uuid;
 use App\Shared\Domain\ValueObject\DomainDateTime;
+use App\Table\Domain\ValueObject\TableName;
 
 final class Table
 {
@@ -11,14 +12,11 @@ final class Table
         private Uuid $uuid,
         private Uuid $restaurantUuid,
         private Uuid $zoneUuid,
-        private string $name,
+        private TableName $name,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
 
-    /**
-     * Método para crear una nueva instancia (Dominio)
-     */
     public static function dddCreate(
         Uuid $uuid,
         Uuid $restaurantUuid,
@@ -31,15 +29,12 @@ final class Table
             $uuid,
             $restaurantUuid,
             $zoneUuid,
-            $name,
+            TableName::create($name),
             $createdAt,
             $updatedAt
         );
     }
 
-    /**
-     * Reconstrucción desde Persistencia (Infraestructura)
-     */
     public static function fromPersistence(
         string $uuid,
         string $restaurantUuid,
@@ -52,50 +47,23 @@ final class Table
             Uuid::create($uuid),
             Uuid::create($restaurantUuid),
             Uuid::create($zoneUuid),
-            $name,
-            // Usamos .create() para ser consistentes con tu clase Family
-            DomainDateTime::create($createdAt), 
+            TableName::create($name),
+            DomainDateTime::create($createdAt),
             DomainDateTime::create($updatedAt)
         );
     }
 
     // --- Getters ---
-
-    public function uuid(): Uuid 
-    { 
-        return $this->uuid; 
-    }
-
-    public function restaurantUuid(): Uuid 
-    { 
-        return $this->restaurantUuid; 
-    }
-
-    public function zoneUuid(): Uuid 
-    { 
-        return $this->zoneUuid; 
-    }
-
-    public function name(): string 
-    { 
-        return $this->name; 
-    }
-
-    public function createdAt(): DomainDateTime 
-    { 
-        return $this->createdAt; 
-    }
-
-    public function updatedAt(): DomainDateTime 
-    { 
-        return $this->updatedAt; 
-    }
+    public function uuid(): Uuid { return $this->uuid; }
+    public function restaurantUuid(): Uuid { return $this->restaurantUuid; }
+    public function zoneUuid(): Uuid { return $this->zoneUuid; }
+    public function name(): string { return $this->name->value(); }
+    public function createdAt(): DomainDateTime { return $this->createdAt; }
+    public function updatedAt(): DomainDateTime { return $this->updatedAt; }
 
     // --- Business Logic ---
-
     public function update(string $name): void
     {
-        $this->name = $name;
+        $this->name = TableName::create($name);
     }
-
 }

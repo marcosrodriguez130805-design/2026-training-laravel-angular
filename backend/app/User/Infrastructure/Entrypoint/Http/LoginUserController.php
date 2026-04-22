@@ -25,7 +25,8 @@ class LoginUserController
         $response = ($this->loginUser)($request->input('email'), $request->input('password'));
 
         return response()->json([
-            'id' => $response->id,
+            'uuid' => $response->uuid,
+            'restaurant_uuid' => $response->restaurant_uuid,
             'name' => $response->name,
             'email' => $response->email,
             'token' => $response->token,

@@ -4,6 +4,9 @@ namespace App\Product\Domain\Entity;
 
 use App\Shared\Domain\ValueObject\DomainDateTime;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Product\Domain\ValueObject\ProductName;
+use App\Product\Domain\ValueObject\ProductPrice;
+use App\Product\Domain\ValueObject\ProductStock;
 
 class Product
 {
@@ -12,9 +15,9 @@ class Product
         private Uuid $restaurantId,
         private Uuid $familyId,
         private Uuid $taxId,
-        private string $name,
-        private int $price,
-        private int $stock,
+        private ProductName $name,
+        private ProductPrice $price,
+        private ProductStock $stock,
         private bool $active,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
@@ -39,9 +42,9 @@ class Product
             $restaurantId,
             $familyId,
             $taxId,
-            $name,
-            $price,
-            $stock,
+            ProductName::create($name),
+            ProductPrice::create($price),
+            ProductStock::create($stock),
             $active,
             $createdAt,
             $updatedAt,
@@ -49,9 +52,6 @@ class Product
         );
     }
 
-    /**
-     * Reconstrucción desde persistencia siguiendo el patrón de Family.
-     */
     public static function fromPersistence(
         string $uuid,
         string $restaurantId,
@@ -70,9 +70,9 @@ class Product
             Uuid::create($restaurantId),
             Uuid::create($familyId),
             Uuid::create($taxId),
-            $name,
-            $price,
-            $stock,
+            ProductName::create($name),
+            ProductPrice::create($price),
+            ProductStock::create($stock),
             $active,
             DomainDateTime::create($createdAt),
             DomainDateTime::create($updatedAt),
@@ -85,9 +85,9 @@ class Product
     public function restaurantId(): Uuid { return $this->restaurantId; }
     public function familyId(): Uuid { return $this->familyId; }
     public function taxId(): Uuid { return $this->taxId; }
-    public function name(): string { return $this->name; }
-    public function price(): int { return $this->price; }
-    public function stock(): int { return $this->stock; }
+    public function name(): string { return $this->name->value(); }
+    public function price(): int { return $this->price->value(); }
+    public function stock(): int { return $this->stock->value(); }
     public function active(): bool { return $this->active; }
     public function imageSrc(): ?string { return $this->imageSrc; }
     public function createdAt(): DomainDateTime { return $this->createdAt; }
@@ -103,9 +103,9 @@ class Product
     ): void {
         $this->familyId = $familyId;
         $this->taxId = $taxId;
-        $this->name = $name;
-        $this->price = $price;
-        $this->stock = $stock;
+        $this->name = ProductName::create($name);
+        $this->price = ProductPrice::create($price);
+        $this->stock = ProductStock::create($stock);
         $this->imageSrc = $imageSrc;
         $this->updatedAt = DomainDateTime::now();
     }
