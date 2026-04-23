@@ -3,35 +3,43 @@
 namespace App\User\Infrastructure\Entrypoint\Http;
 
 use App\User\Application\CreateUser\CreateUser;
-use App\User\Application\CreateUser\CreateUserResponse;
+use App\Shared\Domain\ValueObject\Uuid;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CreateUserController
 {
-    public function __invoke(Request $request, CreateUser $createUser): JsonResponse
+    public function __construct(
+        private CreateUser $useCase
+    ) {}
+
+    public function __invoke(Request $request): JsonResponse
     {
-    $validated = $request->validate([
-        'restaurant_uuid' => 'required|string',
-        'name'          => 'required|string|max:255',
-        'email'         => 'required|email|max:255',
-        'password'      => 'required|string|min:6',
-        'role'          => 'nullable|string|max:50',
-        'image_src'     => 'nullable|string|max:255',
-        'pin'           => 'nullable|string|max:10',
-    ]);
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|max:255',
+            'password'  => 'required|string|min:6',
+            'role'      => 'nullable|string',
+            'image_src' => 'nullable|string',
+            'pin'       => 'nullable|string',
+        ]);
 
-    // Llamamos al caso de uso respetando el orden de CreateUser::__invoke
-    $response = $createUser(
-        \App\Shared\Domain\ValueObject\Uuid::create($validated['restaurant_uuid']),
-        $validated['name'],
-        $validated['email'],
-        $validated['password'],
-        $validated['role']      ?? 'user',
-        $validated['image_src'] ?? 'default.png',
-        $validated['pin']       ?? '0000'
-    );
+        $restaurantUuid = $request->header('X-Restaurant-Id');
 
-    return response()->json($response->toArray(), 201);
+        if (!$restaurantUuid) {
+            return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+        }
+
+        $response = ($this->useCase)(
+            Uuid::create($restaurantUuid),
+            $request->input('name'),
+            $request->input('email'),
+            $request->input('password'),
+            $request->input('role')      ?? 'waiter',
+            $request->input('image_src') ?? null,
+            $request->input('pin')       ?? null
+        );
+
+        return new JsonResponse($response->toArray(), 201);
     }
 }

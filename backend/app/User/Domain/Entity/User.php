@@ -7,6 +7,7 @@ use App\Shared\Domain\ValueObject\Uuid;
 use App\User\Domain\ValueObject\PasswordHash;
 use App\User\Domain\ValueObject\UserName;
 use App\User\Domain\ValueObject\UserRole;
+use App\Shared\Domain\ValueObject\Email;
 use App\User\Domain\ValueObject\Pin;
 
 final class User
@@ -16,7 +17,7 @@ final class User
         private Uuid $restaurantUuid,
         private UserRole $role,
         private UserName $name,
-        private string $email,
+        private Email $email,
         private PasswordHash $passwordHash,
         private ?Pin $pin,
         private ?string $imageSrc,
@@ -24,7 +25,7 @@ final class User
         private DomainDateTime $updatedAt,
     ) {}
 
-    public static function dddCreate(Uuid $restaurantUuid, string $role, string $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, ?string $pin): self
+    public static function dddCreate(Uuid $restaurantUuid, string $role, Email $email, UserName $name, PasswordHash $passwordHash, ?string $imageSrc, ?string $pin): self
     {
         $now = DomainDateTime::now();
 
@@ -59,7 +60,7 @@ final class User
             Uuid::create($restaurantUuid),
             UserRole::create($role),
             UserName::create($name),
-            $email,
+            Email::create($email),
             PasswordHash::create($passwordHash),
             $pin ? Pin::create($pin) : null,
             $imageSrc,
@@ -68,23 +69,93 @@ final class User
         );
     }
 
-    public function updateName(UserName $name): void { $this->name = $name; }
-    public function updateEmail(string $email): void { $this->email = $email; }
-    public function updatePassword(PasswordHash $password): void { $this->passwordHash = $password; }
-    public function updatePin(?string $pin): void { $this->pin = $pin ? Pin::create($pin) : null; }
-    public function updateRole(string $role): void { $this->role = UserRole::create($role); }
-    public function updateImageSrc(?string $imageSrc): void { $this->imageSrc = $imageSrc; }
-    public function updateRestaurantUuid(Uuid $restaurantUuid): void { $this->restaurantUuid = $restaurantUuid; }
+    public function updateName(UserName $name): void 
+    { 
+        $this->name = $name; 
+    }
 
-    public function id(): Uuid { return $this->uuid; }
-    public function uuid(): Uuid { return $this->uuid; }
-    public function restaurantUuid(): Uuid { return $this->restaurantUuid; }
-    public function role(): string { return $this->role->value(); }
-    public function name(): string { return $this->name->value(); }
-    public function email(): string { return $this->email; }
-    public function passwordHash(): string { return $this->passwordHash->value(); }
-    public function pin(): ?string { return $this->pin?->value(); }
-    public function imageSrc(): ?string { return $this->imageSrc; }
-    public function createdAt(): DomainDateTime { return $this->createdAt; }
-    public function updatedAt(): DomainDateTime { return $this->updatedAt; }
+    public function updateEmail(string $email): void 
+    { 
+        $this->email = Email::create($email); 
+    }
+
+    public function updatePassword(PasswordHash $password): void 
+    { 
+        $this->passwordHash = $password; 
+    }
+
+    public function updatePin(?string $pin): void 
+    { 
+        $this->pin = $pin ? Pin::create($pin) : null; 
+    }
+
+    public function updateRole(string $role): void 
+    { 
+        $this->role = UserRole::create($role); 
+    }
+    
+    public function updateImageSrc(?string $imageSrc): void 
+    { 
+        $this->imageSrc = $imageSrc; 
+    }
+    
+    public function updateRestaurantUuid(Uuid $restaurantUuid): void 
+    { 
+        $this->restaurantUuid = $restaurantUuid; 
+    }
+
+    public function id(): Uuid 
+    { 
+        return $this->uuid; 
+    }
+    
+    public function uuid(): Uuid 
+    { 
+        return $this->uuid; 
+    }
+    
+    public function restaurantUuid(): Uuid 
+    { 
+        return $this->restaurantUuid; 
+    }
+
+    public function role(): string 
+    { 
+        return $this->role->value(); 
+    }
+    
+    public function name(): string 
+    { 
+        return $this->name->value(); 
+    }
+    
+    public function email(): string 
+    { 
+        return $this->email->value(); 
+    }
+    
+    public function passwordHash(): string 
+    { 
+        return $this->passwordHash->value(); 
+    }
+    
+    public function pin(): ?string 
+    { 
+        return $this->pin?->value(); 
+    }
+    
+    public function imageSrc(): ?string 
+    { 
+        return $this->imageSrc; 
+    }
+    
+    public function createdAt(): DomainDateTime 
+    { 
+        return $this->createdAt; 
+    }
+    
+    public function updatedAt(): DomainDateTime 
+    { 
+        return $this->updatedAt; 
+    }
 }

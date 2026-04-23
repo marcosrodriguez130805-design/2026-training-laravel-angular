@@ -2,6 +2,7 @@
 
 namespace App\Family\Application\ToggleFamilyActive;
 
+use App\Family\Domain\Exception\FamilyNotFoundException;
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
 
@@ -15,12 +16,11 @@ class ToggleFamilyActive
     {
         $family = $this->repository->findByUuid(Uuid::create($uuid));
 
-        if(!$family) {
-            throw new \RuntimeException("Family not found with uuid: $uuid");
+        if (!$family) {
+            throw new FamilyNotFoundException($uuid);
         }
 
         $family->toggleActive();
-
         $this->repository->update($family);
 
         return new ToggleFamilyActiveResponse($family);

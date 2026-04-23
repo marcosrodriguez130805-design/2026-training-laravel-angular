@@ -4,14 +4,16 @@ namespace App\Tax\Domain\Entity;
 
 use App\Shared\Domain\ValueObject\DomainDateTime;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Tax\Domain\ValueObject\TaxName;
+use App\Tax\Domain\ValueObject\TaxPercentage;
 
 class Tax
 {
     public function __construct(
         private Uuid $uuid,
         private Uuid $restaurantId,
-        private string $name,
-        private int $percentage,
+        private TaxName $name,
+        private TaxPercentage $percentage,
         private DomainDateTime $createdAt,
         private DomainDateTime $updatedAt,
     ) {}
@@ -23,8 +25,8 @@ class Tax
         return new self(
             Uuid::generate(),
             $restaurantId,
-            $name,
-            $percentage,
+            TaxName::create($name),
+            TaxPercentage::create($percentage),
             $now,
             $now,
         );
@@ -41,48 +43,24 @@ class Tax
         return new self(
             Uuid::create($uuid),
             Uuid::create($restaurantId),
-            $name,
-            $percentage,
+            TaxName::create($name),
+            TaxPercentage::create($percentage),
             DomainDateTime::create($createdAt),
             DomainDateTime::create($updatedAt),
         );
     }
 
-    // Getters
-    public function uuid(): Uuid 
-    { 
-        return $this->uuid; 
-    }
-    
-    public function restaurantId(): Uuid 
-    { 
-        return $this->restaurantId; 
-    }
-    
-    public function name(): string 
-    { 
-        return $this->name; 
-    }
-    
-    public function percentage(): int 
-    { 
-        return $this->percentage; 
-    }
-    
-    public function createdAt(): DomainDateTime 
-    { 
-        return $this->createdAt; 
-    }
-    
-    public function updatedAt(): DomainDateTime 
-    { 
-        return $this->updatedAt; 
-    }
+    public function uuid(): Uuid { return $this->uuid; }
+    public function restaurantId(): Uuid { return $this->restaurantId; }
+    public function name(): string { return $this->name->value(); }
+    public function percentage(): int { return $this->percentage->value(); }
+    public function createdAt(): DomainDateTime { return $this->createdAt; }
+    public function updatedAt(): DomainDateTime { return $this->updatedAt; }
 
     public function update(string $name, int $percentage): void
     {
-        $this->name = $name;
-        $this->percentage = $percentage;
+        $this->name = TaxName::create($name);
+        $this->percentage = TaxPercentage::create($percentage);
         $this->updatedAt = DomainDateTime::now();
     }
 }

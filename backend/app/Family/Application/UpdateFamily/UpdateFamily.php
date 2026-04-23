@@ -2,6 +2,7 @@
 
 namespace App\Family\Application\UpdateFamily;
 
+use App\Family\Domain\Exception\FamilyNotFoundException;
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
 
@@ -16,11 +17,11 @@ class UpdateFamily
         $family = $this->repository->findByUuid(Uuid::create($uuid));
 
         if (!$family) {
-            throw new \RuntimeException("Family not found with uuid: $uuid");
+            throw new FamilyNotFoundException($uuid);
         }
 
         $family->updateName($name);
-        
+
         if ($family->active() !== $active) {
             $family->toggleActive();
         }
@@ -28,6 +29,5 @@ class UpdateFamily
         $this->repository->save($family);
 
         return new UpdateFamilyResponse($family);
-
     }
 }

@@ -17,7 +17,7 @@ class EloquentUserRepository implements UserRepositoryInterface
         $this->model->newQuery()->updateOrCreate(
             ['uuid' => $user->id()->value()],
             [
-                'restaurant_uuid' => $user->restaurantId()->value(),
+                'restaurant_uuid' => $user->restaurantUuid()->value(),
                 'role'          => $user->role(),
                 'image_src'     => $user->imageSrc(),
                 'name'          => $user->name(),
@@ -63,7 +63,7 @@ class EloquentUserRepository implements UserRepositoryInterface
     public function update(User $user): void
     {
         $this->model->newQuery()->where('uuid', $user->id()->value())->update([
-            'restaurant_uuid' => $user->restaurantId()->value(),
+            'restaurant_uuid' => $user->restaurantUuid()->value(),
             'role'          => $user->role(),
             'image_src'     => $user->imageSrc(),
             'name'          => $user->name(),
