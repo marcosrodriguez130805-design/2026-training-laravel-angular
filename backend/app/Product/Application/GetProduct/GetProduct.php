@@ -2,6 +2,7 @@
 
 namespace App\Product\Application\GetProduct;
 
+use App\Product\Domain\Exception\ProductNotFoundException;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
 
@@ -11,15 +12,14 @@ class GetProduct
         private ProductRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $restaurantUuid, string $uuid): ?GetProductResponse
+    public function __invoke(string $restaurantUuid, string $uuid): GetProductResponse
     {
         $restaurantId = Uuid::create($restaurantUuid);
 
-    
         $product = $this->repository->getProduct($restaurantId, $uuid);
 
         if (!$product) {
-        return null;
+            throw new ProductNotFoundException($uuid);
         }
 
         return new GetProductResponse($product);

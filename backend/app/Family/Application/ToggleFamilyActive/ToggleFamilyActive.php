@@ -12,9 +12,9 @@ class ToggleFamilyActive
         private FamilyRepositoryInterface $repository,
     ) {}
 
-    public function __invoke(string $uuid): ToggleFamilyActiveResponse
+    public function __invoke(string $uuid, string $restaurantUuid): ToggleFamilyActiveResponse
     {
-        $family = $this->repository->findByUuid(Uuid::create($uuid));
+        $family = $this->repository->findByUuid(Uuid::create($uuid), $restaurantUuid);
 
         if (!$family) {
             throw new FamilyNotFoundException($uuid);

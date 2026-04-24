@@ -2,6 +2,7 @@
 
 namespace App\Tax\Application\GetTax;
 
+use App\Tax\Domain\Exception\TaxNotFoundException;
 use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
 
 class GetTax
@@ -10,22 +11,20 @@ class GetTax
         private TaxRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $uuid, string $restaurantUuid): ?GetTaxResponse
+    public function __invoke(string $uuid, string $restaurantUuid): GetTaxResponse
     {
         $taxWithRestaurant = $this->repository->findByUuidWithRestaurantUuid($uuid);
 
         if (!$taxWithRestaurant) {
-            return null;
+            throw new TaxNotFoundException($uuid);
         }
 
-        // VALIDACIÓN CRUCIAL:
-        // Comparamos el restaurante del impuesto con el del header
         if ($taxWithRestaurant['restaurant_uuid'] !== $restaurantUuid) {
-            return null; // El impuesto no pertenece a este restaurante
+            throw new TaxNotFoundException($uuid);
         }
 
         return new GetTaxResponse(
-            $taxWithRestaurant['tax'], 
+            $taxWithRestaurant['tax'],
             $taxWithRestaurant['restaurant_uuid']
         );
     }

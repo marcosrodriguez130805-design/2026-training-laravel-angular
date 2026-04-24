@@ -12,9 +12,9 @@ class UpdateFamily
         private FamilyRepositoryInterface $repository,
     ) {}
 
-    public function __invoke(string $uuid, string $name, bool $active): UpdateFamilyResponse
+    public function __invoke(string $uuid, string $name, bool $active, string $restaurantUuid): UpdateFamilyResponse
     {
-        $family = $this->repository->findByUuid(Uuid::create($uuid));
+        $family = $this->repository->findByUuid(Uuid::create($uuid), $restaurantUuid);
 
         if (!$family) {
             throw new FamilyNotFoundException($uuid);

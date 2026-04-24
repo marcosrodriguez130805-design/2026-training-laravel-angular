@@ -2,6 +2,7 @@
 
 namespace App\Product\Application\UpdateProduct;
 
+use App\Product\Domain\Exception\ProductNotFoundException;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
 
@@ -12,6 +13,7 @@ class UpdateProduct
     ) {}
 
     public function __invoke(
+        string $restaurantUuid,
         string $uuid,
         Uuid $familyId,
         Uuid $taxId,
@@ -20,13 +22,13 @@ class UpdateProduct
         int $stock,
         ?string $imageSrc
     ): UpdateProductResponse {
-        $product = $this->repository->getProduct($uuid);
+        $restaurantId = Uuid::create($restaurantUuid);
+        $product = $this->repository->getProduct($restaurantId, $uuid);
 
         if (!$product) {
-            throw new \Exception("Product not found", 404);
+            throw new ProductNotFoundException($uuid);
         }
 
-        // La entidad se encarga de cambiar sus valores internos
         $product->update(
             $familyId,
             $taxId,
@@ -36,7 +38,6 @@ class UpdateProduct
             $imageSrc
         );
 
-        // El repositorio solo persiste el estado actual de la entidad
         $this->repository->update($product);
 
         return new UpdateProductResponse($product);

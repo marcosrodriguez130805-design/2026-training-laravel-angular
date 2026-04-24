@@ -2,8 +2,9 @@
 
 namespace App\Tax\Application\UpdateTax;
 
+use App\Tax\Domain\Exception\TaxNotFoundException;
 use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
-use App\Shared\Domain\ValueObject\Uuid; // 👈 IMPORTANTE: Importar el VO
+use App\Shared\Domain\ValueObject\Uuid;
 
 class UpdateTax
 {
@@ -12,34 +13,21 @@ class UpdateTax
     ) {}
 
     public function __invoke(
-        Uuid $uuid,           // 👈 Cambiado de string a Uuid
-        Uuid $restaurantUuid, // 👈 Cambiado de string a Uuid
-        string $name, 
+        Uuid $uuid,
+        Uuid $restaurantUuid,
+        string $name,
         int $percentage
     ): UpdateTaxResponse {
-        
-        // 1. Buscamos el impuesto (pasamos el ->value() al repositorio)
         $tax = $this->repository->findByUuid($uuid->value());
 
         if (!$tax) {
-            throw new \Exception("Tax not found", 404);
+            throw new TaxNotFoundException($uuid->value());
         }
 
-        // 2. Validaciones básicas
-        if (empty(trim($name))) {
-            throw new \Exception("Tax name cannot be empty", 400);
-        }
-
-        if ($percentage < 0) {
-            throw new \Exception("Tax percentage cannot be negative", 400);
-        }
-
-        // 3. Validación de duplicados (usamos ->value() para los IDs)
         if ($this->repository->existsByNameAndRestaurant($name, $restaurantUuid->value(), $uuid->value())) {
             throw new \Exception("Has intentado poner un nombre que ya usa otro de tus impuestos", 409);
         }
 
-        // 4. Actualización de la entidad y persistencia
         $tax->update($name, $percentage);
         $this->repository->update($tax);
 

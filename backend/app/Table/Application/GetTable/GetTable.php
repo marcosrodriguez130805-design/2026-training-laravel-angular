@@ -2,8 +2,8 @@
 
 namespace App\Table\Application\GetTable;
 
+use App\Table\Domain\Exception\TableNotFoundException;
 use App\Table\Domain\Interfaces\TableRepositoryInterface;
-use Exception;
 
 final class GetTable
 {
@@ -11,14 +11,14 @@ final class GetTable
         private TableRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $uuid): GetTableResponse // Devolvemos el OBJETO
-{
-    $table = $this->repository->findByUuid($uuid);
+    public function __invoke(string $uuid): GetTableResponse
+    {
+        $table = $this->repository->findByUuid($uuid);
 
-    if (!$table) {
-        throw new \RuntimeException("Table not found with uuid: $uuid", 404);
+        if (!$table) {
+            throw new TableNotFoundException($uuid);
+        }
+
+        return new GetTableResponse($table);
     }
-
-    return new GetTableResponse($table);
-}
 }

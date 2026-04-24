@@ -2,6 +2,7 @@
 
 namespace App\Table\Application\UpdateTable;
 
+use App\Table\Domain\Exception\TableNotFoundException;
 use App\Table\Domain\Interfaces\TableRepositoryInterface;
 
 class UpdateTable
@@ -17,11 +18,10 @@ class UpdateTable
         $table = $this->repository->findByUuid($uuid);
 
         if (!$table) {
-            throw new \Exception("Table not found", 404);
+            throw new TableNotFoundException($uuid);
         }
 
         $table->update($name);
-
         $this->repository->update($table);
 
         return new UpdateTableResponse($table);

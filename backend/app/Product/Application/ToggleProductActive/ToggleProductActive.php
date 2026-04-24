@@ -2,7 +2,9 @@
 
 namespace App\Product\Application\ToggleProductActive;
 
+use App\Product\Domain\Exception\ProductNotFoundException;
 use App\Product\Domain\Interfaces\ProductRepositoryInterface;
+use App\Shared\Domain\ValueObject\Uuid;
 
 class ToggleProductActive
 {
@@ -10,16 +12,17 @@ class ToggleProductActive
         private ProductRepositoryInterface $repository,
     ) {}
 
-    public function __invoke(string $uuid): ToggleProductActiveResponse
+    public function __invoke(string $restaurantUuid, string $uuid): ToggleProductActiveResponse
     {
-        $product = $this->repository->getProduct($uuid);
+        $restaurantId = Uuid::create($restaurantUuid);
+
+        $product = $this->repository->getProduct($restaurantId, $uuid);
 
         if (!$product) {
-            throw new \RuntimeException("Product not found with uuid: $uuid");
+            throw new ProductNotFoundException($uuid);
         }
 
         $product->toggleActive();
-
         $this->repository->update($product);
 
         return new ToggleProductActiveResponse($product);

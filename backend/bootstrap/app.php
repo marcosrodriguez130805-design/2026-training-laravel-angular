@@ -15,5 +15,15 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+    $exceptions->render(function (\App\Shared\Domain\Exception\NotFoundException $e) {
+        return response()->json(['error' => $e->getMessage()], 404);
+    });
+
+    $exceptions->render(function (\App\Shared\Domain\Exception\BusinessRuleViolationException $e) {
+        return response()->json(['error' => $e->getMessage()], 422);
+    });
+
+    $exceptions->render(function (\App\Shared\Domain\Exception\UnauthorizedException $e) {
+        return response()->json(['error' => $e->getMessage()], 401);
+    });
+})->create();
