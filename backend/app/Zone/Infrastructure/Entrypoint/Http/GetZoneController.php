@@ -10,8 +10,7 @@ final class GetZoneController
 {
     public function __invoke(string $uuid, Request $request, GetZone $getZone): JsonResponse
     {
-        // Buscamos el ID en el Header o en la Query
-        $restaurantUuid = $request->header('X-Restaurant-Id') ?? $request->query('restaurant_id');
+        $restaurantUuid = $request->header('X-Restaurant-Id');
 
         if (!$restaurantUuid) {
             return response()->json(['error' => 'Restaurant ID is required'], 400);

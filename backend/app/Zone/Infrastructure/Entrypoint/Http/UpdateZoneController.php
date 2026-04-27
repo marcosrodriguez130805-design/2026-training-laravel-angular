@@ -13,11 +13,14 @@ final class UpdateZoneController
         try {
             // Validamos que al menos venga el nombre
             $request->validate([
-                'name' => 'required|string'
+                'name' => 'required|string|max:255'
             ]);
+
+            $restaurantUuid = $request->header('X-Restaurant-Id');
 
             $response = $updateZone(
                 $uuid,
+                $restaurantUuid,
                 (string) $request->get('name')
             );
 

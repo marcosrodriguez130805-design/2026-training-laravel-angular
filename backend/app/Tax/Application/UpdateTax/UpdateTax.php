@@ -5,6 +5,7 @@ namespace App\Tax\Application\UpdateTax;
 use App\Tax\Domain\Exception\TaxNotFoundException;
 use App\Tax\Domain\Interfaces\TaxRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Tax\Domain\Exception\TaxNameAlreadyExistsException;
 
 class UpdateTax
 {
@@ -25,7 +26,7 @@ class UpdateTax
         }
 
         if ($this->repository->existsByNameAndRestaurant($name, $restaurantUuid->value(), $uuid->value())) {
-            throw new \Exception("Has intentado poner un nombre que ya usa otro de tus impuestos", 409);
+            throw new TaxNameAlreadyExistsException($name);
         }
 
         $tax->update($name, $percentage);

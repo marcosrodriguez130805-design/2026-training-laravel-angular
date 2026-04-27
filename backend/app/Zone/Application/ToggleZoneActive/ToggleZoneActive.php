@@ -1,35 +1,29 @@
 <?php
 
-namespace App\Zone\Application\UpdateZone;
+namespace App\Zone\Application\ToggleZoneActive;
 
 use App\Zone\Domain\Interfaces\ZoneRepositoryInterface;
 use App\Zone\Domain\Exception\ZoneNotFoundException;
 use App\Shared\Domain\ValueObject\Uuid;
 
-final class UpdateZone
+final class ToggleZoneActive
 {
     public function __construct(
         private ZoneRepositoryInterface $repository
     ) {}
 
-    public function __invoke(
-        string $uuid,
-        string $restaurantUuid,
-        string $name
-    ): UpdateZoneResponse {
-        // Usamos el método findByUuid que ya tienes en el repo
+    public function __invoke(string $uuid, string $restaurantUuid): ToggleZoneActiveResponse
+    {
         $zone = $this->repository->findByUuid(Uuid::create($uuid), $restaurantUuid);
 
         if (!$zone) {
             throw new ZoneNotFoundException($uuid);
         }
 
-        // La entidad Zone ya tiene su método updateName
-        $zone->updateName($name);
+        $zone->toggleActive();
 
-        // Persistimos el cambio
         $this->repository->update($zone);
 
-        return new UpdateZoneResponse($zone);
+        return new ToggleZoneActiveResponse($zone);
     }
 }

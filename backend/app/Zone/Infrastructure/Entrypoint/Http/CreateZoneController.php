@@ -16,19 +16,23 @@ final class CreateZoneController
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            // 1. Validamos la entrada (siguiendo tu migración de zones)
+            // 1. Validamos la entrada
             $request->validate([
-                'restaurant_uuid' => 'required|string',
-                'name'            => 'required|string',
+                'name'   => 'required|string|max:255',
+                'active' => 'required|boolean',
             ]);
 
-            // 2. Ejecutamos el caso de uso
+            // 2. Extraemos el restaurante del Header
+            $restaurantUuid = $request->header('X-Restaurant-Id');
+
+            // 3. Ejecutamos el caso de uso
             $response = $this->useCase->__invoke(
-                Uuid::create($request->input('restaurant_uuid')),
-                (string) $request->input('name')
+                Uuid::create($restaurantUuid),
+                (string) $request->input('name'),
+                (bool) $request->input('active')
             );
 
-            // 3. Devolvemos 201 Created
+            // 4. Devolvemos 201 Created
             return new JsonResponse($response->toArray(), 201);
 
         } catch (\Exception $e) {

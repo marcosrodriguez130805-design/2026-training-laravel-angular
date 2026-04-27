@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Zone\Application\ListZones;
+namespace App\Zone\Application\ToggleZoneActive;
 
 use App\Zone\Domain\Entity\Zone;
 
-final class ListZonesResponse
+final class ToggleZoneActiveResponse
 {
     public function __construct(
         private Zone $zone

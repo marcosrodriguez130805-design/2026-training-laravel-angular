@@ -16,7 +16,15 @@ class EloquentZone extends Model
         'uuid',
         'restaurant_uuid',
         'name',
+        'active',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+        ];
+    }
 
     public function restaurant()
     {

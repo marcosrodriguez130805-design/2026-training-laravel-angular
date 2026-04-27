@@ -26,4 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
     $exceptions->render(function (\App\Shared\Domain\Exception\UnauthorizedException $e) {
         return response()->json(['error' => $e->getMessage()], 401);
     });
+
+    $exceptions->render(function (\InvalidArgumentException $e) {
+        return response()->json(['error' => $e->getMessage()], 422);
+    });
 })->create();

@@ -29,6 +29,7 @@ use App\Zone\Infrastructure\Entrypoint\Http\ListZonesController;
 use App\Zone\Infrastructure\Entrypoint\Http\GetZoneController;
 use App\Zone\Infrastructure\Entrypoint\Http\UpdateZoneController;
 use App\Zone\Infrastructure\Entrypoint\Http\DeleteZoneController;
+use App\Zone\Infrastructure\Entrypoint\Http\ToggleZoneActiveController;
 use App\Table\Infrastructure\Entrypoint\Http\CreateTableController;
 use App\Table\Infrastructure\Entrypoint\Http\ListTablesController;
 use App\Table\Infrastructure\Entrypoint\Http\ListTablesByZoneController;
@@ -79,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/zones', ListZonesController::class);
     Route::get('/zones/{uuid}', GetZoneController::class);
     Route::put('/zones/{uuid}', UpdateZoneController::class);
+    Route::patch('/zones/{uuid}/toggle-active', ToggleZoneActiveController::class);
     Route::delete('/zones/{uuid}', DeleteZoneController::class);
 
     // Tables

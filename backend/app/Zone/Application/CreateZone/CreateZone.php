@@ -5,6 +5,8 @@ namespace App\Zone\Application\CreateZone;
 use App\Zone\Domain\Entity\Zone;
 use App\Zone\Domain\Interfaces\ZoneRepositoryInterface;
 use App\Shared\Domain\ValueObject\Uuid;
+use App\Shared\Domain\ValueObject\DomainDateTime;
+use Illuminate\Support\Str;
 
 final class CreateZone
 {
@@ -13,14 +15,23 @@ final class CreateZone
     ) {}
 
     public function __invoke(
-        Uuid $restaurantUuid,
-        string $name
+        Uuid $restaurantUuid, 
+        string $name,
+        bool $active
     ): CreateZoneResponse {
         
-        // Delegamos la creación a la entidad (Pureza de Dominio)
+        // Generamos los datos que faltan para la entidad
+        $zoneUuid = Uuid::create(\Illuminate\Support\Str::uuid()->toString());
+        $now = \App\Shared\Domain\ValueObject\DomainDateTime::now();
+
+        // Usamos el método de creación de la entidad pasando el estado completo
         $zone = Zone::dddCreate(
-            $restaurantUuid,
-            $name
+            $zoneUuid,
+            $restaurantUuid, 
+            $name,
+            $active,
+            $now,
+            $now
         );
 
         $this->repository->save($zone);

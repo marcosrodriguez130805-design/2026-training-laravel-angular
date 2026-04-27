@@ -11,25 +11,42 @@ final class EloquentZoneRepository implements ZoneRepositoryInterface
 {
     public function save(Zone $zone): void
     {
-        EloquentZone::create([
-            'uuid'            => $zone->uuid()->value(),
-            'restaurant_uuid' => $zone->restaurantUuid()->value(),
-            'name'            => $zone->name(),
-        ]);
+        $model = EloquentZone::where('uuid', $zone->uuid()->value())->first();
+
+        if ($model) {
+            $model->update([
+                'name' => $zone->name(),
+                'active' => $zone->active(),
+                'restaurant_uuid' => $zone->restaurantUuid()->value(),
+            ]);
+        } else {
+            EloquentZone::create([
+                'uuid' => $zone->uuid()->value(),
+                'restaurant_uuid' => $zone->restaurantUuid()->value(),
+                'name' => $zone->name(),
+                'active' => $zone->active(),
+            ]);
+        }
     }
 
-    public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Zone 
-{
-    $model = EloquentZone::where('uuid', $uuid->value())
-        ->where('restaurant_uuid', $restaurantUuid) // Aquí es donde fallaba
-        ->first();
-
-    return $model ? $this->toDomain($model) : null;
-}
-
-    public function listZones(string $restaurantUuid): array
+    public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Zone
     {
-        $models = EloquentZone::where('restaurant_uuid', $restaurantUuid)->get();
+        $model = EloquentZone::where('uuid', $uuid->value())
+            ->where('restaurant_uuid', $restaurantUuid)
+            ->first();
+
+        return $model ? $this->toDomain($model) : null;
+    }
+
+    public function listZones(string $restaurantUuid, bool $onlyActive = false): array
+    {
+        $query = EloquentZone::where('restaurant_uuid', $restaurantUuid);
+
+        if ($onlyActive) {
+            $query->where('active', true);
+        }
+
+        $models = $query->get();
 
         return $models->map(fn($model) => $this->toDomain($model))->toArray();
     }
@@ -39,20 +56,21 @@ final class EloquentZoneRepository implements ZoneRepositoryInterface
      */
     private function toDomain(EloquentZone $model): Zone
     {
-        return new Zone(
-            Uuid::create($model->uuid),
-            Uuid::create($model->restaurant_uuid),
-            (string) $model->name
+        return Zone::fromPersistence(
+            $model->uuid,
+            $model->restaurant_uuid,
+            $model->name,
+            (bool) $model->active,
+            $model->created_at->toDateTimeImmutable(),
+            $model->updated_at->toDateTimeImmutable(),
         );
     }
 
-    // En EloquentZoneRepository.php
-
     public function update(Zone $zone): void
     {
-        EloquentZone::where('uuid', $zone->uuid()->value())
-        ->update([
+        EloquentZone::where('uuid', $zone->uuid()->value())->update([
             'name' => $zone->name(),
+            'active' => $zone->active(),
         ]);
     }
 
