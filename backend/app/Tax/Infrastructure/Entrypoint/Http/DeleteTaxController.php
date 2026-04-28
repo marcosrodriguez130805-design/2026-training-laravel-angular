@@ -13,8 +13,11 @@ class DeleteTaxController
 
     public function __invoke(string $uuid): JsonResponse
     {
-        ($this->deleteTax)($uuid);
-
-        return new JsonResponse(null, 204); // 204 No Content es el estándar para deletes exitosos
+        try {
+            ($this->deleteTax)($uuid);
+            return new JsonResponse(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
     }
 }

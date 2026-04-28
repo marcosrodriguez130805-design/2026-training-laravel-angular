@@ -22,9 +22,9 @@ class CreateUser
         string $name,
         string $email,
         string $plainPassword,
-        string $role = 'user',       // default
-        string $imageSrc = 'default.png', // default
-        string $pin = '0000'         // default
+        ?string $role = 'user',
+        ?string $imageSrc = null,
+        ?string $pin = null
     ): CreateUserResponse
     {
         // Creamos el hash de la contraseña

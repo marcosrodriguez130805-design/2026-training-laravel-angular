@@ -3,7 +3,7 @@
 namespace App\Tax\Infrastructure\Entrypoint\Http;
 
 use App\Tax\Application\CreateTax\CreateTax;
-use App\Tax\Application\CreateTax\CreateTaxRequest;
+use App\Shared\Domain\ValueObject\Uuid;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -13,20 +13,23 @@ class CreateTaxController
 
     public function __invoke(Request $request): JsonResponse
     {
-        // 1. Extraemos el restaurante del header
-        $restaurantUuid = $request->header('X-Restaurant-Id');
-        
-        // 2. Obtenemos los datos del impuesto del body
-        $name = $request->input('name');
-        $percentage = (float) $request->input('percentage');
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'percentage' => 'required|integer|min:0',
+        ]);
 
-        // 3. Ejecutamos el caso de uso pasando el contexto del restaurante
+        $restaurantUuid = $request->header('X-Restaurant-Id');
+
+        if (!$restaurantUuid) {
+            return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+        }
+
         $response = ($this->createTax)(
-            $name,
-            $percentage,
-            $restaurantUuid
+            Uuid::create($restaurantUuid),
+            $validated['name'], 
+            (int) $validated['percentage']
         );
 
-        return response()->json($response->toArray(), 201);
+        return new JsonResponse($response->toArray(), 201);
     }
 }

@@ -8,19 +8,21 @@ use Illuminate\Http\JsonResponse;
 
 class GetFamilyController
 {
-    public function __invoke(string $uuid, Request $request, GetFamily $getFamily): JsonResponse
-{
-    // 1. Capturamos el ID del restaurante del Header
-    $restaurantUuid = $request->header('X-Restaurant-Id');
+    public function __construct(private GetFamily $useCase) {}
 
-    if (!$restaurantUuid) {
-        return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+    public function __invoke(string $uuid, Request $request): JsonResponse
+    {
+        $restaurantUuid = $request->header('X-Restaurant-Id');
+
+        if (!$restaurantUuid) {
+            return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+        }
+
+        try {
+            $response = ($this->useCase)($uuid, $restaurantUuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
     }
-
-    // 2. Pasamos AMBOS parámetros al caso de uso
-    // Antes tenías solo $getFamily($uuid), ahora añadimos el segundo:
-    $family = $getFamily($uuid, $restaurantUuid);
-
-    return response()->json($family->toArray(), 200);
-}
 }

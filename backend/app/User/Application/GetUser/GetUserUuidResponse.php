@@ -14,7 +14,7 @@ class GetUserUuidResponse
     {
         return [
             'uuid'          => $this->user->uuid()->value(),
-            'restaurant_uuid' => $this->user->restaurantId()->value(),
+            'restaurant_uuid' => $this->user->restaurantUuid()->value(),
             'role'          => $this->user->role(),
             'name'          => $this->user->name(),
             'email'         => $this->user->email(),

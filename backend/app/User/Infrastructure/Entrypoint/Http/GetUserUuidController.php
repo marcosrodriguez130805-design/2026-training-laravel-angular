@@ -7,11 +7,15 @@ use Illuminate\Http\JsonResponse;
 
 class GetUserUuidController
 {
-    // Inyectamos el Caso de Uso "GetUser"
-    public function __invoke(string $uuid, GetUserUuid $getUser): JsonResponse
-    {
-        $response = $getUser($uuid);
+    public function __construct(private GetUserUuid $useCase) {}
 
-        return response()->json($response->toArray(), 200);
+    public function __invoke(string $uuid): JsonResponse
+    {
+        try {
+            $response = ($this->useCase)($uuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
     }
 }

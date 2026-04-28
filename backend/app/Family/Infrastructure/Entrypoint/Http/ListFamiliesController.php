@@ -8,21 +8,26 @@ use Illuminate\Http\Request;
 
 class ListFamiliesController
 {
-    public function __invoke(Request $request, ListFamilies $listFamilies): JsonResponse
+    public function __construct(private ListFamilies $useCase) {}
+
+    public function __invoke(Request $request): JsonResponse
     {
-        $restaurantUuid = $request->header('X-Restaurant-Id');
+        try {
+            $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        if (!$restaurantUuid) {
-        return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+            if (!$restaurantUuid) {
+                return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+            }
+
+            $families = ($this->useCase)(
+                $restaurantUuid,
+                filter_var($request->query('only_active', false), FILTER_VALIDATE_BOOLEAN)
+            );
+
+            return response()->json($families, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
         }
-
-        // Le pasamos el ID y, si quieres, el filtro de activos desde la query
-        $families = $listFamilies(
-            $restaurantUuid, 
-            $request->query('only_active', false)
-        );
-
-        return response()->json($families, 200);
     }
 }
 

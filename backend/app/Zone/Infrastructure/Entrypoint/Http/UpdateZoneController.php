@@ -8,20 +8,25 @@ use Illuminate\Http\Request;
 
 final class UpdateZoneController
 {
-    public function __invoke(string $uuid, Request $request, UpdateZone $updateZone): JsonResponse
+    public function __construct(private UpdateZone $useCase) {}
+
+    public function __invoke(string $uuid, Request $request): JsonResponse
     {
         try {
-            // Validamos que al menos venga el nombre
             $request->validate([
                 'name' => 'required|string|max:255'
             ]);
 
             $restaurantUuid = $request->header('X-Restaurant-Id');
 
-            $response = $updateZone(
+            if (!$restaurantUuid) {
+                return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+            }
+
+            $response = ($this->useCase)(
                 $uuid,
                 $restaurantUuid,
-                (string) $request->get('name')
+                (string) $request->input('name')
             );
 
             return response()->json($response->toArray(), 200);

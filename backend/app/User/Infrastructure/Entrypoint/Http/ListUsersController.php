@@ -8,12 +8,19 @@ use Illuminate\Http\Request;
 
 class ListUsersController
 {
-    public function __invoke(Request $request, ListUsers $listUsers): JsonResponse
-    {
-        $responses = $listUsers();
+    public function __construct(private ListUsers $useCase) {}
 
-        return response()->json(
-            array_map(fn($response) => $response->toArray(), $responses), 200
-        );
+    public function __invoke(Request $request): JsonResponse
+    {
+        try {
+            $responses = ($this->useCase)();
+
+            return response()->json(
+                array_map(fn($response) => $response->toArray(), $responses),
+                200
+            );
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
     }
 }

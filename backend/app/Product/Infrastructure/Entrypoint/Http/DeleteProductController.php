@@ -13,8 +13,11 @@ class DeleteProductController
 
     public function __invoke(string $uuid): JsonResponse
     {
-        ($this->deleteProduct)($uuid);
-
-        return new JsonResponse(null, 204);
+        try {
+            ($this->deleteProduct)($uuid);
+            return new JsonResponse(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
     }
 }

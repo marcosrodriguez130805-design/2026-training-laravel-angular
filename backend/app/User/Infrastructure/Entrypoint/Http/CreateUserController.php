@@ -35,9 +35,9 @@ class CreateUserController
             $request->input('name'),
             $request->input('email'),
             $request->input('password'),
-            $request->input('role')      ?? 'waiter',
-            $request->input('image_src') ?? null,
-            $request->input('pin')       ?? null
+            $request->input('role') ?? 'user',
+            $request->input('image_src'),
+            $request->input('pin')
         );
 
         return new JsonResponse($response->toArray(), 201);

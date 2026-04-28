@@ -21,8 +21,8 @@ final class CreateZone
     ): CreateZoneResponse {
         
         // Generamos los datos que faltan para la entidad
-        $zoneUuid = Uuid::create(\Illuminate\Support\Str::uuid()->toString());
-        $now = \App\Shared\Domain\ValueObject\DomainDateTime::now();
+        $zoneUuid = Uuid::create(Str::uuid()->toString());
+        $now = DomainDateTime::now();
 
         // Usamos el método de creación de la entidad pasando el estado completo
         $zone = Zone::dddCreate(

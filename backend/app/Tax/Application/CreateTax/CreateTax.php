@@ -13,22 +13,20 @@ final class CreateTax
         private TaxRepositoryInterface $repository
     ) {}
 
-    public function __invoke(string $name, int $percentage, string $restaurantUuid): CreateTaxResponse
-{
-    $restaurantId = Uuid::create($restaurantUuid);
+    public function __invoke(Uuid $restaurantUuid, string $name, int $percentage): CreateTaxResponse
+    {
+        if ($this->repository->existsByNameAndRestaurant($name, $restaurantUuid->value())) {
+            throw new TaxNameAlreadyExistsException($name);
+        }
 
-    if ($this->repository->existsByNameAndRestaurant($name, $restaurantUuid)) {
-        throw new TaxNameAlreadyExistsException($name);
+        $tax = Tax::dddCreate(
+            $restaurantUuid,
+            $name,
+            $percentage
+        );
+
+        $this->repository->save($tax);
+
+        return new CreateTaxResponse($tax);
     }
-
-    $tax = Tax::dddCreate(
-        $restaurantId,
-        $name,
-        $percentage
-    );
-
-    $this->repository->save($tax);
-
-    return new CreateTaxResponse($tax);
-}
 }

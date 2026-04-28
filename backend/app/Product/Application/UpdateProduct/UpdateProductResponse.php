@@ -22,8 +22,8 @@ class UpdateProductResponse
             'stock'         => $this->product->stock(),
             'active'        => $this->product->active(),
             'image_src'     => $this->product->imageSrc(),
-            'created_at'    => $this->product->createdAt()->value()->format('Y-m-d H:i:s'),
-            'updated_at'    => $this->product->updatedAt()->value()->format('Y-m-d H:i:s'),
+            'created_at'    => $this->product->createdAt()->format('Y-m-d H:i:s'),
+            'updated_at'    => $this->product->updatedAt()->format('Y-m-d H:i:s'),
         ];
     }
 }

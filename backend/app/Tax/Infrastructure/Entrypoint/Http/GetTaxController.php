@@ -8,18 +8,21 @@ use Illuminate\Http\Request; // Importante añadir esto
 
 class GetTaxController
 {
-    public function __invoke(string $uuid, Request $request, GetTax $getTax): JsonResponse
+    public function __construct(private GetTax $useCase) {}
+
+    public function __invoke(string $uuid, Request $request): JsonResponse
     {
-        // 1. Obtenemos el ID del restaurante del header
         $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        // 2. Pasamos ambos UUIDs al Caso de Uso
-        $response = $getTax($uuid, $restaurantUuid);
-
-        if (!$response) {
-            return response()->json(['error' => 'Tax not found or access denied'], 404);
+        if (!$restaurantUuid) {
+            return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
         }
 
-        return response()->json($response->toArray(), 200);
+        try {
+            $response = ($this->useCase)($uuid, $restaurantUuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
     }
 }

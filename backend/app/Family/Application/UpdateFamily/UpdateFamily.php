@@ -12,7 +12,7 @@ class UpdateFamily
         private FamilyRepositoryInterface $repository,
     ) {}
 
-    public function __invoke(string $uuid, string $name, bool $active, string $restaurantUuid): UpdateFamilyResponse
+    public function __invoke(string $uuid, string $restaurantUuid, string $name, bool $active): UpdateFamilyResponse
     {
         $family = $this->repository->findByUuid(Uuid::create($uuid), $restaurantUuid);
 

@@ -8,14 +8,21 @@ use Illuminate\Http\JsonResponse;
 
 class ListTaxesController
 {
-    public function __invoke(Request $request, ListTaxes $listTaxes): JsonResponse
-{
-    $restaurantUuid = $request->header('X-Restaurant-Id');
-    
-    // 1. Obtenemos el objeto Response del Caso de Uso
-    $response = $listTaxes($restaurantUuid);
+    public function __construct(private ListTaxes $useCase) {}
 
-    // 2. IMPORTANTE: Llamamos a ->toArray() para que Laravel reciba el array
-    return response()->json($response->toArray(), 200);
-}
+    public function __invoke(Request $request): JsonResponse
+    {
+        try {
+            $restaurantUuid = $request->header('X-Restaurant-Id');
+
+            if (!$restaurantUuid) {
+                return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+            }
+
+            $response = ($this->useCase)($restaurantUuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
+    }
 }

@@ -13,8 +13,11 @@ final class DeleteTableController
 
     public function __invoke(string $uuid): JsonResponse
     {
-        ($this->useCase)($uuid);
-
-        return new JsonResponse(null, 204);
+        try {
+            ($this->useCase)($uuid);
+            return new JsonResponse(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
     }
 }

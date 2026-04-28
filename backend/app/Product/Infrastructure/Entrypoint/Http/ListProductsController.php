@@ -8,19 +8,23 @@ use Illuminate\Http\Request;
 
 class ListProductsController
 {
-    public function __invoke(Request $request, ListProducts $listProducts): JsonResponse
-{
-    $restaurantUuid = $request->header('X-Restaurant-Id');
+    public function __construct(private ListProducts $useCase) {}
 
-    if (!$restaurantUuid) {
-        return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+    public function __invoke(Request $request): JsonResponse
+    {
+        try {
+            $restaurantUuid = $request->header('X-Restaurant-Id');
+
+            if (!$restaurantUuid) {
+                return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+            }
+
+            $familyUuid = $request->query('family_id');
+            $products = ($this->useCase)($restaurantUuid, $familyUuid);
+
+            return response()->json($products, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
     }
-
-    // Opcional: permitir filtrar por familia desde la URL (?family_id=...)
-    $familyUuid = $request->query('family_id');
-
-    $products = $listProducts($restaurantUuid, $familyUuid);
-
-    return response()->json($products, 200);
-}
 }

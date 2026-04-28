@@ -8,17 +8,22 @@ use Illuminate\Http\Request;
 
 final class DeleteZoneController
 {
-    public function __invoke(string $uuid, Request $request, DeleteZone $deleteZone): JsonResponse
+    public function __construct(private DeleteZone $useCase) {}
+
+    public function __invoke(string $uuid, Request $request): JsonResponse
     {
         try {
             $restaurantUuid = $request->header('X-Restaurant-Id');
 
-            $deleteZone($uuid, $restaurantUuid);
+            if (!$restaurantUuid) {
+                return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+            }
 
-            // Devolvemos 204 No Content (estándar para deletes exitosos)
+            ($this->useCase)($uuid, $restaurantUuid);
+
             return response()->json(null, 204);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
         }
     }
 }

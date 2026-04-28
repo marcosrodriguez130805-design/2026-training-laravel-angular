@@ -3,19 +3,26 @@
 namespace App\Family\Infrastructure\Entrypoint\Http;
 
 use App\Family\Application\ToggleFamilyActive\ToggleFamilyActive;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ToggleFamilyActiveController
 {
-    public function __invoke(Request $request, string $uuid)
+    public function __construct(private ToggleFamilyActive $useCase) {}
+
+    public function __invoke(Request $request, string $uuid): JsonResponse
     {
-        // Obtenemos la clase de aplicación desde el contenedor
-        $toggle = app(ToggleFamilyActive::class);
+        $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        // Ejecutamos la acción
-        $response = $toggle($uuid);
+        if (!$restaurantUuid) {
+            return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+        }
 
-        // Retornamos la respuesta JSON
-        return response()->json($response);
+        try {
+            $response = ($this->useCase)($uuid, $restaurantUuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
     }
 }

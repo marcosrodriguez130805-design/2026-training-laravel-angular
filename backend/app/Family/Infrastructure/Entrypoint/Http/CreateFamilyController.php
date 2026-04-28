@@ -9,23 +9,27 @@ use Illuminate\Http\Request;
 
 class CreateFamilyController
 {
-    public function __invoke(Request $request, CreateFamily $createFamily): JsonResponse
+    public function __construct(private CreateFamily $useCase) {}
+
+    public function __invoke(Request $request): JsonResponse
     {
-        // 1. Validamos solo lo que realmente debe enviar el usuario
         $validated = $request->validate([
             'name'   => 'required|string|max:255',
             'active' => 'required|boolean',
         ]);
 
-        // 2. Extraemos el restaurante del Header (Contexto seguro)
         $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        $response = $createFamily(
+        if (!$restaurantUuid) {
+            return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+        }
+
+        $response = ($this->useCase)(
             Uuid::create($restaurantUuid),
             $validated['name'],
             $validated['active']
         );
 
-        return response()->json($response->toArray(), 201);
+        return new JsonResponse($response->toArray(), 201);
     }
 }

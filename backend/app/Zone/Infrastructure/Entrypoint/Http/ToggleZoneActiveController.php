@@ -8,12 +8,21 @@ use Illuminate\Http\Request;
 
 final class ToggleZoneActiveController
 {
-    public function __invoke(Request $request, ToggleZoneActive $toggleZoneActive, string $uuid): JsonResponse
+    public function __construct(private ToggleZoneActive $useCase) {}
+
+    public function __invoke(Request $request, string $uuid): JsonResponse
     {
         $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        $response = $toggleZoneActive($uuid, $restaurantUuid);
+        if (!$restaurantUuid) {
+            return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
+        }
 
-        return response()->json($response->toArray());
+        try {
+            $response = ($this->useCase)($uuid, $restaurantUuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
     }
 }

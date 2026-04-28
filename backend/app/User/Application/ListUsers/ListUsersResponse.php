@@ -15,7 +15,7 @@ class ListUsersResponse
     {
         return [
             'uuid' => $this->user->uuid()->value(),
-            'restaurant_uuid' => $this->user->restaurantId()->value(),
+            'restaurant_uuid' => $this->user->restaurantUuid()->value(),
             'role' => $this->user->role(),
             'image_src' => $this->user->imageSrc(),
             'name' => $this->user->name(),

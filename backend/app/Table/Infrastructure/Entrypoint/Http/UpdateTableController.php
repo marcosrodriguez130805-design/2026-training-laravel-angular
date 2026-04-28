@@ -15,9 +15,13 @@ final class UpdateTableController
     public function __invoke(string $uuid, Request $request): JsonResponse
     {
         try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
             $response = ($this->useCase)(
                 $uuid,
-                (string) $request->get('name')
+                $validated['name']
             );
 
             return response()->json($response->toArray(), 200);

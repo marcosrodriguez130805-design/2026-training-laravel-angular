@@ -7,10 +7,15 @@ use Illuminate\Http\JsonResponse;
 
 class DeleteFamilyController
 {
-    public function __invoke(string $uuid, DeleteFamily $deleteFamily): JsonResponse
-    {
-        $deleteFamily($uuid);
+    public function __construct(private DeleteFamily $useCase) {}
 
-        return response()->json(null, 204);
+    public function __invoke(string $uuid): JsonResponse
+    {
+        try {
+            ($this->useCase)($uuid);
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
     }
 }

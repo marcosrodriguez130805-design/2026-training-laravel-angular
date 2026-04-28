@@ -8,23 +8,21 @@ use Illuminate\Http\JsonResponse;
 
 class GetProductController
 {
-    public function __invoke(Request $request, string $uuid, GetProduct $getProduct): JsonResponse
+    public function __construct(private GetProduct $useCase) {}
+
+    public function __invoke(Request $request, string $uuid): JsonResponse
     {
-        // 1. Obtenemos el ID del restaurante del header
         $restaurantUuid = $request->header('X-Restaurant-Id');
 
-        // 2. Validación básica por si el header falta
         if (!$restaurantUuid) {
             return response()->json(['error' => 'X-Restaurant-Id header is required'], 400);
         }
 
-        // 3. Pasamos AMBOS parámetros al caso de uso
-        $response = $getProduct($restaurantUuid, $uuid);
-
-        if (!$response) {
-            return response()->json(['error' => 'Product not found'], 404);
+        try {
+            $response = ($this->useCase)($restaurantUuid, $uuid);
+            return response()->json($response->toArray(), 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
         }
-
-        return response()->json($response->toArray(), 200);
     }
 }

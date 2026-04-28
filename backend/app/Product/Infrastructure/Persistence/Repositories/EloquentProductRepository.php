@@ -61,7 +61,7 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         EloquentProduct::where('uuid', $product->uuid()->value())->update([
             'active'     => $product->active(),
             'price'      => $product->price(), // Asegúrate de actualizar lo necesario
-            'updated_at' => $product->updated_at()->value(),
+            'updated_at' => $product->updatedAt()->value(),
         ]);
     }
 

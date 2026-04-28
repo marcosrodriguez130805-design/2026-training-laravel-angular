@@ -28,6 +28,10 @@ class CreateProductController
         // Extraemos el restaurante del Header por seguridad
         $restaurantUuid = $request->header('X-Restaurant-Id');
 
+        if (!$restaurantUuid) {
+            return new JsonResponse(['error' => 'Missing X-Restaurant-Id header'], 400);
+        }
+
         $response = ($this->useCase)(
             Uuid::create($restaurantUuid),
             Uuid::create($request->input('family_uuid')),

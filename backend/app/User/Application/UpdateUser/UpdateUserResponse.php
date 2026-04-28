@@ -6,20 +6,20 @@ use App\User\Domain\Entity\User;
 
 class UpdateUserResponse
 {
-    private string $uuid; // <-- agregar
+    private string $uuid;
     private \App\Shared\Domain\ValueObject\Uuid $restaurantId;
     private string $role;
     private string $name;
     private string $email;
-    private string $pin;
-    private string $imageSrc;
+    private ?string $pin;
+    private ?string $imageSrc;
     private string $createdAt;
     private string $updatedAt;
 
     public function __construct(User $user)
     {
-        $this->uuid         = $user->id()->value(); // si id() devuelve un ValueObject UUID
-        $this->restaurantId = $user->restaurantId();
+        $this->uuid         = $user->id()->value();
+        $this->restaurantId = $user->restaurantUuid();
         $this->role         = $user->role();
         $this->name         = $user->name();
         $this->email        = $user->email();
