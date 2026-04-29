@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\User\Infrastructure\Persistence\Repositories;
 
+use App\Shared\Domain\ValueObject\Uuid;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Infrastructure\Persistence\Models\EloquentUser;
 
-class EloquentUserRepository implements UserRepositoryInterface
+final class EloquentUserRepository implements UserRepositoryInterface
 {
     public function __construct(
         private EloquentUser $model,
@@ -14,42 +17,50 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function save(User $user): void
     {
-        $this->model->newQuery()->updateOrCreate(
-            ['uuid' => $user->id()->value()],
-            [
+        $model = EloquentUser::where('uuid', $user->id()->value())->first();
+
+        if ($model) {
+            $model->update([
                 'restaurant_uuid' => $user->restaurantUuid()->value(),
-                'role'          => $user->role(),
-                'image_src'     => $user->imageSrc(),
-                'name'          => $user->name(),
-                'email'         => $user->email(),
-                'password'      => $user->passwordHash(),
-                'pin'           => $user->pin(),
-                'created_at'    => $user->createdAt()->value(),
-                'updated_at'    => $user->updatedAt()->value(),
-            ]
-        );
-    }
+                'role' => $user->role(),
+                'image_src' => $user->imageSrc(),
+                'name' => $user->name(),
+                'email' => $user->email(),
+                'password' => $user->passwordHash(),
+                'pin' => $user->pin(),
+                'created_at' => $user->createdAt()->value(),
+                'updated_at' => $user->updatedAt()->value(),
+            ]);
 
-    public function findByUuid(string $uuid): ?User
-    {
-        $model = $this->model->newQuery()->where('uuid', $uuid)->first();
-
-        if ($model === null) {
-            return null;
+            return;
         }
 
-        return $this->toEntity($model);
+        EloquentUser::create([
+            'uuid' => $user->id()->value(),
+            'restaurant_uuid' => $user->restaurantUuid()->value(),
+            'role' => $user->role(),
+            'image_src' => $user->imageSrc(),
+            'name' => $user->name(),
+            'email' => $user->email(),
+            'password' => $user->passwordHash(),
+            'pin' => $user->pin(),
+            'created_at' => $user->createdAt()->value(),
+            'updated_at' => $user->updatedAt()->value(),
+        ]);
+    }
+
+    public function findByUuid(Uuid $uuid): ?User
+    {
+        $model = EloquentUser::where('uuid', $uuid->value())->first();
+
+        return $model ? $this->toEntity($model) : null;
     }
 
     public function findByEmail(string $email): ?User
     {
-        $model = $this->model->newQuery()->where('email', $email)->first();
+        $model = EloquentUser::where('email', $email)->first();
 
-        if ($model === null) {
-            return null;
-        }
-
-        return $this->toEntity($model);
+        return $model ? $this->toEntity($model) : null;
     }
 
     public function findAll(): array
@@ -62,23 +73,23 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function update(User $user): void
     {
-        $this->model->newQuery()->where('uuid', $user->id()->value())->update([
+        EloquentUser::where('uuid', $user->id()->value())->update([
             'restaurant_uuid' => $user->restaurantUuid()->value(),
-            'role'          => $user->role(),
-            'image_src'     => $user->imageSrc(),
-            'name'          => $user->name(),
-            'email'         => $user->email(),
-            'password'      => $user->passwordHash(),
-            'pin'           => $user->pin(),
-            'updated_at'    => $user->updatedAt()->value(),
+            'role' => $user->role(),
+            'image_src' => $user->imageSrc(),
+            'name' => $user->name(),
+            'email' => $user->email(),
+            'password' => $user->passwordHash(),
+            'pin' => $user->pin(),
+            'updated_at' => $user->updatedAt()->value(),
         ]);
     }
 
-    public function delete(string $uuid): void
-{
-    // Solo borramos. No hacemos "return", no hace falta.
-    EloquentUser::where('uuid', $uuid)->delete();
-}
+    public function delete(Uuid $uuid): void
+    {
+        EloquentUser::where('uuid', $uuid->value())->delete();
+    }
+
     private function toEntity(EloquentUser $model): User
     {
         return User::fromPersistence(
@@ -88,7 +99,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             $model->name,
             $model->email,
             $model->password,
-            (string) $model->pin,
+            $model->pin === null ? null : (string) $model->pin,
             $model->image_src,
             $model->created_at->toDateTimeImmutable(),
             $model->updated_at->toDateTimeImmutable()

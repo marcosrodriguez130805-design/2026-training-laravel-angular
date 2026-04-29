@@ -11,11 +11,7 @@ class GetUserEmailController
 
     public function __invoke(string $email): JsonResponse
     {
-        try {
-            $response = ($this->useCase)($email);
-            return response()->json($response->toArray(), 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
-        }
+        $response = ($this->useCase)($email);
+        return response()->json($response->toArray(), 200);
     }
 }

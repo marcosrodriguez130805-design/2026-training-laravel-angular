@@ -2,6 +2,7 @@
 
 namespace App\User\Application\GetUserEmail;
 
+use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 
 class GetUserEmail
@@ -15,7 +16,7 @@ class GetUserEmail
         $user = $this->repository->findByEmail($email); 
 
         if (!$user) {
-            throw new \RuntimeException("User not found with email: $email");
+            throw new UserNotFoundException($email);
         }
 
         return new GetUserEmailResponse($user);

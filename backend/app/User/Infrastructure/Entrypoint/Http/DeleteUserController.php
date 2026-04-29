@@ -9,13 +9,8 @@ class DeleteUserController
 {
     public function __invoke(string $uuid, DeleteUser $deleteUser): JsonResponse
     {
-        try {
-            $deleteUser($uuid);
-            return response()->json(null, 204);
-        } catch (\RuntimeException $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al eliminar el usuario'], 500);
-        }
+        $deleteUser($uuid);
+
+        return response()->json(null, 204);
     }
 }

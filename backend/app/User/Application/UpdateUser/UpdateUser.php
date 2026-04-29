@@ -2,6 +2,7 @@
 
 namespace App\User\Application\UpdateUser;
 
+use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Domain\ValueObject\UserName;
 use App\User\Domain\ValueObject\PasswordHash;
@@ -24,10 +25,11 @@ class UpdateUser
         ?string $imageSrc
     ): UpdateUserResponse {
 
-        $user = $this->repository->findByUuid($uuid);
+        $uuidVo = Uuid::create($uuid);
+        $user = $this->repository->findByUuid($uuidVo);
 
         if (!$user) {
-            throw new \RuntimeException("User not found with uuid: $uuid");
+            throw new UserNotFoundException($uuid);
         }
 
         $user->updateName(UserName::create($name));

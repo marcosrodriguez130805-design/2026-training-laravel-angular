@@ -12,15 +12,11 @@ class ListUsersController
 
     public function __invoke(Request $request): JsonResponse
     {
-        try {
-            $responses = ($this->useCase)();
+        $responses = ($this->useCase)();
 
-            return response()->json(
-                array_map(fn($response) => $response->toArray(), $responses),
-                200
-            );
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
-        }
+        return response()->json(
+            array_map(fn($response) => $response->toArray(), $responses),
+            200
+        );
     }
 }

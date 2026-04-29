@@ -2,11 +2,12 @@
 
 namespace App\User\Domain\Interfaces;
 
+use App\Shared\Domain\ValueObject\Uuid;
 use App\User\Domain\Entity\User;
 
 interface UserRepositoryInterface
 {
-    public function findByUuid(string $uuid): ?User;
+    public function findByUuid(Uuid $uuid): ?User;
 
     public function update(User $user): void;
     
@@ -16,6 +17,6 @@ interface UserRepositoryInterface
 
     public function findByEmail(string $email): ?User;
 
-    public function delete(string $uuid): void;
+    public function delete(Uuid $uuid): void;
 
 }

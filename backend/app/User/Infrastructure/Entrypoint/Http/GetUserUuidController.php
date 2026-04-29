@@ -11,11 +11,7 @@ class GetUserUuidController
 
     public function __invoke(string $uuid): JsonResponse
     {
-        try {
-            $response = ($this->useCase)($uuid);
-            return response()->json($response->toArray(), 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 404);
-        }
+        $response = ($this->useCase)($uuid);
+        return response()->json($response->toArray(), 200);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\User\Application\DeleteUser;
 
+use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Shared\Domain\ValueObject\Uuid;
 
 class DeleteUser
 {
@@ -12,15 +14,13 @@ class DeleteUser
 
     public function __invoke(string $uuid): void
     {
-        // 1. Buscamos al usuario pasando el string directamente
-        $user = $this->repository->findByUuid($uuid);
+        $uuidVo = Uuid::create($uuid);
+        $user = $this->repository->findByUuid($uuidVo);
 
         if (!$user) {
-            throw new \RuntimeException("User not found with uuid: $uuid");
+            throw new UserNotFoundException($uuid);
         }
 
-        // 2. Llamamos al delete pasando el string directamente
-        // NO uses Uuid::create($uuid) aquí, o volverá a fallar el tipo
-        $this->repository->delete($uuid);
+        $this->repository->delete($uuidVo);
     }
 }

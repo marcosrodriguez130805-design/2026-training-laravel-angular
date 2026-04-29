@@ -2,6 +2,8 @@
 
 namespace App\User\Application\LoginUser;
 
+use App\User\Domain\Exception\InvalidCredentialsException;
+use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Interfaces\UserRepositoryInterface;
 use App\User\Domain\Interfaces\PasswordHasherInterface;
 use App\User\Domain\Interfaces\TokenGeneratorInterface;
@@ -19,15 +21,13 @@ class LoginUser
         $user = $this->repository->findByEmail($email);
 
         if (!$user) {
-            throw new \RuntimeException("Usuario no encontrado.");
+            throw new UserNotFoundException($email);
         }
 
-        // Usamos el método correcto de tu Entidad: passwordHash()
         if (!$this->hasher->check($password, $user->passwordHash())) {
-            throw new \RuntimeException("Credenciales inválidas.");
+            throw new InvalidCredentialsException();
         }
 
-        // Generamos el token usando nuestro nuevo servicio
         $token = $this->tokenGenerator->generate($user);
 
         return new LoginUserResponse(
