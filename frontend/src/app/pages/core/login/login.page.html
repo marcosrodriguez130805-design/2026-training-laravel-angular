@@ -1,0 +1,38 @@
+<ion-content [fullscreen]="true">
+  <div class="login-wrapper" style="display:flex; align-items:center; justify-content:center; height:100%; width:100%;">
+    <div class="login-card">
+      <h2>Iniciar Sesión</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <ion-item>
+          <ion-input
+            label="Email"
+            labelPlacement="floating"
+            formControlName="email"
+            type="email"
+            placeholder="Introduce tu email"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            label="Contraseña"
+            labelPlacement="floating"
+            formControlName="password"
+            type="password"
+            placeholder="Introduce tu contraseña"
+          ></ion-input>
+        </ion-item>
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          <ion-spinner *ngIf="isLoading" slot="start"></ion-spinner>
+          Iniciar Sesión
+        </ion-button>
+      </form>
+      <ion-text *ngIf="errorMessage" color="danger" class="error-message">
+        {{ errorMessage }}
+      </ion-text>
+    </div>
+  </div>
+</ion-content>

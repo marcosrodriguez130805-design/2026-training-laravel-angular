@@ -1,0 +1,97 @@
+.backoffice-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: #1a1a2e;
+  color: #f3f4f8;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 24px 16px;
+}
+
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.brand {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  color: #a8b0d3;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #d5d8e7;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-item ion-icon {
+  font-size: 1.2rem;
+  color: #8f99b8;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: #16203b;
+  color: #ffffff;
+}
+
+.nav-item.active ion-icon,
+.nav-item:hover ion-icon {
+  color: #ffffff;
+}
+
+.sidebar-footer {
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logout-button {
+  width: 100%;
+  justify-content: flex-start;
+  color: #ffffff;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background: #f5f5f5;
+}
+
+.main-content-inner {
+  min-height: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.main-content ::ng-deep router-outlet {
+  display: block;
+}

@@ -1,0 +1,66 @@
+<ion-content class="families-page">
+  <div class="page-header">
+    <div>
+      <h1>Familias</h1>
+      <p>Gestiona las familias del restaurante.</p>
+    </div>
+    <ion-button fill="solid" size="small" (click)="openCreateModal()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Nueva Familia
+    </ion-button>
+  </div>
+
+  <ion-text *ngIf="errorMessage" color="danger" class="error-message">
+    {{ errorMessage }}
+  </ion-text>
+
+  <ion-text *ngIf="successMessage" color="success" class="success-message">
+    {{ successMessage }}
+  </ion-text>
+
+  <ion-list *ngIf="families.length > 0; else emptyState">
+    <ion-item *ngFor="let family of families">
+      <ion-label>
+        <h2>{{ family.name }}</h2>
+        <p class="family-date">Creado {{ family.created_at | date: 'mediumDate' }}</p>
+      </ion-label>
+
+      <ion-badge slot="end" [color]="family.active ? 'success' : 'medium'">
+        {{ family.active ? 'Activo' : 'Inactivo' }}
+      </ion-badge>
+
+      <ion-button slot="end" fill="clear" size="small" (click)="toggleActive(family)" title="Cambiar estado">
+        <ion-icon slot="icon-only" name="shuffle-outline"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" fill="clear" size="small" (click)="openEditModal(family)" title="Editar">
+        <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" fill="clear" color="danger" size="small" (click)="confirmDelete(family)" title="Eliminar">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <p>No hay familias registradas todavía.</p>
+    </div>
+  </ng-template>
+
+  <ion-modal [isOpen]="isModalOpen" backdrop-dismiss="false" keepContentsMounted="true">
+    <div class="modal-header">
+      <h2>{{ selectedFamily ? 'Editar Familia' : 'Nueva Familia' }}</h2>
+    </div>
+    <app-family-form
+      [family]="selectedFamily"      [isSaving]="isSaving"      (save)="onSaveFamily($event)"
+      (cancel)="closeModal()"
+    ></app-family-form>
+  </ion-modal>
+
+  <ion-alert
+    [isOpen]="isDeleteAlertOpen"
+    header="Confirmar eliminación"
+    message="¿Estás seguro de que quieres eliminar esta familia?"
+    [buttons]="deleteAlertButtons"
+  ></ion-alert>
+</ion-content>

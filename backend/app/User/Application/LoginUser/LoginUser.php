@@ -31,11 +31,12 @@ class LoginUser
         $token = $this->tokenGenerator->generate($user);
 
         return new LoginUserResponse(
-            $user->uuid()->value(),
-            $user->restaurantUuid()->value(),
-            $user->name(),
-            $user->email(),
-            $token
-        );
+    $user->uuid()->value(),
+    $user->restaurantUuid()->value(),
+    $user->role(),
+    $user->name(),
+    $user->email(),
+    $token
+);
     }
 }

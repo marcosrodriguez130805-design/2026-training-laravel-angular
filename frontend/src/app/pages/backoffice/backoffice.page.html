@@ -1,0 +1,42 @@
+<div class="backoffice-layout">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">TPV</div>
+      <div class="user-name">Hola, {{ userName }}</div>
+    </div>
+
+    <nav class="nav-list">
+      <a routerLink="families" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+        <ion-icon name="people-outline"></ion-icon>
+        <span>Familias</span>
+      </a>
+      <a routerLink="taxes" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <span>Impuestos</span>
+      </a>
+      <a routerLink="products" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+        <ion-icon name="fast-food-outline"></ion-icon>
+        <span>Productos</span>
+      </a>
+      <a routerLink="zones" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+        <ion-icon name="map-outline"></ion-icon>
+        <span>Zonas</span>
+      </a>
+      <a routerLink="tables" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+        <ion-icon name="grid-outline"></ion-icon>
+        <span>Mesas</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <ion-button fill="clear" class="logout-button" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Cerrar sesión
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

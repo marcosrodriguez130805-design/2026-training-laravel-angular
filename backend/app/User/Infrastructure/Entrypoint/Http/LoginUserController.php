@@ -27,6 +27,7 @@ class LoginUserController
         return response()->json([
             'uuid' => $response->uuid,
             'restaurant_uuid' => $response->restaurant_uuid,
+            'role' => $response->role,
             'name' => $response->name,
             'email' => $response->email,
             'token' => $response->token,

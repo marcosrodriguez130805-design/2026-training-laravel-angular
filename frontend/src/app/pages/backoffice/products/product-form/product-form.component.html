@@ -1,0 +1,57 @@
+<ion-list>
+  <ion-item>
+    <ion-label position="stacked">Familia</ion-label>
+    <ion-select formControlName="family_uuid" placeholder="Selecciona una familia">
+      <ion-select-option *ngFor="let family of families" [value]="family.uuid">
+        {{ family.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Nombre</ion-label>
+    <ion-input
+      formControlName="name"
+      type="text"
+      placeholder="Nombre del producto"
+    ></ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="nameControl?.invalid && nameControl?.touched" class="error-text">
+    <span *ngIf="nameControl?.errors?.['required']">El nombre es obligatorio.</span>
+    <span *ngIf="nameControl?.errors?.['maxlength']">Máximo 255 caracteres.</span>
+  </ion-text>
+
+  <ion-item>
+    <ion-label position="stacked">Descripción</ion-label>
+    <ion-textarea
+      formControlName="description"
+      placeholder="Descripción del producto (opcional)"
+      rows="3"
+    ></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Precio (€)</ion-label>
+    <ion-input
+      formControlName="price"
+      type="number"
+      step="0.01"
+      min="0"
+      placeholder="0.00"
+    ></ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="priceControl?.invalid && priceControl?.touched" class="error-text">
+    <span *ngIf="priceControl?.errors?.['required']">El precio es obligatorio.</span>
+    <span *ngIf="priceControl?.errors?.['min']">El precio debe ser mayor o igual a 0.</span>
+  </ion-text>
+
+  <ion-item>
+    <ion-label>Activo</ion-label>
+    <ion-checkbox slot="start" formControlName="active"></ion-checkbox>
+  </ion-item>
+
+  <div class="form-actions">
+    <ion-button fill="clear" (click)="onCancel()">Cancelar</ion-button>
+    <ion-button expand="block" (click)="onSubmit()" [disabled]="form.invalid">Guardar</ion-button>
+  </div>
+</ion-list>
