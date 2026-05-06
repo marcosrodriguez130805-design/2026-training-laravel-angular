@@ -47,20 +47,40 @@
     </div>
   </ng-template>
 
-  <ion-modal [isOpen]="isModalOpen" backdrop-dismiss="false" keepContentsMounted="true">
-    <div class="modal-header">
-      <h2>{{ selectedFamily ? 'Editar Familia' : 'Nueva Familia' }}</h2>
-    </div>
-    <app-family-form
-      [family]="selectedFamily"      [isSaving]="isSaving"      (save)="onSaveFamily($event)"
-      (cancel)="closeModal()"
-    ></app-family-form>
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ selectedFamily ? 'Editar Familia' : 'Nueva Familia' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <app-family-form
+          [family]="selectedFamily"
+          [isSaving]="isSaving"
+          (save)="onSaveFamily($event)"
+          (cancel)="closeModal()"
+        ></app-family-form>
+      </ion-content>
+    </ng-template>
   </ion-modal>
 
-  <ion-alert
-    [isOpen]="isDeleteAlertOpen"
-    header="Confirmar eliminación"
-    message="¿Estás seguro de que quieres eliminar esta familia?"
-    [buttons]="deleteAlertButtons"
-  ></ion-alert>
+  <ion-modal [isOpen]="isDeleteAlertOpen" (didDismiss)="closeDeleteAlert()" [breakpoints]="[0, 0.3]" [initialBreakpoint]="0.3">
+    <ng-template>
+      <ion-content class="ion-padding">
+        <h3>¿Eliminar familia?</h3>
+        <p>Esta acción no se puede deshacer.</p>
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <ion-button expand="block" fill="outline" (click)="closeDeleteAlert()">Cancelar</ion-button>
+          <ion-button expand="block" color="danger" (click)="deleteFamily()">Eliminar</ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

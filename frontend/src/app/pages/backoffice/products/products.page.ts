@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonIcon, IonModal, IonAlert, IonText } from '@ionic/angular/standalone';
+import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonText, IonHeader, IonToolbar, IonTitle } from '@ionic/angular/standalone';
 import { ProductsApiService } from '../../../services/products/products-api.service';
 import { Product } from '../../../services/products/product.model';
 import { ProductFormComponent } from './product-form/product-form.component';
@@ -14,7 +14,7 @@ addIcons({ addOutline, pencilOutline, trashOutline, shuffleOutline });
   selector: 'app-products',
   templateUrl: 'products.page.html',
   styleUrls: ['products.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonIcon, IonModal, IonAlert, IonText, ProductFormComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonText, IonHeader, IonToolbar, IonTitle, ProductFormComponent],
   standalone: true,
 })
 export class ProductsPage implements OnInit {

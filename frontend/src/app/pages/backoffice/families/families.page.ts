@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonIcon, IonModal, IonAlert, IonText } from '@ionic/angular/standalone';
+import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonAlert, IonText, IonHeader, IonToolbar, IonTitle } from '@ionic/angular/standalone';
 import { FamiliesApiService } from '../../../services/families/families-api.service';
 import { Family } from '../../../services/families/family.model';
 import { FamilyFormComponent } from './family-form/family-form.component';
@@ -14,8 +14,7 @@ addIcons({ addOutline, pencilOutline, trashOutline, shuffleOutline });
   selector: 'app-families',
   templateUrl: 'families.page.html',
   styleUrls: ['families.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonIcon, IonModal, IonAlert, IonText, FamilyFormComponent],
-  standalone: true,
+imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonAlert, IonText, IonHeader, IonToolbar, IonTitle, FamilyFormComponent],  standalone: true,
 })
 export class FamiliesPage implements OnInit {
   private familiesApiService = inject(FamiliesApiService);
@@ -85,7 +84,7 @@ export class FamiliesPage implements OnInit {
           );
           this.successMessage = 'Familia actualizada correctamente';
           this.isSaving = false;
-          setTimeout(() => this.closeModal(), 1500);
+          this.closeModal();
         },
         error: (error) => {
           this.errorMessage = error.message || 'Error al actualizar la familia';
@@ -98,7 +97,7 @@ export class FamiliesPage implements OnInit {
           this.families = [createdFamily, ...this.families];
           this.successMessage = 'Familia creada correctamente';
           this.isSaving = false;
-          setTimeout(() => this.closeModal(), 1500);
+          this.closeModal(); // sin setTimeout
         },
         error: (error) => {
           this.errorMessage = error.message || 'Error al crear la familia';
@@ -119,22 +118,22 @@ export class FamiliesPage implements OnInit {
   }
 
   deleteFamily(): void {
-    if (!this.deleteTarget) {
-      return;
-    }
-
-    const uuid = this.deleteTarget.uuid;
-    this.familiesApiService.delete(uuid).subscribe({
-      next: () => {
-        this.families = this.families.filter((family) => family.uuid !== uuid);
-        this.closeDeleteAlert();
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Error al eliminar la familia';
-        this.closeDeleteAlert();
-      },
-    });
+  if (!this.deleteTarget) {
+    return;
   }
+
+  const uuid = this.deleteTarget.uuid;
+  this.familiesApiService.delete(uuid).subscribe({
+    next: () => {
+      this.families = [...this.families.filter((family) => family.uuid !== uuid)];
+      this.closeDeleteAlert();
+    },
+    error: (error) => {
+      this.errorMessage = error.message || 'Error al eliminar la familia';
+      this.closeDeleteAlert();
+    },
+  });
+}
 
   toggleActive(family: Family): void {
     this.errorMessage = '';
@@ -156,17 +155,19 @@ export class FamiliesPage implements OnInit {
   }
 
   get deleteAlertButtons() {
-    return [
-      {
-        text: 'Cancelar',
-        role: 'cancel',
-        handler: () => this.closeDeleteAlert(),
+  return [
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      handler: () => this.closeDeleteAlert(),
+    },
+    {
+      text: 'Eliminar',
+      handler: () => {
+        this.deleteFamily();
+        return true;
       },
-      {
-        text: 'Eliminar',
-        role: 'confirm',
-        handler: () => this.deleteFamily(),
-      },
-    ];
-  }
+    },
+  ];
+}
 }
