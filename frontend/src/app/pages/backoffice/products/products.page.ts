@@ -1,151 +1,64 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonText, IonHeader, IonToolbar, IonTitle } from '@ionic/angular/standalone';
-import { ProductsApiService } from '../../../services/products/products-api.service';
+import { Component, OnInit, inject } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { Product } from '../../../services/products/product.model';
-import { ProductFormComponent } from './product-form/product-form.component';
-import { addIcons } from 'ionicons';
-import { addOutline, pencilOutline, trashOutline, shuffleOutline } from 'ionicons/icons';
+import { ProductsApiService } from '../../../services/products/products-api.service';
+import { FamiliesApiService, Family } from '../../../services/families/families-api.service';
 
-addIcons({ addOutline, pencilOutline, trashOutline, shuffleOutline });
+// Definimos la interfaz para la estructura agrupada
+interface GroupedProducts {
+  familyName: string;
+  products: Product[];
+}
 
 @Component({
-  selector: 'app-products',
-  templateUrl: 'products.page.html',
-  styleUrls: ['products.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonText, IonHeader, IonToolbar, IonTitle, ProductFormComponent],
-  standalone: true,
+  selector: 'app-product-page',
+  templateUrl: './product.page.html',
 })
-export class ProductsPage implements OnInit {
+export class ProductPage implements OnInit {
   private productsApiService = inject(ProductsApiService);
+  private familiesApiService = inject(FamiliesApiService);
 
-  products: Product[] = [];
-  selectedProduct: Product | null = null;
-  isModalOpen = false;
-  isDeleteAlertOpen = false;
-  deleteTarget: Product | null = null;
-  errorMessage = '';
-  isLoading = false;
+  // Esta es la lista que usaremos en el HTML
+  groupedProducts: GroupedProducts[] = [];
+  
+  // Guardamos las familias para poder buscar sus nombres por UUID
+  families: Family[] = [];
 
-  ngOnInit(): void {
-    this.loadProducts();
+  ngOnInit() {
+    this.loadData();
   }
 
-  private loadProducts(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.productsApiService.getAll().subscribe({
-      next: (products) => {
-        this.products = products;
-        this.isLoading = false;
+  loadData() {
+    // Cargamos productos y familias a la vez
+    forkJoin({
+      products: this.productsApiService.getAll(),
+      families: this.familiesApiService.getAll()
+    }).subscribe({
+      next: ({ products, families }) => {
+        this.families = families;
+        this.organizeByFamily(products);
       },
-      error: (error) => {
-        this.errorMessage = error.message || 'Error cargando productos';
-        this.isLoading = false;
-      },
+      error: (err) => console.error('Error cargando datos:', err)
     });
   }
 
-  openCreateModal(): void {
-    this.selectedProduct = null;
-    this.isModalOpen = true;
-  }
+  private organizeByFamily(products: Product[]) {
+    const groups = products.reduce((acc, product) => {
+      // Buscamos el nombre de la familia usando el UUID del producto
+      const family = this.families.find(f => f.uuid === product.family_uuid);
+      const categoryName = family ? family.name : 'Sin Familia';
 
-  openEditModal(product: Product): void {
-    this.selectedProduct = product;
-    this.isModalOpen = true;
-  }
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(product);
+      return acc;
+    }, {} as { [key: string]: Product[] });
 
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.selectedProduct = null;
-  }
-
-  onSaveProduct(data: { family_uuid: string; name: string; description?: string; price: number; active: boolean }): void {
-    this.errorMessage = '';
-
-    if (this.selectedProduct) {
-      this.productsApiService.update(this.selectedProduct.uuid, data).subscribe({
-        next: (updatedProduct) => {
-          this.products = this.products.map((product) =>
-            product.uuid === updatedProduct.uuid ? updatedProduct : product
-          );
-          this.closeModal();
-        },
-        error: (error) => {
-          this.errorMessage = error.message || 'Error al actualizar el producto';
-        },
-      });
-    } else {
-      this.productsApiService.create(data).subscribe({
-        next: (createdProduct) => {
-          this.products = [createdProduct, ...this.products];
-          this.closeModal();
-        },
-        error: (error) => {
-          this.errorMessage = error.message || 'Error al crear el producto';
-        },
-      });
-    }
-  }
-
-  confirmDelete(product: Product): void {
-    this.deleteTarget = product;
-    this.isDeleteAlertOpen = true;
-  }
-
-  closeDeleteAlert(): void {
-    this.isDeleteAlertOpen = false;
-    this.deleteTarget = null;
-  }
-
-  deleteProduct(): void {
-    if (!this.deleteTarget) {
-      return;
-    }
-
-    const uuid = this.deleteTarget.uuid;
-    this.productsApiService.delete(uuid).subscribe({
-      next: () => {
-        this.products = this.products.filter((product) => product.uuid !== uuid);
-        this.closeDeleteAlert();
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Error al eliminar el producto';
-        this.closeDeleteAlert();
-      },
-    });
-  }
-
-  toggleActive(product: Product): void {
-    this.errorMessage = '';
-
-    this.productsApiService.toggleActive(product.uuid).subscribe({
-      next: (updatedProduct) => {
-        this.products = this.products.map((item) =>
-          item.uuid === updatedProduct.uuid ? updatedProduct : item
-        );
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Error al cambiar el estado';
-      },
-    });
-  }
-
-  get deleteAlertButtons() {
-    return [
-      {
-        text: 'Cancelar',
-        role: 'cancel',
-        handler: () => this.closeDeleteAlert(),
-      },
-      {
-        text: 'Eliminar',
-        role: 'confirm',
-        handler: () => this.deleteProduct(),
-      },
-    ];
+    // Convertimos el objeto en un array ordenado para el *ngFor
+    this.groupedProducts = Object.keys(groups).map(name => ({
+      familyName: name,
+      products: groups[name]
+    })).sort((a, b) => a.familyName.localeCompare(b.familyName));
   }
 }

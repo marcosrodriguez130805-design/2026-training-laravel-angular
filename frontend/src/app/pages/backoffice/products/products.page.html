@@ -1,82 +1,29 @@
-<ion-content class="products-page">
-  <div class="page-header">
-    <div>
-      <h1>Productos</h1>
-      <p>Gestiona los productos del restaurante.</p>
-    </div>
-    <ion-button fill="solid" size="small" (click)="openCreateModal()">
-      <ion-icon slot="start" name="add-outline"></ion-icon>
-      Nuevo Producto
-    </ion-button>
-  </div>
+<ion-content>
+  <ion-list *ngIf="groupedProducts.length > 0">
+    <ion-item-group *ngFor="let group of groupedProducts">
+      
+      <ion-item-divider sticky color="light">
+        <ion-label>
+          <h2 style="font-weight: bold; color: var(--ion-color-primary);">
+            {{ group.familyName }}
+          </h2>
+        </ion-label>
+      </ion-item-divider>
 
-  <ion-text *ngIf="errorMessage" color="danger" class="error-message">
-    {{ errorMessage }}
-  </ion-text>
+      <ion-item *ngFor="let product of group.products" (click)="handleEdit(product)">
+        <ion-label>
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.description }}</p>
+        </ion-label>
+        <ion-note slot="end" color="dark">
+          {{ product.price / 100 | currency:'EUR' }}
+        </ion-note>
+      </ion-item>
 
-  <ion-list *ngIf="products.length > 0; else emptyState">
-    <ion-item *ngFor="let product of products">
-      <ion-label>
-        <h2>{{ product.name }}</h2>
-        <p class="product-price">Precio: {{ product.price | currency:'EUR':'symbol':'1.2-2' }}</p>
-        <p class="product-date">Creado {{ product.created_at | date: 'mediumDate' }}</p>
-      </ion-label>
-
-      <ion-badge slot="end" [color]="product.active ? 'success' : 'medium'">
-        {{ product.active ? 'Activo' : 'Inactivo' }}
-      </ion-badge>
-
-      <ion-button slot="end" fill="clear" size="small" (click)="toggleActive(product)" title="Cambiar estado">
-        <ion-icon slot="icon-only" name="shuffle-outline"></ion-icon>
-      </ion-button>
-      <ion-button slot="end" fill="clear" size="small" (click)="openEditModal(product)" title="Editar">
-        <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
-      </ion-button>
-      <ion-button slot="end" fill="clear" color="danger" size="small" (click)="confirmDelete(product)" title="Eliminar">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
+    </ion-item-group>
   </ion-list>
 
-  <ng-template #emptyState>
-    <div class="empty-state">
-      <p>No hay productos registrados todavía.</p>
-    </div>
-  </ng-template>
-
-  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>{{ selectedProduct ? 'Editar Producto' : 'Nuevo Producto' }}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeModal()">
-              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <app-product-form
-          [product]="selectedProduct"
-          (save)="onSaveProduct($event)"
-          (cancel)="closeModal()"
-        ></app-product-form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <ion-modal [isOpen]="isDeleteAlertOpen" (didDismiss)="closeDeleteAlert()" [breakpoints]="[0, 0.3]" [initialBreakpoint]="0.3">
-    <ng-template>
-      <ion-content class="ion-padding">
-        <h3>¿Eliminar producto?</h3>
-        <p>Esta acción no se puede deshacer.</p>
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <ion-button expand="block" fill="outline" (click)="closeDeleteAlert()">Cancelar</ion-button>
-          <ion-button expand="block" color="danger" (click)="deleteProduct()">Eliminar</ion-button>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
+  <div *ngIf="groupedProducts.length === 0" class="ion-padding ion-text-center">
+    <p>No se encontraron productos.</p>
+  </div>
 </ion-content>

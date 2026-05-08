@@ -11,6 +11,8 @@ interface FamilyRepositoryInterface
 
     public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Family;
 
+    public function findByName(string $name, string $restaurantUuid): ?Family;
+
     public function findAll(string $restaurantUuid, bool $onlyActive = false): array;
 
     public function update(Family $family): void;

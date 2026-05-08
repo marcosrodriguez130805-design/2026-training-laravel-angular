@@ -30,28 +30,36 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
     }
 
     public function findByUuid(Uuid $uuid, string $restaurantUuid): ?Family
-{
-    $model = EloquentFamily::where('uuid', $uuid->value())
-        ->where('restaurant_uuid', $restaurantUuid) // 🔒 Seguridad reforzada
-        ->first();
+    {
+        $model = EloquentFamily::where('uuid', $uuid->value())
+            ->where('restaurant_uuid', $restaurantUuid)
+            ->first();
 
-    return $model ? $this->toDomainEntity($model) : null;
-}
-
-    public function findAll(string $restaurantUuid, bool $onlyActive = false): array
-{
-    $query = EloquentFamily::where('restaurant_uuid', $restaurantUuid);
-
-    if ($onlyActive) {
-        // OJO: Verifica si en tu DB es 'is_active' o 'active' (en tu save usas 'active')
-        $query->where('active', true); 
+        return $model ? $this->toDomainEntity($model) : null;
     }
 
-    $models = $query->get();
+    // --- NUEVO MÉTODO PARA VALIDAR DUPLICADOS ---
+    public function findByName(string $name, string $restaurantUuid): ?Family
+    {
+        $model = EloquentFamily::where('name', $name)
+            ->where('restaurant_uuid', $restaurantUuid)
+            ->first();
 
-    // CAMBIO AQUÍ: Añadimos 'Entity' al final del nombre del método ⬇️
-    return $models->map(fn($model) => $this->toDomainEntity($model))->toArray();
-}
+        return $model ? $this->toDomainEntity($model) : null;
+    }
+
+    public function findAll(string $restaurantUuid, bool $onlyActive = false): array
+    {
+        $query = EloquentFamily::where('restaurant_uuid', $restaurantUuid);
+
+        if ($onlyActive) {
+            $query->where('active', true); 
+        }
+
+        $models = $query->get();
+
+        return $models->map(fn($model) => $this->toDomainEntity($model))->toArray();
+    }
 
     public function update(Family $family): void
     {
@@ -67,14 +75,14 @@ class EloquentFamilyRepository implements FamilyRepositoryInterface
     }
 
     private function toDomainEntity(EloquentFamily $model): Family
-{
-    return Family::fromPersistence(
-        $model->uuid,
-        Uuid::create($model->restaurant_uuid)->value(), // 🔥 Agregamos ->value() para pasar el string
-        $model->name,
-        (bool) $model->active,
-        $model->created_at->toDateTimeImmutable(),
-        $model->updated_at->toDateTimeImmutable(),
-    );
-}
+    {
+        return Family::fromPersistence(
+            $model->uuid,
+            $model->restaurant_uuid, // Quitamos el Uuid::create manual si ya lo manejas en fromPersistence
+            $model->name,
+            (bool) $model->active,
+            $model->created_at->toDateTimeImmutable(),
+            $model->updated_at->toDateTimeImmutable(),
+        );
+    }
 }

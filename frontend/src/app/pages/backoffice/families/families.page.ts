@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonAlert, IonText, IonHeader, IonToolbar, IonTitle } from '@ionic/angular/standalone';
+import { IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonAlert, IonText, IonHeader, IonToolbar, IonTitle, IonSpinner } from '@ionic/angular/standalone';
 import { FamiliesApiService } from '../../../services/families/families-api.service';
 import { Family } from '../../../services/families/family.model';
 import { FamilyFormComponent } from './family-form/family-form.component';
@@ -14,7 +14,7 @@ addIcons({ addOutline, pencilOutline, trashOutline, shuffleOutline });
   selector: 'app-families',
   templateUrl: 'families.page.html',
   styleUrls: ['families.page.scss'],
-imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonAlert, IonText, IonHeader, IonToolbar, IonTitle, FamilyFormComponent],  standalone: true,
+imports: [CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, IonLabel, IonBadge, IonButton, IonButtons, IonIcon, IonModal, IonAlert, IonText, IonHeader, IonToolbar, IonTitle, IonSpinner, FamilyFormComponent],  standalone: true,
 })
 export class FamiliesPage implements OnInit {
   private familiesApiService = inject(FamiliesApiService);
@@ -26,8 +26,8 @@ export class FamiliesPage implements OnInit {
   deleteTarget: Family | null = null;
   errorMessage = '';
   successMessage = '';
-  isLoading = false;
-  isSaving = false;
+  isLoading = false; // Controla el spinner de la lista
+  isSaving = false;  // Controla el spinner del botón guardar
 
   ngOnInit(): void {
     this.loadFamilies();
@@ -36,7 +36,6 @@ export class FamiliesPage implements OnInit {
   private loadFamilies(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.familiesApiService.getAll().subscribe({
       next: (families) => {
@@ -44,7 +43,8 @@ export class FamiliesPage implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.errorMessage = error.message || 'Error cargando familias';
+        // Captura el mensaje de error del backend
+        this.errorMessage = error.error?.message || 'Error cargando familias';
         this.isLoading = false;
       },
     });
@@ -67,44 +67,42 @@ export class FamiliesPage implements OnInit {
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedFamily = null;
-    this.errorMessage = '';
-    this.successMessage = '';
   }
 
   onSaveFamily(data: { name: string; active: boolean }): void {
     this.errorMessage = '';
-    this.successMessage = '';
     this.isSaving = true;
 
-    if (this.selectedFamily) {
-      this.familiesApiService.update(this.selectedFamily.uuid, data).subscribe({
-        next: (updatedFamily) => {
-          this.families = this.families.map((family) =>
-            family.uuid === updatedFamily.uuid ? updatedFamily : family
+    const request$ = this.selectedFamily
+      ? this.familiesApiService.update(this.selectedFamily.uuid, data)
+      : this.familiesApiService.create(data);
+
+    request$.subscribe({
+      next: (savedFamily) => {
+        if (this.selectedFamily) {
+          // Lógica de actualización
+          this.families = this.families.map((f) =>
+            f.uuid === savedFamily.uuid ? savedFamily : f
           );
-          this.successMessage = 'Familia actualizada correctamente';
-          this.isSaving = false;
-          this.closeModal();
-        },
-        error: (error) => {
-          this.errorMessage = error.message || 'Error al actualizar la familia';
-          this.isSaving = false;
-        },
-      });
-    } else {
-      this.familiesApiService.create(data).subscribe({
-        next: (createdFamily) => {
-          this.families = [createdFamily, ...this.families];
+          this.successMessage = 'Familia actualizada correctamente'; // Confirmación al actualizar
+        } else {
+          // Lógica de creación
+          this.families = [savedFamily, ...this.families];
           this.successMessage = 'Familia creada correctamente';
-          this.isSaving = false;
-          this.closeModal(); // sin setTimeout
-        },
-        error: (error) => {
-          this.errorMessage = error.message || 'Error al crear la familia';
-          this.isSaving = false;
-        },
-      });
-    }
+        }
+        
+        this.isSaving = false;
+        this.closeModal();
+        
+        // Limpiamos el mensaje de éxito tras 3 segundos
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (error) => {
+        // Captura el error de "Nombre Duplicado" lanzado por el Backend
+        this.errorMessage = error.error?.message || 'Error al guardar la familia';
+        this.isSaving = false;
+      },
+    });
   }
 
   confirmDelete(family: Family): void {
@@ -118,22 +116,22 @@ export class FamiliesPage implements OnInit {
   }
 
   deleteFamily(): void {
-  if (!this.deleteTarget) {
-    return;
-  }
+    if (!this.deleteTarget) return;
 
-  const uuid = this.deleteTarget.uuid;
-  this.familiesApiService.delete(uuid).subscribe({
-    next: () => {
-      this.families = [...this.families.filter((family) => family.uuid !== uuid)];
-      this.closeDeleteAlert();
-    },
-    error: (error) => {
-      this.errorMessage = error.message || 'Error al eliminar la familia';
-      this.closeDeleteAlert();
-    },
-  });
-}
+    const uuid = this.deleteTarget.uuid;
+    this.familiesApiService.delete(uuid).subscribe({
+      next: () => {
+        this.families = [...this.families.filter((f) => f.uuid !== uuid)];
+        this.successMessage = 'Familia eliminada correctamente';
+        this.closeDeleteAlert();
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Error al eliminar la familia';
+        this.closeDeleteAlert();
+      },
+    });
+  }
 
   toggleActive(family: Family): void {
     this.errorMessage = '';

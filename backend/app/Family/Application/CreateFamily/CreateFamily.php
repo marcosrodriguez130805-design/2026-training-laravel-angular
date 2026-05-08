@@ -4,8 +4,9 @@ namespace App\Family\Application\CreateFamily;
 
 use App\Family\Domain\Entity\Family;
 use App\Family\Domain\Interfaces\FamilyRepositoryInterface;
+use App\Family\Domain\Exception\FamilyAlreadyExistsException; // Importamos la nueva excepción
 use App\Shared\Domain\ValueObject\Uuid;
-use App\Shared\Domain\ValueObject\DomainDateTime; // Tu VO de fechas
+use App\Shared\Domain\ValueObject\DomainDateTime;
 use Illuminate\Support\Str;
 
 final class CreateFamily
@@ -20,11 +21,18 @@ final class CreateFamily
         bool $active
     ): CreateFamilyResponse {
         
-        // Generamos los datos que faltan para la entidad
+        // 1. Validar si ya existe una familia con ese nombre en este restaurante
+        $existingFamily = $this->repository->findByName($name, $restaurantUuid->value());
+
+        if ($existingFamily) {
+            throw new FamilyAlreadyExistsException($name);
+        }
+
+        // 2. Generamos los datos que faltan para la entidad
         $familyUuid = Uuid::create(Str::uuid()->toString());
         $now = DomainDateTime::now();
 
-        // Usamos el método de creación de la entidad pasando el estado completo
+        // 3. Usamos el método de creación de la entidad pasando el estado completo
         $family = Family::dddCreate(
             $familyUuid,
             $restaurantUuid, 
