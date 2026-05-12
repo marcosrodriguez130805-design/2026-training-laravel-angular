@@ -1,3 +1,4 @@
+// LA CORRECCIÓN CLAVE: Esto viene de @angular/core, NO de @angular/common
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +9,7 @@ import { TaxesApiService, Tax } from '../../../../services/taxes/taxes-api.servi
 
 @Component({
   selector: 'app-product-form',
-  templateUrl: './product-form.component.html',
+  templateUrl: './product-form.component.html', // Verifica que el archivo se llame así
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonCheckbox, IonButton, IonText, IonSelect, IonSelectOption],
 })
@@ -34,17 +35,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
     active: [true],
   });
 
-  // Getters para validaciones en el HTML
   get nameControl() {
     return this.form.get('name');
-  }
-
-  get priceControl() {
-    return this.form.get('price');
-  }
-
-  get taxControl() {
-    return this.form.get('tax_uuid');
   }
 
   ngOnInit(): void {
@@ -65,23 +57,20 @@ export class ProductFormComponent implements OnInit, OnChanges {
   private loadFamilies(): void {
     this.familiesApiService.getAll().subscribe({
       next: (f: Family[]) => this.families = f.filter(item => item.active),
-      error: (e: any) => console.error('Error detectando familias:', e)
+      error: (e: any) => console.error('Error:', e)
     });
   }
 
   private loadTaxes(): void {
-  this.taxesApiService.getAll().subscribe({
-    next: (t: Tax[]) => {
-      console.log('Impuestos detectados:', t); // Mira la consola del navegador (F12)
-      this.taxes = t; // Quita el .filter(...) un momento
-      
-      if (!this.product && this.taxes.length > 0) {
-        this.form.patchValue({ tax_uuid: this.taxes[0].uuid });
+    this.taxesApiService.getAll().subscribe({
+      next: (t: Tax[]) => {
+        this.taxes = t;
+        if (!this.product && this.taxes.length > 0) {
+          this.form.patchValue({ tax_uuid: this.taxes[0].uuid });
+        }
       }
-    },
-    error: (e: any) => console.error('Error detectando impuestos:', e)
-  });
-}
+    });
+  }
 
   onSubmit(): void {
     if (this.form.valid) {
@@ -91,8 +80,6 @@ export class ProductFormComponent implements OnInit, OnChanges {
         price: Math.round(val.price * 100),
         stock: Number(val.stock)
       });
-    } else {
-      this.form.markAllAsTouched();
     }
   }
 

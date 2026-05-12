@@ -1,29 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>{{ isCreating ? (selectedProduct ? 'Editar Producto' : 'Nuevo Producto') : 'Productos' }}</ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="isCreating ? cancelCreate() : handleCreate()">
+        <ion-icon slot="icon-only" [name]="isCreating ? 'close' : 'add'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar *ngIf="!isCreating">
+    <ion-segment [value]="selectedFamilyUuid" scrollable="true" (ionChange)="onFamilyChange($event)">
+      <ion-segment-button value="all">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button *ngFor="let family of families" [value]="family.uuid">
+        <ion-label [style.opacity]="family.active ? '1' : '0.5'">
+          {{ family.name }}
+          <span *ngIf="!family.active" style="font-size: 0.7rem; display: block; color: var(--ion-color-danger);">
+            (Inactiva)
+          </span>
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
-  <ion-list *ngIf="groupedProducts.length > 0">
-    <ion-item-group *ngFor="let group of groupedProducts">
-      
-      <ion-item-divider sticky color="light">
-        <ion-label>
-          <h2 style="font-weight: bold; color: var(--ion-color-primary);">
-            {{ group.familyName }}
-          </h2>
+  <div *ngIf="!isCreating">
+    <ion-list *ngIf="filteredProducts.length > 0">
+      <ion-item *ngFor="let product of filteredProducts">
+        
+        <ion-label (click)="handleEdit(product)" style="cursor: pointer;" [style.opacity]="product.active ? '1' : '0.5'">
+          <h2 style="font-weight: bold;">{{ product.name }}</h2>
+          <p style="color: var(--ion-color-primary); font-weight: bold; margin-top: 4px;">
+            {{ product.price / 100 | currency:'EUR' }}
+          </p>
         </ion-label>
-      </ion-item-divider>
 
-      <ion-item *ngFor="let product of group.products" (click)="handleEdit(product)">
-        <ion-label>
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-        </ion-label>
-        <ion-note slot="end" color="dark">
-          {{ product.price / 100 | currency:'EUR' }}
-        </ion-note>
+        <ion-buttons slot="end">
+          <ion-toggle 
+            [checked]="product.active" 
+            (ionChange)="toggleProductActive(product, $event)">
+          </ion-toggle>
+
+          <ion-button color="primary" (click)="handleEdit(product)">
+            <ion-icon slot="icon-only" name="create"></ion-icon>
+          </ion-button>
+
+          <ion-button color="danger" (click)="handleDelete(product)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+
       </ion-item>
+    </ion-list>
 
-    </ion-item-group>
-  </ion-list>
+    <div *ngIf="filteredProducts.length === 0" class="ion-padding ion-text-center">
+      <ion-text color="medium">
+        <p>No hay productos en esta categoría.</p>
+      </ion-text>
+    </div>
+  </div>
 
-  <div *ngIf="groupedProducts.length === 0" class="ion-padding ion-text-center">
-    <p>No se encontraron productos.</p>
+  <div *ngIf="isCreating" class="ion-padding">
+    <app-product-form 
+      [product]="selectedProduct" 
+      (save)="onProductSaved($event)" 
+      (cancel)="cancelCreate()">
+    </app-product-form>
   </div>
 </ion-content>

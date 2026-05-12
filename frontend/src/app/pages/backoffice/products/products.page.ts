@@ -1,64 +1,168 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { Product } from '../../../services/products/product.model';
+import { 
+  IonContent, IonList, IonLabel, IonItem, 
+  IonHeader, IonToolbar, IonSegment, IonSegmentButton,
+  IonIcon, IonText, IonTitle, IonButtons, IonButton,
+  IonToggle, ToastController 
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { add, close, trash, create } from 'ionicons/icons'; 
 import { ProductsApiService } from '../../../services/products/products-api.service';
 import { FamiliesApiService, Family } from '../../../services/families/families-api.service';
-
-// Definimos la interfaz para la estructura agrupada
-interface GroupedProducts {
-  familyName: string;
-  products: Product[];
-}
+import { Product } from '../../../services/products/product.model';
+import { ProductFormComponent } from './product-form/product-form.component';
 
 @Component({
-  selector: 'app-product-page',
-  templateUrl: './product.page.html',
+  selector: 'app-products-page',
+  templateUrl: './products.page.html',
+  standalone: true,
+  imports: [
+    CommonModule, IonContent, IonList, IonLabel, IonItem,
+    IonHeader, IonToolbar, IonSegment, IonSegmentButton,
+    IonIcon, IonText, IonTitle, IonButtons, IonButton,
+    IonToggle, 
+    ProductFormComponent
+  ]
 })
-export class ProductPage implements OnInit {
+export class ProductsPage implements OnInit {
   private productsApiService = inject(ProductsApiService);
   private familiesApiService = inject(FamiliesApiService);
+  private toastCtrl = inject(ToastController);
 
-  // Esta es la lista que usaremos en el HTML
-  groupedProducts: GroupedProducts[] = [];
-  
-  // Guardamos las familias para poder buscar sus nombres por UUID
   families: Family[] = [];
+  allProducts: Product[] = [];
+  filteredProducts: Product[] = [];
+  selectedFamilyUuid: string = 'all';
+  isCreating: boolean = false;
+  selectedProduct: Product | null = null;
+
+  constructor() {
+    addIcons({ add, close, trash, create });
+  }
 
   ngOnInit() {
     this.loadData();
   }
 
+  private async showToast(message: string, color: 'success' | 'danger' = 'success') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+
   loadData() {
-    // Cargamos productos y familias a la vez
     forkJoin({
       products: this.productsApiService.getAll(),
       families: this.familiesApiService.getAll()
     }).subscribe({
       next: ({ products, families }) => {
-        this.families = families;
-        this.organizeByFamily(products);
+        this.families = families; 
+        this.allProducts = products;
+        this.filterProducts();
       },
-      error: (err) => console.error('Error cargando datos:', err)
+      error: () => this.showToast('Error al cargar datos', 'danger')
     });
   }
 
-  private organizeByFamily(products: Product[]) {
-    const groups = products.reduce((acc, product) => {
-      // Buscamos el nombre de la familia usando el UUID del producto
-      const family = this.families.find(f => f.uuid === product.family_uuid);
-      const categoryName = family ? family.name : 'Sin Familia';
+  toggleProductActive(product: Product, event: any) {
+    const newStatus = event.detail.checked;
+    if (product.active === newStatus) return;
 
-      if (!acc[categoryName]) {
-        acc[categoryName] = [];
+    this.productsApiService.update(product.uuid, { ...product, active: newStatus }).subscribe({
+      next: () => {
+        product.active = newStatus;
+        this.showToast(`Producto ${newStatus ? 'activado' : 'desactivado'}`);
+
+        const parentFamily = this.families.find(f => f.uuid === product.family_uuid);
+        if (!parentFamily) return;
+
+        if (newStatus === true) {
+          // LÓGICA: Activar familia si estaba inactiva
+          if (!parentFamily.active) {
+            this.familiesApiService.update(parentFamily.uuid, { ...parentFamily, active: true }).subscribe({
+              next: () => {
+                parentFamily.active = true;
+                this.showToast(`Familia "${parentFamily.name}" activada automáticamente`);
+              }
+            });
+          }
+        } else {
+          // LÓGICA: Desactivar familia si no quedan más productos activos
+          const hasOtherActiveProducts = this.allProducts.some(
+            p => p.family_uuid === product.family_uuid && p.active && p.uuid !== product.uuid
+          );
+
+          if (!hasOtherActiveProducts && parentFamily.active) {
+            this.familiesApiService.update(parentFamily.uuid, { ...parentFamily, active: false }).subscribe({
+              next: () => {
+                parentFamily.active = false;
+                this.showToast(`Familia "${parentFamily.name}" desactivada (sin productos activos)`, 'danger');
+              }
+            });
+          }
+        }
+      },
+      error: () => {
+        this.showToast('Error al cambiar estado', 'danger');
+        this.loadData();
       }
-      acc[categoryName].push(product);
-      return acc;
-    }, {} as { [key: string]: Product[] });
+    });
+  }
 
-    // Convertimos el objeto en un array ordenado para el *ngFor
-    this.groupedProducts = Object.keys(groups).map(name => ({
-      familyName: name,
-      products: groups[name]
-    })).sort((a, b) => a.familyName.localeCompare(b.familyName));
+  handleDelete(product: Product) {
+    if (confirm(`¿Eliminar ${product.name}?`)) {
+      this.productsApiService.delete(product.uuid).subscribe({
+        next: () => {
+          this.allProducts = this.allProducts.filter(p => p.uuid !== product.uuid);
+          this.filterProducts();
+          this.showToast('Producto eliminado');
+          
+          // Al eliminar, también comprobamos si la familia debe desactivarse
+          const parentFamily = this.families.find(f => f.uuid === product.family_uuid);
+          if (parentFamily && parentFamily.active) {
+            const hasActive = this.allProducts.some(p => p.family_uuid === product.family_uuid && p.active);
+            if (!hasActive) {
+              this.familiesApiService.update(parentFamily.uuid, { ...parentFamily, active: false }).subscribe({
+                next: () => parentFamily.active = false
+              });
+            }
+          }
+        },
+        error: () => this.showToast('Error al eliminar producto', 'danger')
+      });
+    }
+  }
+
+  onProductSaved(productData: any) {
+    const request = this.selectedProduct
+      ? this.productsApiService.update(this.selectedProduct.uuid, productData)
+      : this.productsApiService.create(productData);
+
+    request.subscribe({
+      next: () => {
+        this.isCreating = false;
+        this.selectedProduct = null;
+        this.loadData();
+        this.showToast('Producto guardado correctamente');
+      },
+      error: (e: any) => this.showToast(e.error?.message || 'Error al guardar', 'danger')
+    });
+  }
+
+  handleEdit(product: Product) { this.selectedProduct = product; this.isCreating = true; }
+  handleCreate() { this.selectedProduct = null; this.isCreating = true; }
+  cancelCreate() { this.isCreating = false; this.selectedProduct = null; }
+  onFamilyChange(event: any) { this.selectedFamilyUuid = event.detail.value; this.filterProducts(); }
+  
+  private filterProducts() {
+    this.filteredProducts = this.selectedFamilyUuid === 'all' 
+      ? this.allProducts 
+      : this.allProducts.filter(p => p.family_uuid === this.selectedFamilyUuid);
   }
 }
