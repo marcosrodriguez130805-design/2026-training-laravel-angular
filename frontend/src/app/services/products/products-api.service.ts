@@ -19,11 +19,12 @@ export class ProductsApiService extends BaseApiService {
     return this.http.get<Product>(`${this.apiUrl}/products/${uuid}`);
   }
 
-  create(data: { family_uuid: string; name: string; description?: string; price: number; active: boolean }): Observable<Product> {
+  // Al usar Partial<Product> permitimos que acepte cualquier propiedad definida en la interfaz Product
+  create(data: Partial<Product>): Observable<Product> {
     return this.http.post<Product>(this.apiUrl + '/products', data);
   }
 
-  update(uuid: string, data: { family_uuid: string; name: string; description?: string; price: number; active: boolean }): Observable<Product> {
+  update(uuid: string, data: Partial<Product>): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/products/${uuid}`, data);
   }
 

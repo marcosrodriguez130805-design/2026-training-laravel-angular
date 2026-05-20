@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <ion-item fill="outline" mode="md" class="ion-margin-bottom">
+    <ion-label position="stacked">Nombre del Impuesto</ion-label>
+    <ion-input formControlName="name" placeholder="Ej: IVA General"></ion-input>
+  </ion-item>
+
+  <ion-item fill="outline" mode="md" class="ion-margin-bottom">
+    <ion-label position="stacked">Valor (%)</ion-label>
+    <ion-input type="number" formControlName="value" placeholder="21"></ion-input>
+  </ion-item>
+
+  <ion-item lines="none" class="ion-margin-bottom">
+    <ion-label>Estado Activo</ion-label>
+    <ion-toggle formControlName="active" slot="end"></ion-toggle>
+  </ion-item>
+
+  <div class="ion-padding-top">
+    <ion-button expand="block" type="submit" [disabled]="form.invalid || isSaving">
+      <ion-spinner name="crescent" *ngIf="isSaving"></ion-spinner>
+      <span *ngIf="!isSaving">{{ isEditing ? 'Actualizar Impuesto' : 'Crear Impuesto' }}</span>
+    </ion-button>
+    
+    <ion-button expand="block" fill="clear" color="medium" (click)="cancel.emit()" [disabled]="isSaving">
+      Cancelar
+    </ion-button>
+  </div>
+</form>

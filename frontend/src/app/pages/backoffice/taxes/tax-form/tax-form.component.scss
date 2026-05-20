@@ -1,0 +1,18 @@
+ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  margin-inline: 12px;
+  --background: var(--ion-item-background, #fff);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+ion-list {
+  background: transparent;
+  padding-top: 12px;
+}
+
+.tax-value {
+  font-size: 0.9rem;
+}

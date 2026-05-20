@@ -1,0 +1,61 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" *ngIf="!isCreating">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    
+    <ion-title>{{ isCreating ? (selectedTax ? 'Editar Impuesto' : 'Nuevo Impuesto') : 'Impuestos' }}</ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="isCreating ? cancelForm() : handleCreate()">
+        <ion-icon slot="icon-only" [name]="isCreating ? 'close' : 'add'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="custom-page-background">
+  <div *ngIf="!isCreating" class="page-container">
+
+    <div *ngIf="isLoading" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando impuestos...</p>
+    </div>
+
+    <ion-list lines="none" *ngIf="!isLoading && taxes.length > 0">
+      <ion-item *ngFor="let tax of taxes">
+        
+        <ion-label (click)="handleEdit(tax)" style="cursor: pointer;">
+          <h2 style="font-weight: bold; margin: 0;">{{ tax.name }}</h2>
+          <p class="tax-date" style="margin: 4px 0 0; font-size: 0.9rem; color: #8b93a3;">
+            Valor aplicado: {{ tax.percentage }}%
+          </p>
+        </ion-label>
+
+        <ion-buttons slot="end">
+          <ion-button color="primary" (click)="handleEdit(tax)">
+            <ion-icon slot="icon-only" name="create"></ion-icon>
+          </ion-button>
+          
+          <ion-button color="danger" (click)="handleDelete(tax)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="!isLoading && taxes.length === 0" class="ion-text-center ion-padding">
+      <ion-icon name="receipt-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
+      <p>No hay impuestos registrados todavía.</p>
+    </div>
+  </div>
+
+  <div *ngIf="isCreating" class="ion-padding">
+    <app-tax-form 
+      [tax]="selectedTax"
+      (save)="onTaxSaved()"
+      (cancel)="cancelForm()">
+    </app-tax-form>
+  </div>
+</ion-content>
