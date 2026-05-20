@@ -1,0 +1,25 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <ion-list lines="none">
+    <ion-item>
+      <ion-input
+        label="Nombre de la Zona"
+        labelPlacement="floating"
+        formControlName="name"
+        type="text"
+        placeholder="Ej. Terraza, Salón Principal, Barra"
+        errorText="El nombre es obligatorio (máx. 255 caracteres)">
+      </ion-input>
+    </ion-item>
+  </ion-list>
+
+  <div class="form-actions">
+    <ion-button type="submit" expand="block" color="primary" [disabled]="form.invalid || isSaving">
+      <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+      <span *ngIf="!isSaving">Guardar Zona</span>
+    </ion-button>
+    
+    <ion-button type="button" expand="block" fill="clear" color="medium" (click)="onCancel()" [disabled]="isSaving">
+      Cancelar
+    </ion-button>
+  </div>
+</form>

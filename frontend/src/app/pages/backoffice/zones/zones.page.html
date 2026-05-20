@@ -1,0 +1,72 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" *ngIf="!isModalOpen">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    
+    <ion-title>{{ isModalOpen ? (selectedZone ? 'Editar Zona' : 'Nueva Zona') : 'Zonas' }}</ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="isModalOpen ? closeModal() : openCreateModal()">
+        <ion-icon slot="icon-only" [name]="isModalOpen ? 'close' : 'add'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="custom-page-background">
+  <div *ngIf="!isModalOpen" class="page-container">
+    
+    <div class="page-header">
+      <div>
+        <h1>Zonas</h1>
+        <p>Distribución de espacios del restaurante</p>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando zonas...</p>
+    </div>
+
+    <ion-list lines="none" *ngIf="!isLoading && zones.length > 0">
+      <ion-item *ngFor="let zone of zones">
+        <ion-label (click)="openEditModal(zone)" style="cursor: pointer;" [style.opacity]="zone.active ? '1' : '0.5'">
+          <h2 style="font-weight: bold; margin: 0;">{{ zone.name }}</h2>
+          <p style="margin: 4px 0 0; font-size: 0.9rem; color: #8b93a3;">
+            Creada {{ zone.created_at | date: 'mediumDate' }}
+          </p>
+        </ion-label>
+
+        <ion-buttons slot="end">
+          <ion-toggle 
+            [checked]="zone.active" 
+            (ionChange)="toggleActive(zone)">
+          </ion-toggle>
+
+          <ion-button color="primary" (click)="openEditModal(zone)">
+            <ion-icon slot="icon-only" name="create"></ion-icon>
+          </ion-button>
+
+          <ion-button color="danger" (click)="confirmDelete(zone)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="!isLoading && zones.length === 0" class="ion-text-center ion-padding">
+      <ion-icon name="folder-open-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
+      <p>No hay zonas registradas todavía.</p>
+    </div>
+  </div>
+
+  <div *ngIf="isModalOpen" class="ion-padding">
+    <app-zone-form
+      [zone]="selectedZone"
+      [isSaving]="isSaving"
+      (save)="onSaveZone($event)"
+      (cancel)="closeModal()"
+    ></app-zone-form>
+  </div>
+</ion-content>
