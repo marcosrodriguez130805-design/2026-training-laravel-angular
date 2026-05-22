@@ -1,0 +1,48 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  
+  <ion-item lines="none" class="custom-input">
+    <ion-label position="stacked">Ubicación / Zona</ion-label>
+    <ion-select 
+      formControlName="zone_uuid" 
+      placeholder="Selecciona una zona"
+      interface="popover"
+      toggleIcon="chevron-down-outline">
+      <ion-select-option *ngFor="let zone of zones" [value]="zone.uuid">
+        {{ zone.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-text color="danger" *ngIf="form.get('zone_uuid')?.touched && form.get('zone_uuid')?.invalid">
+    <small class="error-msg">Debes asignar la mesa a una zona real.</small>
+  </ion-text>
+
+  <ion-item lines="none" class="custom-input ion-margin-top">
+    <ion-label position="stacked">Identificador de Mesa</ion-label>
+    <ion-input 
+      formControlName="name" 
+      type="text" 
+      placeholder="Ej: Mesa 1, Terraza A..."></ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+    <small class="error-msg">El nombre es obligatorio (mín. 2 caracteres).</small>
+  </ion-text>
+
+  <div class="ion-margin-top buttons-container">
+    <ion-button 
+      expand="block" 
+      fill="clear" 
+      color="medium" 
+      (click)="cancel.emit()">
+      Cancelar
+    </ion-button>
+    
+    <ion-button 
+      expand="block" 
+      type="submit" 
+      color="primary" 
+      [disabled]="form.invalid || isSaving">
+      <ion-spinner name="crescent" *ngIf="isSaving" slot="start"></ion-spinner>
+      {{ table ? 'Actualizar Mesa' : 'Crear Mesa' }}
+    </ion-button>
+  </div>
+</form>

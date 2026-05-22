@@ -1,0 +1,30 @@
+.segment-toolbar {
+  --background: #f1f2f6;
+  padding: 4px 8px;
+  
+  ion-segment {
+    background: transparent;
+    --background: transparent;
+  }
+}
+
+.bg-light {
+  --background: #ffffff; // Cambiado a blanco de fondo para que resalten los ítems como en tu captura
+}
+
+.custom-list {
+  background: #ffffff;
+  padding: 0;
+}
+
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 8px;
+  --border-color: #f1f2f6;
+  
+  h2 {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2c3e50;
+  }
+}
