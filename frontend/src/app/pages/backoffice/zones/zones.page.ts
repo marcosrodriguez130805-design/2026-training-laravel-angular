@@ -10,6 +10,7 @@ import {
 import { addIcons } from 'ionicons';
 import { add, close, trash, create, folderOpenOutline } from 'ionicons/icons'; 
 import { ZonesApiService } from '../../../services/zones/zones-api.service';
+import { FamiliesApiService } from '../../../services/families/families-api.service'; // 🛠️ NUEVO
 import { Zone } from '../../../services/zones/zone.model';
 import { ZoneFormComponent } from '../zones/zone-form/zone-form.component';
 
@@ -28,6 +29,7 @@ import { ZoneFormComponent } from '../zones/zone-form/zone-form.component';
 })
 export class ZonesPage implements OnInit {
   private zonesApiService = inject(ZonesApiService);
+  private familiesApiService = inject(FamiliesApiService); // 🛠️ NUEVO: Inyectamos familias
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
 
@@ -61,13 +63,24 @@ export class ZonesPage implements OnInit {
       next: (res: Zone[]) => {
         this.zones = res;
         
-        // 💡 TRUCO: Si la base de datos ya nos devuelve zonas creadas previamente, 
-        // le "robamos" el UUID del restaurante para usarlo en las nuevas.
         if (res.length > 0) {
           this.currentRestaurantUuid = res[0].restaurant_uuid || (res[0] as any).restaurantUuid || '';
+          this.isLoading = false;
+        } else {
+          // 🛠️ ESTRATEGIA REVOLUCIONARIA: Si no hay zonas, llamamos a familias 
+          // para sacar el UUID del restaurante real del sistema.
+          this.familiesApiService.getAll().subscribe({
+            next: (families) => {
+              if (families.length > 0) {
+                this.currentRestaurantUuid = families[0].restaurant_uuid;
+              }
+              this.isLoading = false;
+            },
+            error: () => {
+              this.isLoading = false; // Continuamos aunque falle
+            }
+          });
         }
-        
-        this.isLoading = false;
       },
       error: (error) => {
         this.showToast(error.error?.message || 'Error al cargar zonas', 'danger');
@@ -112,7 +125,7 @@ export class ZonesPage implements OnInit {
     this.zonesApiService.delete(zone.uuid).subscribe({
       next: () => {
         this.zones = this.zones.filter(z => z.uuid !== zone.uuid);
-        this.showToast('Zona eliminada correctamente');
+        this.showToast('Zona XML eliminada correctamente');
       },
       error: (error) => {
         this.showToast(error.error?.message || 'Error al eliminar la zona', 'danger');
@@ -125,22 +138,17 @@ export class ZonesPage implements OnInit {
     let request$;
 
     if (this.selectedZone) {
-      // Caso EDICIÓN: Mandamos solo el name tal y como pide tu método updateName de PHP
-      const updatePayload = {
-        name: formData.name
-      };
+      const updatePayload = { name: formData.name };
       request$ = this.zonesApiService.update(this.selectedZone.uuid, updatePayload);
     } else {
-      // Caso CREACIÓN: Forzamos los parámetros estrictos que pide el constructor dddCreate de PHP
-      // ⚠️ IMPORTANTE: Si 'currentRestaurantUuid' está vacío porque no había zonas previas,
-      // pon aquí entre las comillas un UUID real de tu tabla 'restaurants' de la base de datos.
-      const restaurantUuid = this.currentRestaurantUuid || 'AQUI_PEGA_UN_UUID_DE_TU_TABLA_RESTAURANTS';
+      const restaurantUuid = this.currentRestaurantUuid || '00000000-0000-0000-0000-000000000000';
 
       const createPayload = {
-        uuid: crypto.randomUUID(), // Generamos el UUID de la zona desde el cliente (Muy común en DDD)
+        uuid: crypto.randomUUID(), 
         name: formData.name,
+        active: true, // 🛠️ ¡FIJADO! Laravel lo pide obligatorio en el validate()
         restaurant_uuid: restaurantUuid,
-        restaurantUuid: restaurantUuid // Enviamos ambos formatos para evitar problemas con el mapeador
+        restaurantUuid: restaurantUuid 
       };
       
       request$ = this.zonesApiService.create(createPayload);
@@ -154,9 +162,9 @@ export class ZonesPage implements OnInit {
         this.closeModal();
       },
       error: (error) => {
-        // Imprime esto en tu consola del navegador (F12) para ver el mensaje interno real de PHP
         console.error('Error detallado devuelto por PHP:', error);
-        this.showToast(error.error?.message || 'Error de consistencia en el servidor', 'danger');
+        // 💡 Si sigue fallando, este alert nos mostrará el mensaje exacto de Laravel en la pantalla
+        this.showToast(error.error?.error || error.error?.message || 'Error de consistencia', 'danger');
         this.isSaving = false;
       }
     });

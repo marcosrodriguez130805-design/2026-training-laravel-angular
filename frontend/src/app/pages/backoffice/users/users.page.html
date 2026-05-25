@@ -1,0 +1,86 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Usuarios y Plantilla</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreateModal()">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar *ngIf="!isLoading" class="segment-toolbar">
+    <ion-segment [value]="selectedRoleFilter" (ionChange)="onRoleFilterChange($event)" mode="md">
+      <ion-segment-button value="all">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="admin">
+        <ion-label>Administradores</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="waiter">
+        <ion-label>Camareros</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding bg-light">
+
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando plantilla de empleados...</p>
+  </div>
+
+  <ion-list *ngIf="!isLoading && filteredUsers.length > 0" lines="inset" class="custom-list">
+    <ion-item *ngFor="let user of filteredUsers">
+      <ion-icon slot="start" name="person-outline" color="medium"></ion-icon>
+      <ion-label>
+        <h2>{{ user.name }}</h2>
+        <p>Email: <strong>{{ user.email }}</strong></p>
+        <p>Rol: <span class="ion-text-uppercase"><strong>{{ user.role }}</strong></span></p>
+      </ion-label>
+      
+      <ion-buttons slot="end">
+        <ion-button color="primary" (click)="openEditModal(user)">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-button>
+        <ion-button color="danger" (click)="confirmDelete(user)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="!isLoading && filteredUsers.length === 0" class="ion-text-center ion-padding empty-state">
+    <ion-icon name="folder-open-outline" style="font-size: 64px; color: #b3b3b3;"></ion-icon>
+    <p>No se encontraron usuarios en esta categoría.</p>
+    <ion-button fill="outline" color="primary" (click)="openCreateModal()">Añadir primer usuario</ion-button>
+  </div>
+
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ selectedUser ? 'Editar Empleado' : 'Dar de Alta Empleado' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="ion-padding">
+        <app-user-form 
+          [user]="selectedUser"
+          [isSaving]="isSaving"
+          (save)="onSaveUser($event)" 
+          (cancel)="closeModal()">
+        </app-user-form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

@@ -38,6 +38,10 @@ export const routes: Routes = [
         path: 'tables',
         loadComponent: () => import('./pages/backoffice/tables/tables.page').then((m) => m.TablesPage),
       },
+      {
+        path: 'users',
+        loadComponent: () => import('./pages/backoffice/users/users.page').then(m => m.UsersPage)
+      },
     ],
   },
   {
