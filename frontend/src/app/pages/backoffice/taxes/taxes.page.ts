@@ -1,10 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
-  IonContent, IonList, IonItem, IonLabel, IonButton, 
+  IonContent, IonModal, IonList, IonItem, IonLabel, IonButton, 
   IonButtons, IonIcon, IonHeader, IonToolbar, 
-  IonTitle, IonSpinner, ToastController, IonBadge,
-  IonMenuButton, IonText, AlertController 
+  IonTitle, IonSpinner, ToastController,
+  IonMenuButton, AlertController 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, close, trashOutline, createOutline, receiptOutline, alertCircleOutline } from 'ionicons/icons';
@@ -19,10 +19,10 @@ import { TaxFormComponent } from './tax-form/tax-form.component';
   styleUrls: ['./taxes.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, IonContent, IonList, IonItem, IonLabel, 
+    CommonModule, IonContent, IonModal, IonList, IonItem, IonLabel, 
     IonButton, IonButtons, IonIcon, IonHeader, 
-    IonToolbar, IonTitle, IonSpinner, IonBadge,
-    IonMenuButton, IonText, TaxFormComponent
+    IonToolbar, IonTitle, IonSpinner,
+    IonMenuButton, TaxFormComponent
   ]
 })
 export class TaxesPage implements OnInit {

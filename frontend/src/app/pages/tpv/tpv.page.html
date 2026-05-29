@@ -1,0 +1,101 @@
+<ion-content>
+  <ion-grid class="tpv-shell" style="height: 100vh; overflow: hidden;">
+    <ion-row class="tpv-main-row" style="height: 100%;">
+      <ion-col size="12" size-lg="8" class="tpv-catalog">
+        <ion-header class="tpv-catalog-header">
+          <ion-toolbar>
+            <ion-title>Catálogo TPV</ion-title>
+            <ion-buttons slot="end">
+              <ion-button fill="clear" color="primary">
+                <ion-icon slot="icon-only" name="cart"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+
+        <section class="tpv-family-bar">
+          <div class="tpv-family-scroll">
+            <ion-button
+              *ngFor="let family of families"
+              fill="clear"
+              [color]="family.active ? 'primary' : 'medium'"
+              (click)="selectFamily(family.id)">
+              {{ family.name }}
+            </ion-button>
+          </div>
+        </section>
+
+        <section class="tpv-product-grid">
+          <ion-row>
+            <ion-col
+              *ngFor="let product of filteredProducts"
+              size="12"
+              size-sm="6"
+              size-md="4"
+              class="tpv-product-col">
+              <ion-card class="tpv-product-card" (click)="addProduct(product)">
+                <div class="tpv-product-visual" [style.background]="product.color"></div>
+                <ion-card-header>
+                  <ion-card-title>{{ product.name }}</ion-card-title>
+                </ion-card-header>
+                <ion-card-content class="tpv-product-meta">
+                  <ion-label class="tpv-product-price">{{ product.price | currency:'EUR' }}</ion-label>
+                  <ion-badge color="secondary">Tocar para añadir</ion-badge>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </section>
+      </ion-col>
+
+      <ion-col size="12" size-lg="4" class="tpv-ticket-panel">
+        <ion-header class="tpv-ticket-header">
+          <ion-toolbar>
+            <ion-title>Ticket Actual</ion-title>
+          </ion-toolbar>
+        </ion-header>
+
+        <section class="tpv-ticket-summary">
+          <div class="tpv-ticket-table">
+            <span class="ticket-label">Mesa</span>
+            <strong>{{ currentTable }}</strong>
+          </div>
+
+          <div class="tpv-ticket-items">
+            <div *ngFor="let item of ticketItems" class="tpv-ticket-item">
+              <div class="ticket-item-info">
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-price">{{ item.price | currency:'EUR' }}</span>
+              </div>
+
+              <div class="ticket-item-actions">
+                <ion-button fill="clear" size="small" (click)="decreaseQuantity(item)">
+                  <ion-icon slot="icon-only" name="remove"></ion-icon>
+                </ion-button>
+                <ion-badge color="medium">{{ item.quantity }}</ion-badge>
+                <ion-button fill="clear" size="small" (click)="increaseQuantity(item)">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="removeItem(item)">
+                  <ion-icon slot="icon-only" name="close"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tpv-ticket-footer">
+          <div class="tpv-ticket-total">
+            <span>Total</span>
+            <strong>{{ ticketTotal | currency:'EUR' }}</strong>
+          </div>
+
+          <ion-button expand="block" color="success" class="tpv-pay-button" (click)="checkout()">
+            <ion-icon slot="start" name="cash"></ion-icon>
+            Cobrar
+          </ion-button>
+        </section>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

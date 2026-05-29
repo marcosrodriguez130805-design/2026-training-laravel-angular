@@ -35,3 +35,20 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 /* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+/* Global modal header styling */
+ion-modal ion-header ion-toolbar {
+  --background: #3880ff;
+}
+
+ion-modal ion-header ion-toolbar ion-title {
+  color: #ffffff !important;
+}
+
+ion-modal ion-header ion-toolbar ion-button {
+  --color: #ffffff;
+}
+
+ion-modal ion-header ion-toolbar ion-buttons {
+  color: #ffffff;
+}

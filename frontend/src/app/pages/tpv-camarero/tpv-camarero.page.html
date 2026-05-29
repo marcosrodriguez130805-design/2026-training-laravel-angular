@@ -1,0 +1,73 @@
+<ion-content class="tpv-camarero-shell">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Selecciona camarero</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid class="tpv-camarero-grid">
+    <ion-row *ngIf="!isLoading && camareros.length > 0">
+      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let camarero of camareros">
+        <ion-card button class="tpv-camarero-card" (click)="openPinModal(camarero)">
+          <ion-card-header>
+            <ion-card-title>{{ camarero.name }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-icon name="person-circle" class="tpv-camarero-icon"></ion-icon>
+            <p>Presiona para iniciar sesión con tu PIN.</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!isLoading && camareros.length === 0">
+      <ion-col size="12">
+        <p>No se encontraron camareros registrados.</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="isLoading">
+      <ion-col size="12">
+        <p>Cargando camareros...</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div class="pin-overlay" *ngIf="isPinModalOpen">
+    <div class="pin-card">
+      <div class="pin-header">
+        <h3>Introduce tu PIN</h3>
+        <p>Camarero: {{ selectedCamarero?.name }}</p>
+      </div>
+
+      <div class="pin-body">
+        <div class="pin-display">
+          <span *ngFor="let digit of [1,2,3,4]">
+            {{ pin.length >= digit ? '●' : '○' }}
+          </span>
+        </div>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col size="4" *ngFor="let num of [1,2,3]"><ion-button expand="block" fill="clear" class="num-btn" (click)="teclearNumero(num)">{{ num }}</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="4" *ngFor="let num of [4,5,6]"><ion-button expand="block" fill="clear" class="num-btn" (click)="teclearNumero(num)">{{ num }}</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="4" *ngFor="let num of [7,8,9]"><ion-button expand="block" fill="clear" class="num-btn" (click)="teclearNumero(num)">{{ num }}</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="4"><ion-button expand="block" color="danger" fill="solid" (click)="borrarPin()">C</ion-button></ion-col>
+            <ion-col size="4"><ion-button expand="block" fill="clear" class="num-btn" (click)="teclearNumero(0)">0</ion-button></ion-col>
+            <ion-col size="4"><ion-button expand="block" color="success" fill="solid" (click)="confirmarPin()">✔</ion-button></ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-button expand="block" fill="clear" color="medium" (click)="isPinModalOpen = false" class="ion-margin-top">
+          Cancelar
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

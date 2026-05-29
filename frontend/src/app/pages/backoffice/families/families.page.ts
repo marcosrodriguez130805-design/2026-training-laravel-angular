@@ -2,9 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { 
-  IonContent, IonList, IonItem, IonLabel, IonButton, 
+  IonContent, IonModal, IonMenuButton, IonList, IonItem, IonLabel, IonButton, 
   IonButtons, IonIcon, IonHeader, IonToolbar, 
-  IonTitle, IonSpinner, IonToggle, ToastController // <--- Añadido ToastController
+  IonTitle, IonSpinner, IonToggle, ToastController
 } from '@ionic/angular/standalone';
 import { FamiliesApiService } from '../../../services/families/families-api.service';
 import { Family } from '../../../services/families/family.model';
@@ -17,7 +17,7 @@ import { add, close, trash, create, folderOpenOutline } from 'ionicons/icons';
   templateUrl: 'families.page.html',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, IonContent, IonList, IonItem, 
+    CommonModule, ReactiveFormsModule, IonContent, IonModal, IonMenuButton, IonList, IonItem, 
     IonLabel, IonButton, IonButtons, IonIcon, 
     IonHeader, IonToolbar, IonTitle, IonSpinner, IonToggle, 
     FamilyFormComponent

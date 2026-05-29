@@ -35,7 +35,7 @@ export class LoginPage {
         next: (response) => {
           this.isLoading = false;
           if (this.authService.isBackofficeUser()) {
-            this.router.navigate(['/backoffice']);
+            this.router.navigate(['/selector-entorno']);
           } else {
             this.errorMessage = 'No tienes acceso al backoffice';
           }

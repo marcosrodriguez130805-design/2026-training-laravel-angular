@@ -8,6 +8,31 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/core/login/login.page').then((m) => m.LoginPage),
   },
   {
+    path: 'selector-entorno',
+    loadComponent: () => import('./pages/selector-entorno/selector-entorno.page').then((m) => m.SelectorEntornoPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'tpv',
+    loadComponent: () => import('./pages/tpv-camarero/tpv-camarero.page').then((m) => m.TpvCamareroPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'tpv-mesas',
+    loadComponent: () => import('./pages/tpv-mesas/tpv-mesas.page').then((m) => m.TpvMesasPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'seleccion-mesa',
+    loadComponent: () => import('./pages/seleccion-mesa/seleccion-mesa.page').then((m) => m.SeleccionMesaPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'tpv-comanda',
+    loadComponent: () => import('./pages/tpv-comanda/tpv-comanda.page').then((m) => m.TpvComandaPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'backoffice',
     loadComponent: () => import('./pages/backoffice/backoffice.page').then((m) => m.BackofficePage),
     canActivate: [authGuard, backofficeGuard],

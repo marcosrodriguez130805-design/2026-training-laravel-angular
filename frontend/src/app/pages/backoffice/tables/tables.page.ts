@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   IonContent, IonList, IonLabel, IonItem, 
-  IonHeader, IonToolbar, IonIcon, IonText, 
+  IonHeader, IonToolbar, IonIcon, 
   IonTitle, IonButtons, IonButton, 
   ToastController, AlertController, IonSpinner,
   IonMenuButton, IonSegment, IonSegmentButton,
@@ -23,7 +23,7 @@ import { TableFormComponent } from './table-form/table-form.component';
   standalone: true,
   imports: [
     CommonModule, IonContent, IonList, IonLabel, IonItem,
-    IonHeader, IonToolbar, IonIcon, IonText, IonTitle, 
+    IonHeader, IonToolbar, IonIcon, IonTitle, 
     IonButtons, IonButton, IonSpinner, IonMenuButton,
     IonSegment, IonSegmentButton, TableFormComponent,
     IonModal // 🛠️ NUEVO: Registrado en los imports para habilitar su uso en el HTML

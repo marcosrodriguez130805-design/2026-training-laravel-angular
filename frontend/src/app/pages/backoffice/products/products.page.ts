@@ -2,9 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { 
-  IonContent, IonList, IonLabel, IonItem, 
+  IonContent, IonModal, IonMenuButton, IonList, IonLabel, IonItem, 
   IonHeader, IonToolbar, IonSegment, IonSegmentButton,
-  IonIcon, IonText, IonTitle, IonButtons, IonButton,
+  IonIcon, IonTitle, IonButtons, IonButton,
   IonToggle, ToastController, AlertController, IonBadge 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -19,9 +19,9 @@ import { ProductFormComponent } from './product-form/product-form.component';
   templateUrl: './products.page.html',
   standalone: true,
   imports: [
-    CommonModule, IonContent, IonList, IonLabel, IonItem,
+    CommonModule, IonContent, IonModal, IonMenuButton, IonList, IonLabel, IonItem,
     IonHeader, IonToolbar, IonSegment, IonSegmentButton,
-    IonIcon, IonText, IonTitle, IonButtons, IonButton,
+    IonIcon, IonTitle, IonButtons, IonButton,
     IonToggle, IonBadge, 
     ProductFormComponent
   ]

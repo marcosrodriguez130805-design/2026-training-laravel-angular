@@ -1,0 +1,42 @@
+<ion-content class="seleccion-mesa-shell">
+  <ion-grid class="seleccion-mesa-grid">
+    <ion-row class="seleccion-mesa-header" justify-content="center">
+      <ion-col size="12" size-md="10" size-lg="8">
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Selecciona una mesa</ion-title>
+          </ion-toolbar>
+        </ion-header>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="seleccion-mesa-list" justify-content="center">
+      <ion-col
+        *ngFor="let mesa of mesas$ | async"
+        size="12"
+        size-sm="6"
+        size-md="4"
+        size-lg="3"
+      >
+        <ion-card
+          button
+          class="mesa-card"
+          [ngClass]="mesa.estado"
+          (click)="selectMesa(mesa.id)"
+        >
+          <ion-card-header>
+            <ion-card-title>{{ mesa.nombre }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="mesa-card-body">
+              <ion-icon name="restaurant-outline" class="mesa-icon"></ion-icon>
+              <ion-badge [color]="mesa.estado === 'libre' ? 'medium' : mesa.estado === 'ocupada' ? 'primary' : 'warning'">
+                {{ statusLabel(mesa.estado) }}
+              </ion-badge>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

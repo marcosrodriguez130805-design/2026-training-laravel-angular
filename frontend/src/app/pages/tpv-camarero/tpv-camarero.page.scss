@@ -1,0 +1,113 @@
+.pin-modal {
+  --width: 100%;
+  --height: 100%;
+  --min-width: 280px;
+  --max-width: 450px;
+  --min-height: 400px;
+  --max-height: 550px;
+  --border-radius: 16px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+
+  ion-content {
+    --background: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.pin-modal ion-button {
+  color: #1a1d24;
+  background: #f8fafc;
+  border-radius: 12px;
+  font-weight: 700;
+  min-height: 56px;
+}
+
+.pin-modal ion-button[color="warning"] {
+  color: #1a1d24;
+  background: #fde68a;
+}
+
+.pin-modal .pin-summary {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pin-modal .pin-display {
+  margin-top: 12px;
+  font-size: 1.8rem;
+  letter-spacing: 0.45rem;
+  color: #1a1d24;
+}
+
+.pin-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pin-card {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.pin-header {
+  background: #3880ff;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.pin-header h3 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.pin-header p {
+  margin: 5px 0 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.pin-body {
+  padding: 20px;
+}
+
+.pin-display {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 24px;
+  color: #3880ff;
+  margin-bottom: 20px;
+  background: #f4f5f8;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.num-btn {
+  --color: #1a1d24;
+  font-size: 1.4rem;
+  font-weight: 600;
+  height: 55px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

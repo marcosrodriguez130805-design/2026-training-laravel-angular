@@ -23,45 +23,48 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding bg-light">
+<ion-content class="bg-light">
+  <div class="main-content-inner">
 
-  <div *ngIf="isLoading" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Cargando distribución de salas...</p>
+    <div *ngIf="isLoading" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando distribución de salas...</p>
+    </div>
+
+    <ion-list *ngIf="!isLoading && filteredTables.length > 0" lines="none" class="custom-list">
+      <ion-item class="custom-card" *ngFor="let table of filteredTables" (click)="openEditModal(table)">
+        <ion-icon slot="start" name="grid-outline" color="medium"></ion-icon>
+        <ion-label>
+          <h2>{{ table.name }}</h2>
+          <p *ngIf="selectedZoneUuid === 'all'">
+            Ubicación: <strong>{{ getZoneName(table.zone_uuid) }}</strong>
+          </p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-button color="primary" (click)="openEditModal(table); $event.stopPropagation()">
+            <ion-icon slot="icon-only" name="create"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" (click)="confirmDelete(table); $event.stopPropagation()">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="!isLoading && filteredTables.length === 0 && zones.length > 0" class="empty-state">
+      <ion-icon name="grid-outline"></ion-icon>
+      <p>No hay mesas registradas en esta sección.</p>
+      <ion-button fill="solid" color="primary" (click)="openCreateModal()">Añadir mesa aquí</ion-button>
+    </div>
+
+    <div *ngIf="!isLoading && zones.length === 0" class="empty-state">
+      <ion-icon name="grid-outline"></ion-icon>
+      <p>Para añadir mesas, primero necesitas crear zonas en el sistema.</p>
+    </div>
+
   </div>
 
-  <ion-list *ngIf="!isLoading && filteredTables.length > 0" lines="inset" class="custom-list">
-    <ion-item *ngFor="let table of filteredTables">
-      <ion-icon slot="start" name="grid-outline" color="medium"></ion-icon>
-      <ion-label>
-        <h2>{{ table.name }}</h2>
-        <p *ngIf="selectedZoneUuid === 'all'">
-          Ubicación: <strong>{{ getZoneName(table.zone_uuid) }}</strong>
-        </p>
-      </ion-label>
-      <ion-buttons slot="end">
-        <ion-button color="primary" (click)="openEditModal(table)">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-button>
-        <ion-button color="danger" (click)="confirmDelete(table)">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
-
-  <div *ngIf="!isLoading && filteredTables.length === 0 && zones.length > 0" class="ion-text-center ion-padding empty-state">
-    <ion-icon name="folder-open-outline" style="font-size: 64px; color: #b3b3b3;"></ion-icon>
-    <p>No hay mesas registradas en esta sección.</p>
-    <ion-button fill="outline" color="primary" (click)="openCreateModal()">Añadir mesa aquí</ion-button>
-  </div>
-
-  <div *ngIf="!isLoading && zones.length === 0" class="ion-text-center ion-padding empty-state">
-    <ion-icon name="folder-open-outline" style="font-size: 64px; color: #b3b3b3;"></ion-icon>
-    <p>Para añadir mesas, primero necesitas crear zonas en el sistema.</p>
-  </div>
-
-  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()" [backdropDismiss]="false">
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
@@ -74,7 +77,7 @@
         </ion-toolbar>
       </ion-header>
       
-      <ion-content class="ion-padding">
+      <ion-content class="form-container">
         <app-table-form 
           [table]="selectedTable" 
           [zones]="zones"

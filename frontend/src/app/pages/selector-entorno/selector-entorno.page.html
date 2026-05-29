@@ -1,0 +1,35 @@
+<ion-content class="selector-entorno-shell">
+  <ion-grid class="selector-entorno-grid">
+    <ion-row class="selector-entorno-row" justify-content="center" align-items="center">
+      <ion-col size="12" size-md="10" size-lg="8">
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Selecciona tu entorno</ion-title>
+          </ion-toolbar>
+        </ion-header>
+
+        <div class="selector-entorno-actions">
+          <ion-card button class="selector-card" (click)="navigateToBackoffice()">
+            <ion-card-header>
+              <ion-card-title>Panel de Gestión (Backoffice)</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon name="analytics-outline" class="selector-card-icon"></ion-icon>
+              <p>Accede al panel administrativo y gestiona familias, productos, mesas y más.</p>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card button class="selector-card" (click)="navigateToTpv()">
+            <ion-card-header>
+              <ion-card-title>Terminal Punto de Venta (TPV)</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon name="cash-outline" class="selector-card-icon"></ion-icon>
+              <p>Abre el TPV para atender pedidos desde la mesa y cobrar de forma rápida.</p>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

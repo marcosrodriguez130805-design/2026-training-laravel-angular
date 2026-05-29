@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { 
-  IonList, IonItem, IonLabel, IonInput, IonTextarea, 
+  IonItem, IonLabel, IonInput, IonTextarea, 
   IonCheckbox, IonButton, IonText, IonSelect, IonSelectOption,
   IonIcon 
 } from '@ionic/angular/standalone';
@@ -18,7 +18,7 @@ import { Tax } from '../../../../services/taxes/tax.model';
   templateUrl: './product-form.component.html',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, IonList, IonItem, IonLabel, 
+    CommonModule, ReactiveFormsModule, IonItem, IonLabel, 
     IonInput, IonTextarea, IonCheckbox, IonButton, IonText, IonSelect, 
     IonSelectOption, IonIcon 
   ],

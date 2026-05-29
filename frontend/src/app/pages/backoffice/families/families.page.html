@@ -1,58 +1,82 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>{{ isModalOpen ? (selectedFamily ? 'Editar Familia' : 'Nueva Familia') : 'Familias' }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Familias</ion-title>
     
     <ion-buttons slot="end">
-      <ion-button (click)="isModalOpen ? closeModal() : openCreateModal()">
-        <ion-icon slot="icon-only" [name]="isModalOpen ? 'close' : 'add'"></ion-icon>
+      <ion-button (click)="openCreateModal()">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div *ngIf="!isModalOpen">
+<ion-content class="bg-light">
+  <div class="main-content-inner">
+    
     <div *ngIf="isLoading" class="ion-text-center ion-padding">
-      <ion-spinner name="crescent"></ion-spinner>
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
       <p>Cargando familias...</p>
     </div>
 
-    <ion-list *ngIf="!isLoading && families.length > 0">
-      <ion-item *ngFor="let family of families">
-        <ion-label (click)="openEditModal(family)" style="cursor: pointer;" [style.opacity]="family.active ? '1' : '0.5'">
-          <h2 style="font-weight: bold;">{{ family.name }}</h2>
+    <ion-list *ngIf="!isLoading && families.length > 0" lines="none" class="custom-list">
+      <ion-item class="custom-card" *ngFor="let family of families" (click)="openEditModal(family)">
+        <ion-icon slot="start" name="people-outline" color="medium"></ion-icon>
+        <ion-label [style.opacity]="family.active ? '1' : '0.5'">
+          <h2>{{ family.name }}</h2>
           <p>Creado {{ family.created_at | date: 'mediumDate' }}</p>
         </ion-label>
 
         <ion-buttons slot="end">
           <ion-toggle 
             [checked]="family.active" 
+            (click)="$event.stopPropagation()"
             (ionChange)="toggleActive(family)">
           </ion-toggle>
 
-          <ion-button color="primary" (click)="openEditModal(family)">
+          <ion-button color="primary" (click)="openEditModal(family); $event.stopPropagation()">
             <ion-icon slot="icon-only" name="create"></ion-icon>
           </ion-button>
 
-          <ion-button color="danger" (click)="confirmDelete(family)">
+          <ion-button color="danger" (click)="confirmDelete(family); $event.stopPropagation()">
             <ion-icon slot="icon-only" name="trash"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-item>
     </ion-list>
 
-    <div *ngIf="!isLoading && families.length === 0" class="ion-text-center ion-padding">
-      <ion-icon name="folder-open-outline" style="font-size: 48px; color: #ccc;"></ion-icon>
+    <div *ngIf="!isLoading && families.length === 0" class="empty-state">
+      <ion-icon name="folder-open-outline"></ion-icon>
       <p>No hay familias registradas todavía.</p>
+      <ion-button fill="solid" color="primary" (click)="openCreateModal()">Crear primera familia</ion-button>
     </div>
+
   </div>
 
-  <div *ngIf="isModalOpen" class="ion-padding">
-    <app-family-form
-      [family]="selectedFamily"
-      [isSaving]="isSaving"
-      (save)="onSaveFamily($event)"
-      (cancel)="closeModal()"
-    ></app-family-form>
-  </div>
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()" [backdropDismiss]="false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ selectedFamily ? 'Editar Familia' : 'Nueva Familia' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="form-container">
+        <app-family-form
+          [family]="selectedFamily"
+          [isSaving]="isSaving"
+          (save)="onSaveFamily($event)"
+          (cancel)="closeModal()"
+        ></app-family-form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

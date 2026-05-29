@@ -1,7 +1,8 @@
 <form [formGroup]="form">
-  <ion-list>
-    <ion-item>
-      <ion-label position="stacked">Nombre</ion-label>
+  
+  <div class="form-group">
+    <ion-item [class.has-error]="nameControl?.invalid && nameControl?.touched">
+      <ion-label class="label-stacked">Nombre</ion-label>
       <ion-input
         formControlName="name"
         type="text"
@@ -12,18 +13,23 @@
       <span *ngIf="nameControl?.errors?.['required']">El nombre es obligatorio.</span>
       <span *ngIf="nameControl?.errors?.['maxlength']">Máximo 255 caracteres.</span>
     </ion-text>
+  </div>
 
-    <ion-item>
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
       <ion-label>Activo</ion-label>
       <ion-checkbox slot="start" formControlName="active"></ion-checkbox>
     </ion-item>
+  </div>
 
-    <div class="form-actions">
-      <ion-button fill="clear" (click)="onCancel()" [disabled]="isSaving">Cancelar</ion-button>
-      <ion-button expand="block" (click)="onSubmit()" [disabled]="form.invalid || isSaving">
-        <ion-spinner *ngIf="isSaving" slot="start" name="crescent"></ion-spinner>
-        {{ isSaving ? 'Guardando...' : 'Guardar' }}
-      </ion-button>
-    </div>
-  </ion-list>
+  <div class="form-actions">
+    <ion-button fill="clear" class="btn-secondary" (click)="onCancel()" [disabled]="isSaving">
+      Cancelar
+    </ion-button>
+    <ion-button class="btn-primary" (click)="onSubmit()" [disabled]="form.invalid || isSaving">
+      <ion-spinner *ngIf="isSaving" slot="start" name="crescent"></ion-spinner>
+      {{ isSaving ? 'Guardando...' : 'Guardar' }}
+    </ion-button>
+  </div>
+
 </form>

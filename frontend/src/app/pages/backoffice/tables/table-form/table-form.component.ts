@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { 
   IonItem, IonLabel, IonInput, IonButton, 
-  IonText, IonSelect, IonSelectOption, IonIcon, IonSpinner 
+  IonText, IonSelect, IonSelectOption, IonSpinner 
 } from '@ionic/angular/standalone';
 import { Table } from '../../../../services/tables/table.model';
 import { Zone } from '../../../../services/zones/zone.model';
@@ -15,7 +15,7 @@ import { Zone } from '../../../../services/zones/zone.model';
   imports: [
     CommonModule, ReactiveFormsModule, IonItem, IonLabel, 
     IonInput, IonButton, IonText, IonSelect, IonSelectOption, 
-    IonIcon, IonSpinner
+    IonSpinner
   ],
   // 🛠️ Solución radical al error NG2008: metemos los estilos en línea y nos olvidamos del archivo físico defectuoso
   styles: [`

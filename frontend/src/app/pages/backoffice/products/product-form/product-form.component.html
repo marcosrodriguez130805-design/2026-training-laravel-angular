@@ -1,67 +1,81 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <ion-list lines="none">
-    
-    <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-      <ion-label position="stacked">Familia</ion-label>
-      <ion-select formControlName="family_uuid" placeholder="Selecciona familia" label-placement="stacked">
+  
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label class="label-stacked">Familia</ion-label>
+      <ion-select formControlName="family_uuid" placeholder="Selecciona familia">
         <ion-select-option *ngFor="let family of families" [value]="family.uuid">
           {{ family.name }}
         </ion-select-option>
       </ion-select>
     </ion-item>
+  </div>
 
-    <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-      <ion-label position="stacked">Impuesto</ion-label>
-      <ion-select formControlName="tax_uuid" placeholder="Selecciona impuesto" label-placement="stacked">
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label class="label-stacked">Impuesto</ion-label>
+      <ion-select formControlName="tax_uuid" placeholder="Selecciona impuesto">
         <ion-select-option *ngFor="let tax of taxes" [value]="tax.uuid">
           {{ tax.name }} ({{ tax.percentage }}%)
         </ion-select-option>
       </ion-select>
     </ion-item>
+  </div>
 
-    <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-      <ion-label position="stacked">Nombre</ion-label>
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom" [class.has-error]="nameControl?.invalid && nameControl?.touched">
+      <ion-label class="label-stacked">Nombre</ion-label>
       <ion-input formControlName="name" type="text" placeholder="Nombre del producto"></ion-input>
-      <ion-text color="danger" *ngIf="nameControl?.invalid && nameControl?.touched">
-        <p class="ion-no-margin" style="font-size: 0.8rem;">El nombre es obligatorio.</p>
-      </ion-text>
     </ion-item>
+    <ion-text color="danger" *ngIf="nameControl?.invalid && nameControl?.touched" class="error-text">
+      <span *ngIf="nameControl?.errors?.['required']">El nombre es obligatorio.</span>
+    </ion-text>
+  </div>
 
-    <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-      <ion-label position="stacked">Descripción (opcional)</ion-label>
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label class="label-stacked">Descripción (opcional)</ion-label>
       <ion-textarea formControlName="description" placeholder="Breve descripción del plato..."></ion-textarea>
     </ion-item>
+  </div>
 
-    <div style="display: flex; gap: 8px;" class="ion-margin-bottom">
-      <ion-item fill="outline" mode="md" style="flex: 1; margin-bottom: 0;">
-        <ion-label position="stacked">Precio (€)</ion-label>
+  <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+    <div style="flex: 1;" class="form-group">
+      <ion-item class="ion-margin-bottom">
+        <ion-label class="label-stacked">Precio (€)</ion-label>
         <ion-input formControlName="price" type="number" step="0.01" placeholder="0.00"></ion-input>
-      </ion-item>
-
-      <ion-item fill="outline" mode="md" style="flex: 1; margin-bottom: 0;">
-        <ion-label position="stacked">Stock inicial</ion-label>
-        <ion-input formControlName="stock" type="number" placeholder="0"></ion-input>
       </ion-item>
     </div>
 
-    <div style="margin: 8px 0 20px 0; padding: 16px; background: #f0f4f9; border-radius: 12px; border: 2px dashed #93c5fd;">
-      <h3 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: bold; color: var(--ion-color-primary); display: flex; align-items: center; gap: 6px;">
-        <ion-icon name="sparkles-outline" style="font-size: 1.2rem;"></ion-icon> 
-        Estrategia de Venta Inteligente (Upselling)
-      </h3>
-      
-      <ion-item fill="outline" mode="md" class="ion-margin-bottom" style="--background: #ffffff;">
-        <ion-label position="stacked">Sugerencia de maridaje o acompañamiento</ion-label>
-        <ion-select formControlName="suggested_product_uuid" placeholder="Ninguno (Selecciona un producto...)" label-placement="stacked">
+    <div style="flex: 1;" class="form-group">
+      <ion-item class="ion-margin-bottom">
+        <ion-label class="label-stacked">Stock inicial</ion-label>
+        <ion-input formControlName="stock" type="number" placeholder="0"></ion-input>
+      </ion-item>
+    </div>
+  </div>
+
+  <div class="upselling-section">
+    <h3>
+      <ion-icon name="sparkles-outline"></ion-icon> 
+      Estrategia de Venta Inteligente
+    </h3>
+    
+    <div class="form-group">
+      <ion-item class="ion-margin-bottom">
+        <ion-label class="label-stacked">Producto sugerido</ion-label>
+        <ion-select formControlName="suggested_product_uuid" placeholder="Ninguno">
           <ion-select-option [value]="null">Ninguno</ion-select-option>
           <ion-select-option *ngFor="let prod of products" [value]="prod.uuid">
             {{ prod.name }}
           </ion-select-option>
         </ion-select>
       </ion-item>
+    </div>
 
-      <ion-item fill="outline" mode="md" style="--background: #ffffff; margin-bottom: 0;">
-        <ion-label position="stacked">Guía de recomendación para el camarero</ion-label>
+    <div class="form-group">
+      <ion-item class="ion-margin-bottom">
+        <ion-label class="label-stacked">Guía para el camarero</ion-label>
         <ion-textarea 
           formControlName="upselling_tip" 
           placeholder="Ej: Ofrecer una copa de vino tinto de la casa, combina excelente con la maduración de esta carne."
@@ -69,17 +83,22 @@
         </ion-textarea>
       </ion-item>
     </div>
-    <ion-item lines="none">
-      <ion-checkbox formControlName="active" labelPlacement="end">Activo</ion-checkbox>
-    </ion-item>
-  </ion-list>
+  </div>
 
-  <div class="ion-padding-top" style="display: flex; gap: 8px;">
-    <ion-button expand="block" fill="outline" (click)="onCancel()" style="flex: 1;">
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label>Activo</ion-label>
+      <ion-checkbox slot="start" formControlName="active"></ion-checkbox>
+    </ion-item>
+  </div>
+
+  <div class="form-actions">
+    <ion-button fill="clear" class="btn-secondary" (click)="onCancel()">
       Cancelar
     </ion-button>
-    <ion-button expand="block" type="submit" [disabled]="form.invalid" style="flex: 1;">
-      Guardar
+    <ion-button class="btn-primary" type="submit" [disabled]="form.invalid">
+      Guardar Producto
     </ion-button>
   </div>
+
 </form>

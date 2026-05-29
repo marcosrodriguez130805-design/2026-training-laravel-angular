@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonList, IonItem, IonLabel, IonInput, IonCheckbox, IonButton, IonText, IonSpinner } from '@ionic/angular/standalone';
+import { IonItem, IonLabel, IonInput, IonCheckbox, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { Zone } from '../../../../services/zones/zone.model';
 
 @Component({
@@ -9,7 +9,7 @@ import { Zone } from '../../../../services/zones/zone.model';
   templateUrl: './zone-form.component.html',
   styleUrls: ['./zone-form.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonList, IonItem, IonLabel, IonInput, IonCheckbox, IonButton, IonText, IonSpinner],
+  imports: [CommonModule, ReactiveFormsModule, IonItem, IonLabel, IonInput, IonCheckbox, IonButton, IonSpinner],
 })
 export class ZoneFormComponent implements OnChanges {
   @Input() zone: Zone | null = null;

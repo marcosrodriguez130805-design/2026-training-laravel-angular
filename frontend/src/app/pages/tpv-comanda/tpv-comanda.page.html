@@ -1,0 +1,116 @@
+<ion-content class="tpv-comanda-shell">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Comanda - {{ mesaActiva?.nombre || 'Sin mesa' }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid class="tpv-comanda-grid">
+    <ion-row class="tpv-comanda-row" style="height: 100%;">
+      <ion-col size="12" size-lg="7" class="tpv-comanda-left">
+        <section class="tpv-categories-bar">
+          <ion-button
+            *ngFor="let category of categorias"
+            fill="clear"
+            [color]="selectedCategory === category.id ? 'primary' : 'medium'"
+            (click)="selectCategory(category.id)"
+          >
+            {{ category.nombre }}
+          </ion-button>
+        </section>
+
+        <section class="tpv-product-grid">
+          <ion-row>
+            <ion-col size="12" size-sm="6" size-md="4" *ngFor="let product of productosFiltrados">
+              <ion-card button class="tpv-product-card" (click)="addProduct(product)">
+                <div class="tpv-product-color" [style.background]="product.color"></div>
+                <ion-card-header>
+                  <ion-card-title>{{ product.name }}</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-text>
+                    <strong>{{ product.price | currency:'EUR' }}</strong>
+                  </ion-text>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </section>
+      </ion-col>
+
+      <ion-col size="12" size-lg="5" class="tpv-comanda-right">
+        <section class="tpv-ticket-summary">
+          <div class="ticket-header">
+            <ion-text>
+              <h2>Pedido actual</h2>
+              <p>{{ mesaActiva?.nombre }}</p>
+            </ion-text>
+          </div>
+
+          <ion-list *ngIf="mesaActiva?.productosPedido?.length; else emptyState">
+            <ion-item *ngFor="let item of mesaActiva?.productosPedido">
+              <ion-label>
+                <h3>
+                  {{ item.name }}
+                  <span *ngIf="item.formato">({{ item.formato.nombre }})</span>
+                </h3>
+                <p>{{ item.price | currency:'EUR' }} x {{ item.quantity }}</p>
+                <p color="warning" *ngIf="item.nota">📝 {{ item.nota }}</p>
+              </ion-label>
+
+              <ion-buttons slot="end">
+                <ion-button fill="clear" size="small" (click)="decreaseQuantity(item)">
+                  <ion-icon slot="icon-only" name="remove-circle-outline"></ion-icon>
+                </ion-button>
+                <ion-badge color="medium">{{ item.quantity }}</ion-badge>
+                <ion-button fill="clear" size="small" (click)="increaseQuantity(item)">
+                  <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" (click)="agregarNota(item); $event.stopPropagation()">
+                  <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="danger" (click)="eliminarProductoDelTicket(item); $event.stopPropagation()">
+                  <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+              <div *ngIf="item" class="formato-selector" style="margin-top: 5px; width: 100%;">
+                <ion-select
+                  interface="popover"
+                  placeholder="Ración"
+                  [value]="item.formato"
+                  (ionChange)="cambiarFormato(item, $event.detail.value)"
+                >
+                  <ion-select-option [value]="formatos[0]">Ración</ion-select-option>
+                  <ion-select-option [value]="formatos[1]">Media Ración</ion-select-option>
+                  <ion-select-option [value]="formatos[2]">Tapa</ion-select-option>
+                </ion-select>
+              </div>
+            </ion-item>
+          </ion-list>
+
+          <ng-template #emptyState>
+            <div class="tpv-empty-state">
+              <ion-icon name="cart-outline"></ion-icon>
+              <p>No hay productos en la comanda.</p>
+            </div>
+          </ng-template>
+
+          <div class="tpv-ticket-total">
+            <span>Total</span>
+            <strong>{{ ticketTotal | currency:'EUR' }}</strong>
+          </div>
+
+          <ion-button expand="block" color="medium" (click)="guardarYSalir()">
+            Guardar y Salir
+          </ion-button>
+
+          <ion-button expand="block" color="success" (click)="cobrarYCerrar()">
+            <ion-icon slot="start" name="cash"></ion-icon>
+            Cobrar y Cerrar Mesa
+          </ion-button>
+        </section>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

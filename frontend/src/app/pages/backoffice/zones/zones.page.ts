@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
-  IonContent, IonList, IonLabel, IonItem, 
-  IonHeader, IonToolbar, IonIcon, IonText, 
+  IonContent, IonModal, IonList, IonLabel, IonItem, 
+  IonHeader, IonToolbar, IonIcon, 
   IonTitle, IonButtons, IonButton, IonToggle, 
   ToastController, AlertController, IonSpinner,
   IonMenuButton 
@@ -20,8 +20,8 @@ import { ZoneFormComponent } from '../zones/zone-form/zone-form.component';
   styleUrls: ['./zones.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, IonContent, IonList, IonLabel, IonItem,
-    IonHeader, IonToolbar, IonIcon, IonText, IonTitle, 
+    CommonModule, IonContent, IonModal, IonList, IonLabel, IonItem,
+    IonHeader, IonToolbar, IonIcon, IonTitle, 
     IonButtons, IonButton, IonToggle, IonSpinner,
     IonMenuButton,
     ZoneFormComponent

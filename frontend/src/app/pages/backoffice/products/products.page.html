@@ -1,92 +1,116 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>{{ isCreating ? (selectedProduct ? 'Editar Producto' : 'Nuevo Producto') : 'Productos' }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Productos</ion-title>
     
     <ion-buttons slot="end">
-      <ion-button (click)="isCreating ? cancelCreate() : handleCreate()">
-        <ion-icon slot="icon-only" [name]="isCreating ? 'close' : 'add'"></ion-icon>
+      <ion-button (click)="handleCreate()">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 
-  <ion-toolbar *ngIf="!isCreating">
-    <ion-segment [value]="selectedFamilyUuid" scrollable="true" (ionChange)="onFamilyChange($event)">
+  <ion-toolbar *ngIf="!isCreating && families.length > 0" class="segment-toolbar">
+    <ion-segment [value]="selectedFamilyUuid" scrollable="true" (ionChange)="onFamilyChange($event)" mode="md">
       <ion-segment-button value="all">
         <ion-label>Todos</ion-label>
       </ion-segment-button>
       <ion-segment-button *ngFor="let family of families" [value]="family.uuid">
         <ion-label [style.opacity]="family.active ? '1' : '0.5'">
           {{ family.name }}
-          <span *ngIf="!family.active" style="font-size: 0.7rem; display: block; color: var(--ion-color-danger);">
-            (Inactiva)
-          </span>
         </ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div *ngIf="!isCreating">
-    <ion-list *ngIf="filteredProducts.length > 0">
-      <ion-item *ngFor="let product of filteredProducts">
-        
-        <div (click)="handleEdit(product)" style="cursor: pointer; width: 100%; padding: 10px 0;" [style.opacity]="product.active ? '1' : '0.5'">
-          
-          <h2 style="font-weight: bold; margin: 0; font-size: 1.1rem; color: var(--ion-color-dark);">
-            {{ product.name }}
-          </h2>
-          
-          <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-            <span style="color: var(--ion-color-primary); font-weight: bold; font-size: 1rem;">
-              {{ product.price / 100 | currency:'EUR' }}
-            </span>
-            
-            <ion-badge *ngIf="product.upselling_tip" color="secondary" mode="ios" style="font-size: 0.7rem; padding: 2px 6px; font-weight: 600;">
-              <ion-icon name="sparkles" style="font-size: 0.8rem; vertical-align: middle; margin-right: 2px;"></ion-icon>
-              Estrategia Activa
-            </ion-badge>
-          </div>
-
-          <div *ngIf="product.upselling_tip" style="margin-top: 8px; padding: 8px 12px; background: #eff6ff; border-left: 4px solid var(--ion-color-secondary); border-radius: 4px; display: block; clear: both;">
-            <p style="margin: 0; font-size: 0.85rem; color: #1e40af; font-style: italic; white-space: normal; line-height: 1.2rem;">
-              <strong>Guía:</strong> "{{ product.upselling_tip }}"
-            </p>
-          </div>
-          
-        </div>
-
-        <ion-buttons slot="end">
-          <ion-toggle 
-            [checked]="product.active" 
-            (ionChange)="toggleProductActive(product, $event)">
-          </ion-toggle>
-
-          <ion-button color="primary" fill="clear" (click)="handleEdit(product)">
-            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-          </ion-button>
-
-          <ion-button color="danger" fill="clear" (click)="handleDelete(product)">
-            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-
-      </ion-item>
-    </ion-list>
-
-    <div *ngIf="filteredProducts.length === 0" class="ion-padding ion-text-center">
-      <ion-text color="medium">
-        <p>No hay productos en esta categoría.</p>
-      </ion-text>
+<ion-content class="bg-light">
+  <div class="main-content-inner">
+    
+    <div *ngIf="isCreating">
+      <app-product-form 
+        [product]="selectedProduct" 
+        [products]="allProducts"
+        (save)="onProductSaved($event)" 
+        (cancel)="cancelCreate()">
+      </app-product-form>
     </div>
+
+    <div *ngIf="!isCreating">
+      <ion-list *ngIf="filteredProducts.length > 0" lines="none" class="custom-list">
+        <ion-item class="custom-card" *ngFor="let product of filteredProducts" (click)="handleEdit(product)">
+          <ion-icon slot="start" name="fast-food-outline" color="medium"></ion-icon>
+          
+          <ion-label [style.opacity]="product.active ? '1' : '0.5'">
+            <h2>{{ product.name }}</h2>
+            
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+              <span style="color: var(--ion-color-primary); font-weight: 600;">
+                {{ product.price / 100 | currency:'EUR' }}
+              </span>
+              
+              <ion-badge *ngIf="product.upselling_tip" color="secondary" mode="ios" style="font-size: 0.7rem; padding: 2px 6px; font-weight: 600;">
+                <ion-icon name="sparkles" style="font-size: 0.8rem; vertical-align: middle; margin-right: 2px;"></ion-icon>
+                Estrategia Activa
+              </ion-badge>
+            </div>
+
+            <div *ngIf="product.upselling_tip" style="margin-top: 8px; font-size: 0.85rem; color: #666; font-style: italic;">
+              <strong>Guía:</strong> "{{ product.upselling_tip }}"
+            </div>
+          </ion-label>
+
+          <ion-buttons slot="end">
+            <ion-toggle 
+              [checked]="product.active" 
+              (click)="$event.stopPropagation()"
+              (ionChange)="toggleProductActive(product, $event)">
+            </ion-toggle>
+
+            <ion-button color="primary" (click)="handleEdit(product); $event.stopPropagation()">
+              <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-button>
+
+            <ion-button color="danger" (click)="handleDelete(product); $event.stopPropagation()">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="filteredProducts.length === 0" class="empty-state">
+        <ion-icon name="fast-food-outline"></ion-icon>
+        <p>No hay productos en esta categoría.</p>
+        <ion-button fill="solid" color="primary" (click)="handleCreate()">Crear primer producto</ion-button>
+      </div>
+    </div>
+
   </div>
 
-  <div *ngIf="isCreating" class="ion-padding">
-    <app-product-form 
-      [product]="selectedProduct" 
-      [products]="allProducts"
-      (save)="onProductSaved($event)" 
-      (cancel)="cancelCreate()">
-    </app-product-form>
-  </div>
+  <ion-modal [isOpen]="isCreating" (didDismiss)="cancelCreate()" [backdropDismiss]="false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ selectedProduct ? 'Editar Producto' : 'Nuevo Producto' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cancelCreate()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="form-container">
+        <app-product-form 
+          [product]="selectedProduct" 
+          [products]="allProducts"
+          (save)="onProductSaved($event)" 
+          (cancel)="cancelCreate()">
+        </app-product-form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

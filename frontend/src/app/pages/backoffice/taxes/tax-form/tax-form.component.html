@@ -1,27 +1,34 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-    <ion-label position="stacked">Nombre del Impuesto</ion-label>
-    <ion-input formControlName="name" placeholder="Ej: IVA General"></ion-input>
-  </ion-item>
+  
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label class="label-stacked">Nombre del Impuesto</ion-label>
+      <ion-input formControlName="name" placeholder="Ej: IVA General"></ion-input>
+    </ion-item>
+  </div>
 
-  <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-    <ion-label position="stacked">Valor (%)</ion-label>
-    <ion-input type="number" formControlName="value" placeholder="21"></ion-input>
-  </ion-item>
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label class="label-stacked">Porcentaje (%)</ion-label>
+      <ion-input type="number" formControlName="percentage" placeholder="21"></ion-input>
+    </ion-item>
+  </div>
 
-  <ion-item lines="none" class="ion-margin-bottom">
-    <ion-label>Estado Activo</ion-label>
-    <ion-toggle formControlName="active" slot="end"></ion-toggle>
-  </ion-item>
+  <div class="form-group">
+    <ion-item class="ion-margin-bottom">
+      <ion-label>Estado Activo</ion-label>
+      <ion-toggle formControlName="active" slot="end"></ion-toggle>
+    </ion-item>
+  </div>
 
-  <div class="ion-padding-top">
-    <ion-button expand="block" type="submit" [disabled]="form.invalid || isSaving">
+  <div class="form-actions">
+    <ion-button fill="clear" class="btn-secondary" (click)="cancel.emit()" [disabled]="isSaving">
+      Cancelar
+    </ion-button>
+    <ion-button class="btn-primary" type="submit" [disabled]="form.invalid || isSaving">
       <ion-spinner name="crescent" *ngIf="isSaving"></ion-spinner>
       <span *ngIf="!isSaving">{{ isEditing ? 'Actualizar Impuesto' : 'Crear Impuesto' }}</span>
     </ion-button>
-    
-    <ion-button expand="block" fill="clear" color="medium" (click)="cancel.emit()" [disabled]="isSaving">
-      Cancelar
-    </ion-button>
   </div>
+
 </form>

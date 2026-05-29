@@ -1,0 +1,57 @@
+<ion-content class="tpv-mesas-shell">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Plano de mesas</ion-title>
+      <ion-buttons slot="end">
+        <ion-button color="tertiary" fill="outline" (click)="toggleModoFusion()">
+          {{ modoFusion ? 'Cancelar' : 'Juntar Mesas' }}
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar *ngIf="modoFusion">
+      <ion-title size="small">
+        {{ mesaOrigenSeleccionada ? 'Selecciona mesa destino' : 'Selecciona mesa origen ocupada' }}
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid class="tpv-mesas-grid">
+    <ion-row>
+      <ion-col
+        *ngFor="let mesa of mesas$ | async"
+        size="12"
+        size-sm="6"
+        size-md="4"
+        size-lg="3"
+      >
+        <ion-card
+          button
+          class="mesa-card"
+          [ngClass]="mesa.estado"
+          [style.border]="mesaOrigenSeleccionada?.id === mesa.id ? '3px dashed var(--ion-color-primary)' : null"
+          [style.boxShadow]="mesaOrigenSeleccionada?.id === mesa.id ? '0 0 0 4px rgba(56, 128, 255, 0.25)' : null"
+          (click)="seleccionarMesa(mesa)"
+        >
+          <ion-card-header>
+            <ion-card-title>{{ mesa.nombre }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="mesa-card-body">
+              <ion-icon name="restaurant-outline" class="mesa-icon"></ion-icon>
+              <ion-badge [color]="mesa.estado === 'libre' ? 'medium' : mesa.estado === 'ocupada' ? 'primary' : 'warning'">
+                {{ statusLabel(mesa.estado) }}
+              </ion-badge>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="toastMessage"
+    duration="2500"
+    (didDismiss)="showToast = false"
+  ></ion-toast>
+</ion-content>
